@@ -5,7 +5,8 @@
     <artifactId>Classificacao</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-  
+
+    
     <dependencies>
         <dependency>
             <groupId>nz.ac.waikato.cms.weka</groupId>
@@ -13,13 +14,21 @@
             <version>3.8.0</version>
             <type>jar</type>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.intel.daal/daal -->
+        
+        <!-- https://mvnrepository.com/artifact/com.google.firebase/firebase-database -->
         <dependency>
-            <groupId>com.intel.daal</groupId>
-            <artifactId>daal</artifactId>
-            <version>2020.1.009</version>
-            <type>jar</type>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>6.8.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.gms/google-services -->
+        <dependency>
+            <groupId>com.google.gms</groupId>
+            <artifactId>google-services</artifactId>
+            <version>3.1.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
 
     </dependencies>
     <properties>
@@ -44,6 +53,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+             <plugin>
+                <groupId>com.google.gms</groupId>
+                <artifactId>google-services</artifactId>
             </plugin>
         </plugins>
     </build>

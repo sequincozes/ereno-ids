@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "571589759634",
+    "firebase_url": "https://ereno-9326b.firebaseio.com",
+    "project_id": "ereno-9326b",
+    "storage_bucket": "ereno-9326b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571589759634:android:2f862f6542c0bcb1a50c4b",
+        "android_client_info": {
+          "package_name": "br.uff.midiacom.ereno"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571589759634-cuhbeca5c0n2opetktggh89jtbaitu0e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS0057lXxZ_ENwGcKz7LQIKlBj0FR-Ofg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571589759634-cuhbeca5c0n2opetktggh89jtbaitu0e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

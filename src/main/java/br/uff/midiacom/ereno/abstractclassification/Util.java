@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
-import br.uff.midiacom.legacy.substation.FeatureAvaliada;
+import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;

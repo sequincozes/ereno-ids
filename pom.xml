@@ -48,16 +48,12 @@
                         </goals>
                         <configuration>
                             <classifier>spring-boot</classifier>
-                            <mainClass>featureSelection.grasp.Grasp</mainClass>
-
+                            <mainClass>br.uff.midiacom.ereno.featureSelection.grasp.Grasp</mainClass>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-             <plugin>
-                <groupId>com.google.gms</groupId>
-                <artifactId>google-services</artifactId>
-            </plugin>
+             
         </plugins>
     </build>
 </project>

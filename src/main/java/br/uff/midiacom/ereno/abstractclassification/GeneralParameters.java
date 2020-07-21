@@ -8,7 +8,7 @@ package br.uff.midiacom.ereno.abstractclassification;
 public class GeneralParameters {
 
     public static boolean CSV = false;
-    public static String ALL_IN_ONE_FILE = "all_in_one_mini.csv";
+    public static String ALL_IN_ONE_FILE = "all_in_one.csv";
     
     // GRASP
     public static String OUTPUT = "outputs/";

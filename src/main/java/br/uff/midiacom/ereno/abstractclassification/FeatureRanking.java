@@ -5,9 +5,9 @@
  */
 package br.uff.midiacom.ereno.abstractclassification;
 
-import br.uff.midiacom.legacy.substation.FeatureAvaliada;
-import static br.uff.midiacom.legacy.substation.Parameters.NORMALIZE;
-import static br.uff.midiacom.legacy.substation.Util.readDataFile;
+import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+import static br.uff.midiacom.ereno.legacy.substation.Parameters.NORMALIZE;
+import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.OneRAttributeEval;

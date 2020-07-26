@@ -62,12 +62,15 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
             LocalOutput localOutputManager = (LocalOutput) outputManager;
             localOutputManager.writeHeaders();
         }
-        while (iteration < this.maxIterations && noImprovements < this.maxNoImprovement) {
-            System.out.println("IT: " + iteration + "/" + maxIterations + " .. noImp: " + noImprovements + "/" + maxNoImprovement);
+        while (iterationNumber < this.maxIterations && noImprovements < this.maxNoImprovement && currentTime < maxTime) {
+            if (numberEvaluation >= maxNumberEvaluation) {
+                return getBestGlobalSolution();
+            }
+            System.out.println("IT: " + iterationNumber + "/" + maxIterations + " .. noImp: " + noImprovements + "/" + maxNoImprovement);
             long time = System.currentTimeMillis();
 
-            iteration = ++iteration;
-            System.out.println("######### ITERATION (" + iteration + ") #############");
+            iterationNumber = ++iterationNumber;
+            System.out.println("######### ITERATION (" + iterationNumber + ") #############");
 
             GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
 
@@ -88,17 +91,17 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
             }
 
             if (String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()).length() > 7) {
-                System.out.println("######### Fim ITERAÇÂO (" + iteration + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()).substring(0, 7) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())) + " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+                System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()).substring(0, 7) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())) + " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
             } else {
-                System.out.println("######### Fim ITERAÇÂO (" + iteration + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())) + " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
+                System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())) + " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
             }
             //    writeIteration(iteration, getBestGlobalSolution().getEvaluation().getAcuracia(), getBestGlobalSolution().getEvaluation().getF1Score(), getBestGlobalSolution().getEvaluation().getPrecision(), getBestGlobalSolution().getEvaluation().getRecall(), (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())), " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-            System.out.println("Agora vai gravar...");
-            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iteration,  (System.currentTimeMillis() - time) / 1000 ));
-            System.out.println("Espera 3 segundos...");
-            Thread.sleep(3000);
-            //System.exit(0);
+            currentTime = System.currentTimeMillis() - beginTime;
+            System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
+            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60) + "min"));
 
+            //   Thread.sleep(3000);
+            //   System.exit(0);
         }
         return getBestGlobalSolution();
     }

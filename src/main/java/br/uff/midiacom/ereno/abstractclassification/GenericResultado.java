@@ -171,6 +171,11 @@ public class GenericResultado {
     }
 
     public double getAcuracia() {
+        String acc = String.valueOf(acuracia);
+        if (acc.length() > 6) {
+            acc = acc.substring(0, 7);
+        }
+        acuracia = Double.valueOf(acc);
         return acuracia;
     }
 

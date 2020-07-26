@@ -55,28 +55,37 @@ public class LocalSearches {
         int max = neighborhoodStructures.size();
 
         GraspSolution melhor = semente.newClone(false);
-
+        boolean firstIteration = true;
         while (neighborhoodStructures.size() > 0) {
             int randomNum = 0;
             try {
                 randomNum = ThreadLocalRandom.current().nextInt(min, max);
-
+                System.out.println("Running structure: " + randomNum);
                 GraspSolution nova = buscaLocal(semente, neighborhoodStructures.get(randomNum));
                 System.out.println("Melhor/Semente:" + Arrays.toString(melhor.getArrayFeaturesSelecionadas()) + "/" + melhor.getEvaluation().getAcuracia());
                 System.out.println("Nova:" + Arrays.toString(nova.getArrayFeaturesSelecionadas()) + "/" + nova.getEvaluation().getAcuracia());
                 if (nova.isBetterThan(melhor)) {
-                    melhor = nova.newClone(false);
-                    neighborhoodStructures = new ArrayList<>();
-                    neighborhoodStructures.add(new BitFlip(grasp));
-                    neighborhoodStructures.add(new IWSS(grasp));
-                    neighborhoodStructures.add(new IWSSr(grasp));
+                    if (firstIteration) {
+                        firstIteration = false;
+                        neighborhoodStructures.remove(randomNum);
+                        System.out.println("REMOVE(" + randomNum + ") - T: " + neighborhoodStructures.size());
+                        max = neighborhoodStructures.size();
+                    } else {
+                        System.out.println("RESET");
+                        melhor = nova.newClone(false);
+                        neighborhoodStructures = new ArrayList<>();
+                        neighborhoodStructures.add(new BitFlip(grasp));
+                        neighborhoodStructures.add(new IWSS(grasp));
+                        neighborhoodStructures.add(new IWSSr(grasp));
+                        max = neighborhoodStructures.size();
+                    }
                 } else {
                     neighborhoodStructures.remove(randomNum);
                     System.out.println("REMOVE(" + randomNum + ") - T: " + neighborhoodStructures.size());
                     max = neighborhoodStructures.size();
                 }
-            } catch (Exception e) {
-                System.out.println("Sorteou numero invalido, cancelando a rodada.");
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Sorteou numero invalido, cancelando a rodada:" + e.getLocalizedMessage());
             }
         }
 

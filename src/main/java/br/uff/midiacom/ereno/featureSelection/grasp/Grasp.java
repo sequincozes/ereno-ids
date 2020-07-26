@@ -5,9 +5,9 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
+import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.ALL;
 import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.OUTPUT;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
@@ -38,23 +38,28 @@ public abstract class Grasp {
 
     public static Instances allInstances;
 
-    int maxIterations = 50; // quantidade total de iteracoes
-    final int maxNoImprovement = 20; // iteracoes sem melhorias consecutivas
+    int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
+    int maxIterations = 100000; // quantidade total de iteracoes
+    public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)
+    final int maxNoImprovement = 100000; // iteracoes sem melhorias consecutivas
     static int NUM_FEATURES = 5;
     //String method = "method";
     //String experimentIdentifier = "0000000";
     boolean localOutput = false;
 
     // Current Run Data
-    int iteration = 0;
+    int iterationNumber = 0;
     int noImprovements = 0;
+    long currentTime = 0;
     boolean printSelection = false;
-    int numberEvaluation = 0;
+    public int numberEvaluation = 0;
     OutputManager outputManager;
 
+    long beginTime = 0;
+    
     public static void main(String[] args) throws IOException, Exception {
 
-        GeneralParameters.ALL_IN_ONE_FILE = "all_in_one.csv";
+
         //setupStandaloneGrasp("Test");
         //new GraspSimple().runGraspSimple(ALL, "grasp", NeighborhoodStructures.IWSSR);
         if (args.length == 2 && args[0].equals("all")) {
@@ -189,8 +194,6 @@ public abstract class Grasp {
         solution.setEvaluation(Util.getResultAverage(resultado));
         String avaliacao = "AVALIAÇÃO " + "(" + numberEvaluation++ + ")" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + " > " + solution.getEvaluation().getAcuracia();
         System.out.println(avaliacao);
-//System.out.println(method + "|" + avaliacao + "|" + experimentIdentifier);
-        //writeDetails(avaliacao);
         outputManager.writeDetail(new Detail(solution.getAccuracy(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
         return solution;
     }
@@ -218,13 +221,13 @@ public abstract class Grasp {
     private static void showOptions(int graspAlgoritm, int classifier) throws Exception {
         switch (graspAlgoritm) {
             case 1:
-                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(ALL, "grasp", NeighborhoodStructures.BIT_FLIP);
+                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP);
                 break;
             case 2:
-                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(ALL, "grasp_vnd");
+                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd");
                 break;
             case 3:
-                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(ALL, "grasp_rvnd");
+                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd");
                 break;
             case 4:
                 System.out.println("Not implemented yet.");

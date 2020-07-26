@@ -22,8 +22,6 @@ public class GraspRVND extends Grasp {
     public GraspSolution runGraspRVND(int[] rcl, String methodChoosen) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen);
 
-        int iteration = 1;
-        int noImprovement = 0;
 
         /* RCL Baseada no Critério OneR */
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
@@ -45,10 +43,14 @@ public class GraspRVND extends Grasp {
             LocalOutput localOutputManager = (LocalOutput) outputManager;
             localOutputManager.writeHeaders();
         }
-        while (iteration < this.maxIterations && noImprovement < this.maxNoImprovement) {
+        while (iterationNumber < this.maxIterations && noImprovements < this.maxNoImprovement && currentTime < maxTime) {
+            if (numberEvaluation >= maxNumberEvaluation) {
+                return getBestGlobalSolution();
+            }
+
             long time = System.currentTimeMillis();
-            iteration = ++iteration;
-            System.out.println("############# ITERATION (" + iteration + ") #############");
+            iterationNumber = ++iterationNumber;
+            System.out.println("############# ITERATION (" + iterationNumber + ") #############");
 
             GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
 
@@ -59,22 +61,14 @@ public class GraspRVND extends Grasp {
             reconstructedSoluction = LocalSearches.doRVND(reconstructedSoluction, this);
             if (reconstructedSoluction.isEqualOrBetterThan(getBestGlobalSolution())) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
-                noImprovement = 0;
+                noImprovements = 0;
             } else {
-                noImprovement = ++noImprovement;
+                noImprovements++;
             }
 
-            System.out.println("######### Fim ITERAÇÂO (" + iteration + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
-            /*     if (localOutput) {
-                LocalOutput localOutputManager = (LocalOutput) outputManager;
-                localOutputManager.writeHeaders();
-                localOutputManager.writeIteration(iteration, getBestGlobalSolution().getEvaluation().getAcuracia(),
-                        getBestGlobalSolution().getEvaluation().getF1Score(), getBestGlobalSolution().getEvaluation().getPrecision(),
-                        getBestGlobalSolution().getEvaluation().getRecall(), (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())),
-                        " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-            }
-             */
-            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iteration, getBestGlobalSolution().getEvaluation().getTime()));
+            currentTime = System.currentTimeMillis() - beginTime;
+            System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
+            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60) + "min"));
 
         }
         return getBestGlobalSolution();

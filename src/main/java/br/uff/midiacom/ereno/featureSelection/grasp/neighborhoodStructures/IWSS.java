@@ -48,6 +48,9 @@ public class IWSS implements NeighborhoodStructure {
 
         try {
             while (bestLocal.getNumSelectedFeatures() < lenght) {
+                if (grasp.numberEvaluation >= grasp.maxNumberEvaluation) {
+                    return bestLocal;
+                }
                 if (completionMode) {
                     return bestLocal;
                 } else {
@@ -62,6 +65,7 @@ public class IWSS implements NeighborhoodStructure {
                     }
                 }
             }
+            System.out.println("Reached " + remIterations + " iterations.");
         } catch (IncompleteFeatureSelection e) {
             System.err.println("Warning! " + e.getLocalizedMessage() + "- best is " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()) + " Accuracy: " + bestLocal.getEvaluation().getAcuracia());
             restoreRCL(bestLocal);

@@ -16,18 +16,23 @@ public class Iteration {
 
     public String accuracy;
     public String subset;
-    public int iteration;
-    public long time;
+    public int iterationNumber;
+    public int noImprovments;
+    public String currentTime;
+    public Detail details;
+    public int numberEvaluation;
 
     public Iteration() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Iteration(String accuracy, String subset, int iteration, long time) {
+    public Iteration(String accuracy, String subset, int iteration, int noImprovments, int numberEvaluation, String currentTime) {
         this.accuracy = accuracy;
         this.subset = subset;
-        this.iteration = iteration;
-        this.time = time;
+        this.iterationNumber = iteration;
+        this.currentTime = currentTime;
+        this.noImprovments = noImprovments;
+        this.numberEvaluation = numberEvaluation;
     }
 
 }

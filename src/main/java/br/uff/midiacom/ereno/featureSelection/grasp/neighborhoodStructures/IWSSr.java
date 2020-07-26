@@ -55,6 +55,9 @@ public class IWSSr implements NeighborhoodStructure {
         for (int rclIndex = 0; rclIndex < bestLocal.getNumRCLFeatures(); rclIndex++) {
             GraspSolution beforeIncrement = bestLocal.newClone(false);
             for (int solutionIndex = 0; solutionIndex < bestLocal.getNumSelectedFeatures(); solutionIndex++) {
+                if (grasp.numberEvaluation >= grasp.maxNumberEvaluation) {
+                    return bestLocal;
+                }
                 // inverte e avalia
                 if (remIterations == 0 || remNoImprovements == 0) {
                     return bestLocal;

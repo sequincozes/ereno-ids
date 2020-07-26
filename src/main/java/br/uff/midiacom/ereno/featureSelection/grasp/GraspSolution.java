@@ -9,6 +9,7 @@ import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,8 +146,11 @@ public class GraspSolution {
             featuresRCLAux.add(toRemove); //devolve a RCL
         }
 
-        while (featuresSelecionadasAux.size() < num_features) {
-            int sorteio = r.nextInt(featuresRCLAux.size());
+        while ((featuresSelecionadasAux.size() < num_features) && (featuresRCLAux.size() > 0)) {
+            int sorteio = 0;
+            if (featuresRCLAux.size() > 1) {
+                sorteio = ThreadLocalRandom.current().nextInt(0, featuresRCLAux.size() - 1);//r.nextInt(featuresRCLAux.size());
+            }
             int featureSorteada = featuresRCLAux.remove(sorteio);
 //            System.out.println("Sorteio[" + sorteio + "]: " + featureSorteada);
             if (!featuresSelecionadasAux.contains(featureSorteada)) {
@@ -252,9 +256,12 @@ public class GraspSolution {
     public String getFeaturesAndPerformance() {
         return Arrays.toString(getArrayFeaturesSelecionadas()) + " - Acc: " + getEvaluation().getAcuracia();
     }
+
     public String getFeatureSet() {
         return Arrays.toString(getArrayFeaturesSelecionadas());
-    } public String getAccuracy() {
+    }
+
+    public String getAccuracy() {
         return String.valueOf(getEvaluation().getAcuracia());
     }
 }

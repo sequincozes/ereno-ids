@@ -16,7 +16,8 @@ import br.uff.midiacom.ereno.outputManager.model.Error;
  */
 public interface OutputManager {
 
-   
+    void writeBeginTime();
+
     OutputManager initialize(String graspMethod);
 
     void writeError(Error error);

@@ -131,4 +131,9 @@ public class LocalOutput implements OutputManager {
         }
         return this;
     }
+
+    @Override
+    public void writeBeginTime() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

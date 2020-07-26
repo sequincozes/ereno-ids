@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ public class FirebaseOutput implements OutputManager {
     private DatabaseReference mDatabase;
     private String graspMethod;
     private String experimentName;
+    int currentIterationNumber = 1;
 
     @Override
     public OutputManager initialize(String graspMethod) {
@@ -61,32 +64,48 @@ public class FirebaseOutput implements OutputManager {
 
     @Override
     public void writeDetail(Detail detail) {
-        final DatabaseReference detailReference = mDatabase.child(graspMethod).child(experimentName).child("details");
-        detailReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                detailReference.child(String.valueOf(dataSnapshot.getChildrenCount())).setValueAsync(detail);
-            }
+        final DatabaseReference pathReference = (getPath(experimentName));
 
+        final DatabaseReference iterationReference = pathReference
+                .child("iterations")
+                .child(String.valueOf(currentIterationNumber - 1));
+        final DatabaseReference detailsReference = iterationReference.child("details").child(String.valueOf(detail.evaluation));
+
+        System.out.println("detailsReference: " + detailsReference);
+
+        detailsReference.setValue(detail, new DatabaseReference.CompletionListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("Erro ao salvar detalhe: " + databaseError);
+            public void onComplete(DatabaseError de, DatabaseReference dr) {
+                System.out.println("DatabaseError: " + de.getMessage());
+                System.out.println("DatabaseReference: " + dr.toString());
+            }
+        });
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        pathReference.child("last_evaluation").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError de, DatabaseReference dr) {
+                System.out.println("DatabaseError: " + de.getMessage());
+                System.out.println("DatabaseReference: " + dr.toString());
             }
         });
     }
 
     @Override
     public void writeIteration(Iteration iteration) {
-        final DatabaseReference iterationReference = mDatabase.child(graspMethod).child(experimentName).child("iterations");
-        iterationReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                iterationReference.child(String.valueOf(dataSnapshot.getChildrenCount())).setValueAsync(iteration);
-            }
+        currentIterationNumber = iteration.iterationNumber;
+        final DatabaseReference iterationReference = (getPath(experimentName))
+                .child("iterations")
+                .child(String.valueOf(currentIterationNumber));
 
+        System.out.println("iterationReference: " + iterationReference);
+
+        iterationReference.setValue(iteration, new DatabaseReference.CompletionListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("Erro ao salvar detalhe: " + databaseError);
+            public void onComplete(DatabaseError de, DatabaseReference dr) {
+                System.out.println("DatabaseError: " + de.getMessage());
+                System.out.println("DatabaseReference: " + dr.toString());
             }
         });
     }
@@ -103,6 +122,30 @@ public class FirebaseOutput implements OutputManager {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 System.out.println("Erro ao salvar detalhe: " + databaseError);
+            }
+        });
+    }
+
+    private DatabaseReference getPath(String experimentName) {
+        String[] classifierAndRest = experimentName.split("_");
+        String classifier = classifierAndRest[0];
+        String rest = classifierAndRest[1];
+        String[] pidAndHost = rest.split("@");
+        String pid = pidAndHost[0];
+        String host = pidAndHost[1];
+        return mDatabase.child(graspMethod).child(classifier).child(host).child(pid);
+    }
+
+    @Override
+    public void writeBeginTime() {
+        final DatabaseReference pathReference = (getPath(experimentName));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        pathReference.child("begin_time").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError de, DatabaseReference dr) {
+                System.out.println("DatabaseError: " + de.getMessage());
+                System.out.println("DatabaseReference: " + dr.toString());
             }
         });
     }

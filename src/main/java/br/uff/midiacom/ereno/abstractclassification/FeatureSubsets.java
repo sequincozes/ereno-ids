@@ -11,6 +11,14 @@ package br.uff.midiacom.ereno.abstractclassification;
  */
 public class FeatureSubsets {
 
+    public static final int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    public static final int[] CICIDS_IG_RCL = new int[]{28, 36, 73, 43, 42, 8, 7, 13, 55, 14, 39, 11, 6, 66, 76, 40, 67, 68, 70, 1};
+    public static int[] RCL = WSN_FULL;
+
+    public static int[] CICIDS_OneR = new int[]{2, 37, 19, 17, 24};
+    public static int[] CICIDS_IG = new int[]{2, 37, 19, 17, 16}; // same oneR, coincidentally
+    public static int[] CICIDS_GR = new int[]{40, 67, 68, 70, 1};
+
     public static int[] WSN_IG = new int[]{3, 6, 12, 13, 18};
     public static int[] WSN_GR = new int[]{3, 6, 10, 12, 13};
     public static int[] WSN_GBDT = new int[]{2, 3, 4, 15, 18};
@@ -50,6 +58,5 @@ public class FeatureSubsets {
     public static int[] WSN_FLOODING_GRASP_BITFLIP_RepTree = new int[]{1, 6, 11, 4, 2};
     public static int[] WSN_FLOODING_GRASP_BITFLIP_NaiveBayes = new int[]{17, 8, 6, 1, 2};
     public static int[] WSN_FLOODING_GRASP_BITFLIP_RandomForest = new int[]{12, 4, 2, 6, 14};
-    
-    public static int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+
 }

@@ -122,31 +122,36 @@ public class GenericEvaluation {
         int vectorPosErrors[] = new int[1000];
 
         for (int i = 0; i < test.size(); i++) {
-            Instance testando = test.instance(i);
-            long antes = System.nanoTime();
-            double res1 = selectedClassifier.getClassifier().classifyInstance(testando);
-            long depois = (System.nanoTime() - antes);
-            if (timeTest) {
-                System.out.println(depois);
-            }
-            cumulativo = cumulativo + depois;
-            if (res1 == testando.classValue()) {
-                if (res1 == normalClass) {
-                    VN = VN + 1;
-                } else {
-                    VP = VP + 1;
+            try {
+                Instance testando = test.instance(i);
+                long antes = System.nanoTime();
+                double res1 = selectedClassifier.getClassifier().classifyInstance(testando);
+                long depois = (System.nanoTime() - antes);
+                if (timeTest) {
+                    System.out.println(depois);
                 }
-            } else {
-                //  String str = testando.toStringMaxDecimalDigits(10).substring(0, 3).replace("0,", "0").replace("1,", "0.1");
-                // float pos = Float.valueOf(str) * 10;
-                // int posi = (int) pos;
 
-                if (res1 == normalClass) {
-                    FN = FN + 1;
+                cumulativo = cumulativo + depois;
+                if (res1 == testando.classValue()) {
+                    if (res1 == normalClass) {
+                        VN = VN + 1;
+                    } else {
+                        VP = VP + 1;
+                    }
                 } else {
-                    FP = FP + 1;
-                    // vectorPosErrors[posi] = vectorPosErrors[posi] + 1;
+                    //  String str = testando.toStringMaxDecimalDigits(10).substring(0, 3).replace("0,", "0").replace("1,", "0.1");
+                    // float pos = Float.valueOf(str) * 10;
+                    // int posi = (int) pos;
+
+                    if (res1 == normalClass) {
+                        FN = FN + 1;
+                    } else {
+                        FP = FP + 1;
+                        // vectorPosErrors[posi] = vectorPosErrors[posi] + 1;
+                    }
                 }
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getLocalizedMessage());
             }
         }
         if (ERROR) {
@@ -161,6 +166,7 @@ public class GenericEvaluation {
         } catch (java.lang.ArithmeticException e) {
             System.out.println("Divisão por zero ((" + VP + " + " + VN + ") * 100) / (" + VP + " + " + VN + "+ " + FP + "+" + FN + "))");
         }
+
 //        Resultado r = new Resultado(descricao, VP, FN, VN, FP, acuracia, txDec, txAFal, cumulativo / (VP + VN + FP + FN));
         GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, cumulativo);
         return r;

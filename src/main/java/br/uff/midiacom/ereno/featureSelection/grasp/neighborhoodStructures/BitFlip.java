@@ -9,6 +9,9 @@ import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,15 +28,26 @@ public class BitFlip implements NeighborhoodStructure {
         this.grasp = grasp;
     }
 
-    private GraspSolution performSingleMoviment(GraspSolution reference) throws Exception {
+    private GraspSolution performSingleMoviment(GraspSolution reference) throws IncompleteFeatureSelection, Exception {
         GraspSolution neighborSolution = reference.newClone(true);
-        Random r = new Random();
-        int rem = r.nextInt(neighborSolution.getNumSelectedFeatures() - 1);
-        int add = r.nextInt(neighborSolution.getNumRCLFeatures() - 1);
-        //System.out.println("RCL: " + neighborSolution.getNumRCLFeatures() + "/sel: " + neighborSolution.getNumSelectedFeatures() + " (add:" + add + " rem:" + rem + ")");
-        neighborSolution.replaceFeature(
-                r.nextInt(rem + 1),
-                r.nextInt(add + 1));
+        int rem = 0;
+        int add = 0;
+        if (neighborSolution.getNumSelectedFeatures() == 0 || neighborSolution.getNumRCLFeatures() == 0) {
+            throw new IncompleteFeatureSelection("Selected features: " + neighborSolution.getNumSelectedFeatures() + ", RCL Size: " + neighborSolution.getNumRCLFeatures());
+        } else {
+            if (neighborSolution.getNumSelectedFeatures() == 1) {
+                rem = 0;
+            } else {
+                rem = ThreadLocalRandom.current().nextInt(0, neighborSolution.getNumSelectedFeatures() - 1);
+            }
+            if (neighborSolution.getNumRCLFeatures() == 1) {
+                add = 0;
+            } else {
+                add = ThreadLocalRandom.current().nextInt(0, neighborSolution.getNumRCLFeatures() - 1);
+            }
+        }
+
+        neighborSolution.replaceFeature(rem, add);
         neighborSolution = grasp.avaliar(neighborSolution);
         return neighborSolution;
     }
@@ -43,11 +57,20 @@ public class BitFlip implements NeighborhoodStructure {
         bestLocal = reference.newClone(false); // initialization
 
         while (--remLSIterations > 0 && --remLSNoImprovements > 0) {
-            GraspSolution neighborSolution = performSingleMoviment(reference);
-            if (neighborSolution.isBetterThan(bestLocal)) {
-                bestLocal = neighborSolution.newClone(false);
+            GraspSolution neighborSolution;
+            try {
+                neighborSolution = performSingleMoviment(reference);
+                if (neighborSolution.isBetterThan(bestLocal)) {
+                    bestLocal = neighborSolution.newClone(false);
+                    remLSNoImprovements = 10;
+                }
+            } catch (IncompleteFeatureSelection ex) {
+                System.out.println("Cancelando run: " + ex);
+                remLSIterations = 20;
                 remLSNoImprovements = 10;
+                return bestLocal;
             }
+
         }
         remLSIterations = 20;
         remLSNoImprovements = 10;

@@ -24,10 +24,9 @@ public class GraspVND extends Grasp {
 
     public GraspSolution runGraspVND(int[] rcl, String methodChoosen) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen);
+        this.beginTime = System.currentTimeMillis();
 
-        int iteration = 1;
-        int noImprovement = 0;
-        System.out.println("######### ITERATION (" + iteration + ") #############");
+        System.out.println("######### ITERATION (" + iterationNumber + ") #############");
 
         /* RCL Baseada no Critério OneR */
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
@@ -39,7 +38,7 @@ public class GraspVND extends Grasp {
 
         /* Gera uma solução vizinha igual ou melhor */
         initialSolution = LocalSearches.doVND(initialSolution, this);
-        iteration = iteration++;
+        iterationNumber++;
         if (initialSolution.isBetterThan(getBestGlobalSolution())) {
             setBestGlobalSolution(initialSolution.newClone(false));
         }
@@ -48,9 +47,12 @@ public class GraspVND extends Grasp {
             LocalOutput localOutputManager = (LocalOutput) outputManager;
             localOutputManager.writeHeaders();
         }
-        while (iteration < this.maxIterations && noImprovement < this.maxNoImprovement) {
-            iteration = ++iteration;
-            System.out.println("######### ITERATION (" + iteration + ") #############");
+        while (iterationNumber < this.maxIterations && noImprovements < this.maxNoImprovement && currentTime < maxTime) {
+            if (numberEvaluation >= maxNumberEvaluation) {
+                return getBestGlobalSolution();
+            }
+            iterationNumber++;
+            System.out.println("######### ITERATION (" + iterationNumber + ") #############");
             long time = System.currentTimeMillis();
 
             GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
@@ -61,13 +63,15 @@ public class GraspVND extends Grasp {
             if (reconstructedSoluction.isEqualOrBetterThan(getBestGlobalSolution())) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
                 System.out.println("GLOBAL IMPROVEMENT: " + Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas()) + " = " + getBestGlobalSolution().getEvaluation().getAcuracia());
-                noImprovement = 0;
+                noImprovements = 0;
             } else {
-                noImprovement = ++noImprovement;
+                System.out.print("Sem melhoras: " + noImprovements + " atualizado para ");
+                noImprovements++;
+                System.out.println("Sem melhoras: " + noImprovements);
             }
-            System.out.println("######### Fim ITERAÇÂO (" + iteration + ") - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
-//            writeIteration(iteration, getBestGlobalSolution().getEvaluation().getAcuracia(), getBestGlobalSolution().getEvaluation().getF1Score(), getBestGlobalSolution().getEvaluation().getPrecision(), getBestGlobalSolution().getEvaluation().getRecall(), (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())), " Iteration time: " + (System.currentTimeMillis() - time) / 1000 + " seconds.");
-            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iteration, getBestGlobalSolution().getEvaluation().getTime()));
+            currentTime = System.currentTimeMillis() - beginTime;
+            System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
+            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60)+"min"));
 
         }
         return getBestGlobalSolution();

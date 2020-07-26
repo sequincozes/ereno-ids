@@ -24,29 +24,21 @@ public class CrossValidation {
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = false;
 
-        System.out.println("Blackhole");
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/blackhole/all_in_one_blackhole.csv";
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.WSN_FULL)).printResults();
+        /*System.out.println("CICIDS GR");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.CICIDS_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.CICIDS_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.CICIDS_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.CICIDS_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.CICIDS_GR)).printResults();
+        */
+        System.out.println("CICIDS IG/OneR");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        
 
-        System.out.println("Graykhole");
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/grayhole/all_in_one_grayhole.csv";
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.WSN_FULL)).printResults();
-
-        System.out.println("Flooding");
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/flooding/all_in_one_flooding.csv";
-     Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_FULL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.WSN_FULL)).printResults();
 
         System.exit(0);
 

@@ -35,4 +35,8 @@ public class Iteration {
         this.numberEvaluation = numberEvaluation;
     }
 
+    public void print() {
+        System.out.println("#" + iterationNumber + ": " + subset + " = " + accuracy);
+    }
+
 }

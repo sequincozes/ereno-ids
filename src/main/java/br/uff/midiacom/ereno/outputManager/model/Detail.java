@@ -28,7 +28,10 @@ public class Detail {
         this.subset = subset;
         this.evaluation = evaluation;
         this.time = time;
-
+    }
+    
+    public void print(){
+        System.out.println(subset + " = "+accuracy);
     }
 
 }

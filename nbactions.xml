@@ -11,7 +11,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath featureSelection.grasp.Grasp</exec.args>
+                <exec.args>-classpath %classpath br.uff.midiacom.ereno.featureSelection.grasp.Grasp</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

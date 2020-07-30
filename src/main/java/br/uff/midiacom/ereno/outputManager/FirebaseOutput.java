@@ -37,26 +37,29 @@ public class FirebaseOutput implements OutputManager {
     private String graspMethod;
     private String experimentName;
     int currentIterationNumber = 1;
+    boolean offlinemode = true;
 
     @Override
     public OutputManager initialize(String graspMethod) {
         this.experimentName = GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName() + "_" + ManagementFactory.getRuntimeMXBean().getName().replace(".", "_");
         this.graspMethod = graspMethod;
-        FileInputStream serviceAccount = null;
-        try {
-            serviceAccount = new FileInputStream("ereno-9326b-firebase-adminsdk-n4abg-a77d35e070.json");
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl("https://ereno-9326b.firebaseio.com")
-                    .build();
-            FirebaseApp.initializeApp(options);
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-            serviceAccount.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);
+        if (!offlinemode) {
+            FileInputStream serviceAccount = null;
+            try {
+                serviceAccount = new FileInputStream("ereno-9326b-firebase-adminsdk-n4abg-a77d35e070.json");
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                        .setDatabaseUrl("https://ereno-9326b.firebaseio.com")
+                        .build();
+                FirebaseApp.initializeApp(options);
+                mDatabase = FirebaseDatabase.getInstance().getReference().child("cicids");
+                serviceAccount.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);
 
+            }
         }
         return this;
 
@@ -64,66 +67,80 @@ public class FirebaseOutput implements OutputManager {
 
     @Override
     public void writeDetail(Detail detail) {
-        final DatabaseReference pathReference = (getPath(experimentName));
+        if (!offlinemode) {
+            final DatabaseReference pathReference = (getPath(experimentName));
 
-        final DatabaseReference iterationReference = pathReference
-                .child("iterations")
-                .child(String.valueOf(currentIterationNumber - 1));
-        final DatabaseReference detailsReference = iterationReference.child("details").child(String.valueOf(detail.evaluation));
+            final DatabaseReference iterationReference = pathReference
+                    .child("iterations")
+                    .child(String.valueOf(currentIterationNumber - 1));
+            final DatabaseReference detailsReference = iterationReference.child("details").child(String.valueOf(detail.evaluation));
 
-        System.out.println("detailsReference: " + detailsReference);
+            System.out.println("detailsReference: " + detailsReference);
 
-        detailsReference.setValue(detail, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError de, DatabaseReference dr) {
-                System.out.println("DatabaseError: " + de.getMessage());
-                System.out.println("DatabaseReference: " + dr.toString());
-            }
-        });
+            detailsReference.setValue(detail, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        pathReference.child("last_evaluation").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError de, DatabaseReference dr) {
-                System.out.println("DatabaseError: " + de.getMessage());
-                System.out.println("DatabaseReference: " + dr.toString());
-            }
-        });
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            pathReference.child("last_evaluation").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
+        } else {
+            detail.print();
+        }
     }
 
     @Override
     public void writeIteration(Iteration iteration) {
-        currentIterationNumber = iteration.iterationNumber;
-        final DatabaseReference iterationReference = (getPath(experimentName))
-                .child("iterations")
-                .child(String.valueOf(currentIterationNumber));
+        if (!offlinemode) {
 
-        System.out.println("iterationReference: " + iterationReference);
+            currentIterationNumber = iteration.iterationNumber;
+            final DatabaseReference iterationReference = (getPath(experimentName))
+                    .child("iterations")
+                    .child(String.valueOf(currentIterationNumber));
 
-        iterationReference.setValue(iteration, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError de, DatabaseReference dr) {
-                System.out.println("DatabaseError: " + de.getMessage());
-                System.out.println("DatabaseReference: " + dr.toString());
-            }
-        });
+            System.out.println("iterationReference: " + iterationReference);
+
+            iterationReference.setValue(iteration, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
+        } else {
+            iteration.print();
+        }
     }
 
     @Override
     public void writeError(Error error) {
-        final DatabaseReference errorReference = mDatabase.child(graspMethod).child(experimentName).child("errors");
-        errorReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                errorReference.child(String.valueOf(dataSnapshot.getChildrenCount())).setValueAsync(error);
-            }
+        if (!offlinemode) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("Erro ao salvar detalhe: " + databaseError);
-            }
-        });
+            final DatabaseReference errorReference = mDatabase.child(graspMethod).child(experimentName).child("errors");
+            errorReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    errorReference.child(String.valueOf(dataSnapshot.getChildrenCount())).setValueAsync(error);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    System.out.println("Erro ao salvar detalhe: " + databaseError);
+                }
+            });
+        } else {
+            System.out.println(error.message);
+        }
     }
 
     private DatabaseReference getPath(String experimentName) {
@@ -138,16 +155,17 @@ public class FirebaseOutput implements OutputManager {
 
     @Override
     public void writeBeginTime() {
-        final DatabaseReference pathReference = (getPath(experimentName));
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        pathReference.child("begin_time").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError de, DatabaseReference dr) {
-                System.out.println("DatabaseError: " + de.getMessage());
-                System.out.println("DatabaseReference: " + dr.toString());
-            }
-        });
+        if (!offlinemode) {
+            final DatabaseReference pathReference = (getPath(experimentName));
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            pathReference.child("begin_time").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
+        }
     }
-
 }

@@ -21,7 +21,8 @@ public class GraspRVND extends Grasp {
 
     public GraspSolution runGraspRVND(int[] rcl, String methodChoosen) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen);
-
+        this.beginTime = System.currentTimeMillis();
+        outputManager.writeBeginTime();
 
         /* RCL Baseada no Critério OneR */
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
@@ -48,7 +49,6 @@ public class GraspRVND extends Grasp {
                 return getBestGlobalSolution();
             }
 
-            long time = System.currentTimeMillis();
             iterationNumber = ++iterationNumber;
             System.out.println("############# ITERATION (" + iterationNumber + ") #############");
 

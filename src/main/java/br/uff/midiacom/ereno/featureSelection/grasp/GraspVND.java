@@ -25,6 +25,7 @@ public class GraspVND extends Grasp {
     public GraspSolution runGraspVND(int[] rcl, String methodChoosen) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen);
         this.beginTime = System.currentTimeMillis();
+        outputManager.writeBeginTime();
 
         System.out.println("######### ITERATION (" + iterationNumber + ") #############");
 
@@ -53,7 +54,6 @@ public class GraspVND extends Grasp {
             }
             iterationNumber++;
             System.out.println("######### ITERATION (" + iterationNumber + ") #############");
-            long time = System.currentTimeMillis();
 
             GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
             avaliar(reconstructedSoluction);
@@ -71,7 +71,7 @@ public class GraspVND extends Grasp {
             }
             currentTime = System.currentTimeMillis() - beginTime;
             System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
-            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60)+"min"));
+            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60) + "min"));
 
         }
         return getBestGlobalSolution();

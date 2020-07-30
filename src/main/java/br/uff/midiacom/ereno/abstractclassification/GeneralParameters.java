@@ -15,7 +15,8 @@ public class GeneralParameters {
     public static int FOLDS = 5;
     public static int GRASP_SEED;
 
-    // Run Settings
+    // Run Settings java 
+//  java -jar preGrasp.jar all_in_one_WSN.csv 4 >> pregrasp_WSN_RANDOM_FOREST.txt
     public static ClassifierExtended[] CLASSIFIERS_FOREACH = {
         GenericClassifiers.RANDOM_TREE,
         GenericClassifiers.J48,

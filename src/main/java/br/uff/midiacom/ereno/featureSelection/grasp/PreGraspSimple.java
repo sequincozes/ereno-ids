@@ -12,6 +12,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
+import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.PreGraspIWSS;
 import br.uff.midiacom.ereno.outputManager.FirebaseOutput;
 import br.uff.midiacom.ereno.outputManager.LocalOutput;
 import br.uff.midiacom.ereno.outputManager.model.Iteration;
@@ -22,35 +23,20 @@ import java.util.Arrays;
  *
  * @author sequi
  */
-public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
+public class PreGraspSimple extends PreGrasp { //@TODO: Create abstract GRASP
 
     public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
-        
-        NeighborhoodStructure neighborhood = null;
-        if (null != selectedNeighborhood) {
-            switch (selectedNeighborhood) {
-                case BIT_FLIP:
-                    neighborhood = new BitFlip(this);
-                    break;
-                case IWSS:
-                    neighborhood = new IWSS(this);
-                    break;
-                case IWSSR:
-                    neighborhood = new IWSSr(this);
-                    break;
-                default:
-                    break;
-            }
-        }
 
-        /* RCL Baseada no Critério OneR */
+        NeighborhoodStructure neighborhood = new PreGraspIWSS(this);
+
+        /* Add all rcl features to RCL */
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
 
         // Solução Inicial Factível
-        GraspSolution initialSolution = buildSolucaoInicial(RCL);
+        GraspSolution initialSolution = buildIWSSSolucaoInicial(RCL);
         initialSolution = avaliar(initialSolution);
         setBestGlobalSolution(initialSolution.newClone(false));
 
@@ -60,7 +46,7 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
             setBestGlobalSolution(initialSolution.newClone(false));
         }
 
-        if (localOutput) {
+       /* if (localOutput) {
             LocalOutput localOutputManager = (LocalOutput) outputManager;
             localOutputManager.writeHeaders();
         }
@@ -104,7 +90,7 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
             //   Thread.sleep(3000);
             //   System.exit(0);
-        }
+        }*/
         return getBestGlobalSolution();
     }
 

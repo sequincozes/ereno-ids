@@ -72,6 +72,7 @@ public class Util {
         for (int i = instances.numAttributes() - 1; i > 0; i--) {
             if (instances.numAttributes() <= fs.length) {
                 System.err.println("O número de features precisa ser maior que o filtro.");
+                System.exit(i);
                 return instances;
             }
             boolean deletar = true;

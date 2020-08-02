@@ -8,7 +8,8 @@ package br.uff.midiacom.ereno.abstractclassification;
 public class GeneralParameters {
 
     public static boolean CSV = false;
-    public static String ALL_IN_ONE_FILE = "all_in_one_cicids2017.csv";
+    public static String WSN = "all_in_one_wsn.csv";
+    public static String ALL_IN_ONE_FILE = "teste.csv";
 
     // GRASP
     public static String OUTPUT = "outputs/";
@@ -30,10 +31,11 @@ public class GeneralParameters {
 
     public static final boolean NORMALIZE = false;
 
-    public static int[] FEATURE_SELECTION = FeatureSubsets.CICIDS_IG_RCL;
+    public static int[] FEATURE_SELECTION = {};// FeatureSubsets.RCL_CICIDS_IG;
 
-    public static int getTotalFeatures(){
+    public static int getTotalFeatures() {
         return FEATURE_SELECTION.length;
-    };
+    }
+;
 
 }

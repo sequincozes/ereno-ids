@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -113,14 +111,22 @@ public class GraspSolution {
     }
 
     public boolean isBetterThan(GraspSolution solucao) {
+        if (solucao.getNumSelectedFeatures() == 0) {
+            return true;
+        } else if (this.getNumSelectedFeatures() == 0) {
+            return false;
+        }
+        if (this.evaluation.getAcuracia() == solucao.getEvaluation().getAcuracia()) {
+            return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();
+        }
+
         return this.evaluation.getAcuracia() > solucao.getEvaluation().getAcuracia();
     }
 
     //@TODO: Add support to multiple metrics
-    public boolean isEqualOrBetterThan(GraspSolution solucao) {
+    /* public boolean isEqualOrBetterThan(GraspSolution solucao) {
         return this.evaluation.getAcuracia() >= solucao.getEvaluation().getAcuracia();
-    }
-
+    }*/
     public void printSelection(String selecaoName) {
         //System.out.print("Seleção [" + selecaoName + "]: {");
         boolean printComma = false;
@@ -136,6 +142,7 @@ public class GraspSolution {
         System.out.print("} - ");
     }
 
+    /*
     public GraspSolution reconstruirNewSolucao(int num_features) {
         ArrayList<Integer> featuresSelecionadasAux = new ArrayList<>(solutionFeatures);
         ArrayList<Integer> featuresRCLAux = new ArrayList<>(RCLfeatures);;
@@ -161,16 +168,18 @@ public class GraspSolution {
             }
         }
         GraspSolution newer = new GraspSolution(featuresSelecionadasAux, featuresRCLAux);
+        System.out.println("Solução Reconstruída: " + newer.getFeatureSet());
+        System.out.println("RCL Restante: " + newer.getRCLfeatures());
         return newer;
     }
-
+*/
     public GraspSolution newClone(boolean resetMetrics) {
         ArrayList<Integer> featuresSelecionadasAux = new ArrayList<>(solutionFeatures);
-        ArrayList<Integer> getBitFlipSolution = new ArrayList<>(RCLfeatures);
+        ArrayList<Integer> newRcl = new ArrayList<>(RCLfeatures);
         if (resetMetrics) {
-            return new GraspSolution(featuresSelecionadasAux, getBitFlipSolution);
+            return new GraspSolution(featuresSelecionadasAux, newRcl);
         }
-        return new GraspSolution(featuresSelecionadasAux, RCLfeatures, evaluation);
+        return new GraspSolution(featuresSelecionadasAux, newRcl, evaluation);
     }
 
     public void addFeature(Integer fature) {

@@ -5,7 +5,6 @@
  */
 package br.uff.midiacom.ereno.abstractclassification;
 
-import static br.uff.midiacom.ereno.crossvalidation.CrossValidation.runMultipleClassifier;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -72,6 +71,8 @@ public class Util {
         for (int i = instances.numAttributes() - 1; i > 0; i--) {
             if (instances.numAttributes() <= fs.length) {
                 System.err.println("O número de features precisa ser maior que o filtro.");
+                System.out.println("FS: "+Arrays.toString(fs) + " - Instance[0]: "+instances.get(0).toString());
+                System.exit(1);
                 return instances;
             }
             boolean deletar = true;

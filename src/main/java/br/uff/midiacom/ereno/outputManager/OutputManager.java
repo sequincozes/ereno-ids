@@ -18,7 +18,7 @@ public interface OutputManager {
 
     void writeBeginTime();
 
-    OutputManager initialize(String graspMethod);
+    OutputManager initialize(String graspMethod, String dataset);
 
     void writeError(Error error);
 

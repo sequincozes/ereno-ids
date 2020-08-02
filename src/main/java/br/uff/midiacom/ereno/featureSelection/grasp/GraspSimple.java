@@ -5,7 +5,6 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
-import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.featureSelection.grasp.localsearch.LocalSearches;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.BitFlip;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
@@ -24,8 +23,8 @@ import java.util.Arrays;
  */
 public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
-    public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood) throws Exception {
-        outputManager = new FirebaseOutput().initialize(methodChoosen);
+    public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood, String dataset) throws Exception {
+        outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
         
@@ -50,13 +49,13 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
 
         // Solução Inicial Factível
-        GraspSolution initialSolution = buildSolucaoInicial(RCL);
+        GraspSolution initialSolution = constructSolution(RCL);
         initialSolution = avaliar(initialSolution);
         setBestGlobalSolution(initialSolution.newClone(false));
 
         /* Gera uma solução vizinha igual ou melhor */
         initialSolution = LocalSearches.buscaLocal(initialSolution, neighborhood);
-        if (initialSolution.isEqualOrBetterThan(getBestGlobalSolution())) {
+        if (initialSolution.isBetterThan(getBestGlobalSolution())) {
             setBestGlobalSolution(initialSolution.newClone(false));
         }
 
@@ -74,7 +73,7 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
             iterationNumber = ++iterationNumber;
             System.out.println("######### ITERATION (" + iterationNumber + ") #############");
 
-            GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
+            GraspSolution reconstructedSoluction = reconstructSolution(initialSolution);
 
             // Avalia Solução
             avaliar(reconstructedSoluction);
@@ -85,7 +84,7 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
             // Busca por Ótimo Local
             reconstructedSoluction = LocalSearches.buscaLocal(reconstructedSoluction, neighborhood);
 
-            if (reconstructedSoluction.isEqualOrBetterThan(getBestGlobalSolution())) {
+            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution())) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
                 noImprovements = 0;
             } else {

@@ -5,7 +5,6 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
-import static br.uff.midiacom.ereno.featureSelection.grasp.Grasp.NUM_FEATURES;
 import br.uff.midiacom.ereno.featureSelection.grasp.localsearch.LocalSearches;
 import br.uff.midiacom.ereno.outputManager.FirebaseOutput;
 import br.uff.midiacom.ereno.outputManager.LocalOutput;
@@ -19,8 +18,8 @@ import java.util.Arrays;
  */
 public class GraspRVND extends Grasp {
 
-    public GraspSolution runGraspRVND(int[] rcl, String methodChoosen) throws Exception {
-        outputManager = new FirebaseOutput().initialize(methodChoosen);
+    public GraspSolution runGraspRVND(int[] rcl, String methodChoosen, String dataset) throws Exception {
+        outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
 
@@ -28,7 +27,7 @@ public class GraspRVND extends Grasp {
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
 
         // Solução Inicial Factível
-        GraspSolution initialSolution = buildSolucaoInicial(RCL);
+        GraspSolution initialSolution = constructSolution(RCL);
         initialSolution = avaliar(initialSolution);
         setBestGlobalSolution(initialSolution.newClone(false));
         System.out.println("%%%% solucaoInicial: " + getBestGlobalSolution().getEvaluation().getAcuracia());
@@ -52,14 +51,14 @@ public class GraspRVND extends Grasp {
             iterationNumber = ++iterationNumber;
             System.out.println("############# ITERATION (" + iterationNumber + ") #############");
 
-            GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
+            GraspSolution reconstructedSoluction = reconstructSolution(initialSolution);
 
             // Avalia Solução
             avaliar(reconstructedSoluction);
 
             // Busca por Ótimo Local
             reconstructedSoluction = LocalSearches.doRVND(reconstructedSoluction, this);
-            if (reconstructedSoluction.isEqualOrBetterThan(getBestGlobalSolution())) {
+            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution())) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
                 noImprovements = 0;
             } else {

@@ -31,12 +31,12 @@ public class CrossValidation {
         Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.CICIDS_GR)).printResults();
         Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.CICIDS_GR)).printResults();
         */
-        System.out.println("CICIDS IG/OneR");
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.CICIDS_IG_RCL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.CICIDS_IG_RCL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.CICIDS_IG_RCL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.CICIDS_IG_RCL)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.CICIDS_IG_RCL)).printResults();
+        //System.out.println("CICIDS IG/OneR");
+        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.RCL_CICIDS_IG)).printResults();
+        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.RCL_CICIDS_IG)).printResults();
+        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.RCL_CICIDS_IG)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_GR)).printResults();
+        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.RCL_CICIDS_IG)).printResults();
         
 
 
@@ -163,7 +163,7 @@ public class CrossValidation {
         System.out.println("--- END REP_TREE (" + (System.currentTimeMillis() - time) + ")");
          */
         System.out.println("--- RANDOM_FOREST WSN_GRASPP_BITFLIP_RandomForest");
-        GeneralParameters.FEATURE_SELECTION = FeatureSubsets.WSN_GRASPP_BITFLIP_RandomForest;
+        GeneralParameters.FEATURE_SELECTION = FeatureSubsets.WSN_GRASPP_BITFLIP_RandomForest_5;
         GeneralParameters.CLASSIFIERS_FOREACH = new ClassifierExtended[]{GenericClassifiers.RANDOM_FOREST};
         time = System.currentTimeMillis();
         runMultipleClassifier(10, 10);

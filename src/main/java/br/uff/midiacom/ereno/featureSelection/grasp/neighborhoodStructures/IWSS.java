@@ -5,11 +5,9 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
-import br.uff.midiacom.ereno.featureSelection.Parameters;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -20,10 +18,6 @@ public class IWSS implements NeighborhoodStructure {
     Grasp grasp;
     GraspSolution bestLocal;
     ArrayList<Integer> fullList;
-    boolean completionMode = false;
-    int lenght;
-    int remIterations = 20;
-    int remNoImprovements = 10;
 
     public IWSS(Grasp grasp) {
         this.grasp = grasp;
@@ -35,8 +29,7 @@ public class IWSS implements NeighborhoodStructure {
      */
     @Override
     public GraspSolution run(GraspSolution seed) throws Exception {
-//        System.out.println("----- ENTROU NO IWSS");
-        lenght = seed.getNumSelectedFeatures();
+        System.out.println("Running IWSS:");
         bestLocal = seed.newClone(false); // initialization
 
         // Starts with a empty set
@@ -46,57 +39,32 @@ public class IWSS implements NeighborhoodStructure {
 
         fullList = bestLocal.copyRCLFeatures();
 
-        try {
-            while (bestLocal.getNumSelectedFeatures() < lenght) {
-                if (grasp.numberEvaluation >= grasp.maxNumberEvaluation) {
-                    return bestLocal;
-                }
-                if (completionMode) {
-                    return bestLocal;
-                } else {
-                    if (remIterations <= 0 || remNoImprovements <= 0) {
-                        return bestLocal;
-                    }
-                    GraspSolution neighborSolution = performSingleMoviment(bestLocal);
-                    if (neighborSolution.isBetterThan(bestLocal)) {
-                        bestLocal = neighborSolution.newClone(false);
-                        remNoImprovements = 10;
-//                        System.out.println("IWSS - LOCAL IMPROVEMENT: " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()) + " = " + bestLocal.getEvaluation().getAcuracia());
-                    }
-                }
+        for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
+            System.out.println("IWSS >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(" + bestLocal.getAccuracy() + ")");
+
+            if (grasp.currentTime >= grasp.maxTime) {
+                return bestLocal;
             }
-            System.out.println("Reached " + remIterations + " iterations.");
-        } catch (IncompleteFeatureSelection e) {
-            System.err.println("Warning! " + e.getLocalizedMessage() + "- best is " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()) + " Accuracy: " + bestLocal.getEvaluation().getAcuracia());
-            restoreRCL(bestLocal);
-            return bestLocal;
+            GraspSolution beforeIncrement = bestLocal.newClone(false);
+            GraspSolution add = performAddMoviment(beforeIncrement.newClone(true), rclIndex);
+            if (add.isBetterThan(bestLocal)) {
+                bestLocal = add.newClone(false);
+            }
         }
+
         restoreRCL(bestLocal);
         return bestLocal;
     }
 
-    public GraspSolution performSingleMoviment(GraspSolution reference) throws Exception, IncompleteFeatureSelection {
-
-        GraspSolution neighborSolution = reference.newClone(false);
-        if (neighborSolution.getRCLfeatures().size() > 0) {
-            neighborSolution.selectFeature(neighborSolution.getRCLfeatures().size() - 1);//Seed selected first, then RCL
-            neighborSolution = grasp.avaliar(neighborSolution);
-            remIterations = remIterations - 1;
-        } else {
-            System.out.println("Completou");
-            if (completionMode == false) {
-                completionMode = true;
-                restoreRCL(bestLocal);
-            } else {
-                throw new IncompleteFeatureSelection("All RCL features provides worst solution.");
-            }
-        }
-        return neighborSolution;
+    public GraspSolution performAddMoviment(GraspSolution reference, int rclFeatureIndex) throws Exception {
+        reference.selectFeature(rclFeatureIndex);
+        reference = grasp.avaliar(reference);
+        return reference;
     }
 
     private void restoreRCL(GraspSolution bestLocal) {
         for (int feature : fullList) {
-            if (!bestLocal.getSelectedFeatures().contains(feature)) {
+            if (!bestLocal.getSelectedFeatures().contains(feature) && !bestLocal.getRCLfeatures().contains(feature)) {
                 bestLocal.addFeatureRCL(feature);
             }
         }

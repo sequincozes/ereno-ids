@@ -7,6 +7,7 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -17,8 +18,9 @@ public class IWSSr implements NeighborhoodStructure {
 
     GraspSolution bestLocal;
     Grasp grasp;
-    int remIterations = 20;
-    int remNoImprovements = 10;
+    int remIterations = 1000000;
+    int remNoImprovements = 1000000;
+    ArrayList<Integer> fullList;
 
     public IWSSr(Grasp grasp) {
         this.grasp = grasp;
@@ -41,50 +43,40 @@ public class IWSSr implements NeighborhoodStructure {
 
     @Override
     public GraspSolution run(GraspSolution seed) throws Exception {
-        bestLocal = seed.newClone(true); // initialization
-        int lenght = seed.getNumSelectedFeatures();
-        System.out.println("Seed:" + Arrays.toString(seed.getArrayFeaturesSelecionadas()));
+        bestLocal = seed.newClone(false); // initialization
+
         while (bestLocal.getNumSelectedFeatures() > 0) {
             bestLocal.deselectFeature(0);
         }
-
+        fullList = bestLocal.copyRCLFeatures();
+        System.out.println("Running IWSSSr:");
         // Initial solution
-        bestLocal.selectFeature(0);
-        bestLocal = grasp.avaliar(bestLocal);
-
-        for (int rclIndex = 0; rclIndex < bestLocal.getNumRCLFeatures(); rclIndex++) {
+        for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
+            System.out.println("IWSSr >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(" + bestLocal.getAccuracy() + ")");
             GraspSolution beforeIncrement = bestLocal.newClone(false);
             for (int solutionIndex = 0; solutionIndex < bestLocal.getNumSelectedFeatures(); solutionIndex++) {
-                if (grasp.numberEvaluation >= grasp.maxNumberEvaluation) {
-                    return bestLocal;
-                }
-                // inverte e avalia
-                if (remIterations == 0 || remNoImprovements == 0) {
-                    return bestLocal;
-                }
                 GraspSolution swap = performSwapMoviment(beforeIncrement.newClone(true), rclIndex, solutionIndex);
                 if (swap.isBetterThan(bestLocal)) {
                     bestLocal = swap.newClone(false);
-                    remNoImprovements = 10;
-                    System.out.println("Melhorou com swap: " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()));
                 }
-            }
-            if (bestLocal.getNumSelectedFeatures() < lenght) {
-                if (remIterations == 0 || remNoImprovements == 0) {
-                    return bestLocal;
-                }
-                GraspSolution add = performAddMoviment(beforeIncrement.newClone(true), rclIndex);
-                if (add.isEqualOrBetterThan(bestLocal)) {
-                    System.out.println("Melhorou com add: " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()));
-                    System.out.println("Melhorou com add");
-                    bestLocal = add.newClone(false);
-                }
-            } else {
-                return bestLocal;
             }
 
+            GraspSolution add = performAddMoviment(beforeIncrement.newClone(true), rclIndex);
+            if (add.isBetterThan(bestLocal)) {
+                bestLocal = add.newClone(false);
+            }
         }
+        restoreRCL(bestLocal);
+
         return bestLocal;
     }
 
+    private void restoreRCL(GraspSolution bestLocal) {
+        for (int feature : fullList) {
+            if (!bestLocal.getSelectedFeatures().contains(feature) && !bestLocal.getRCLfeatures().contains(feature)) {
+                bestLocal.addFeatureRCL(feature);
+            }
+        }
+
+    }
 }

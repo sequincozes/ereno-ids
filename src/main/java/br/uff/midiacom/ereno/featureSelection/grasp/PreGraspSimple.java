@@ -12,7 +12,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
-import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.PreGraspIWSS;
+import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.PreGraspIWSSr;
 import br.uff.midiacom.ereno.outputManager.FirebaseOutput;
 import br.uff.midiacom.ereno.outputManager.LocalOutput;
 import br.uff.midiacom.ereno.outputManager.model.Iteration;
@@ -25,12 +25,12 @@ import java.util.Arrays;
  */
 public class PreGraspSimple extends PreGrasp { //@TODO: Create abstract GRASP
 
-    public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood) throws Exception {
-        outputManager = new FirebaseOutput().initialize(methodChoosen);
+    public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood, String dataset) throws Exception {
+        outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
 
-        NeighborhoodStructure neighborhood = new PreGraspIWSS(this);
+        NeighborhoodStructure neighborhood = new PreGraspIWSSr(this);
 
         /* Add all rcl features to RCL */
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
@@ -42,7 +42,7 @@ public class PreGraspSimple extends PreGrasp { //@TODO: Create abstract GRASP
 
         /* Gera uma solução vizinha igual ou melhor */
         initialSolution = LocalSearches.buscaLocal(initialSolution, neighborhood);
-        if (initialSolution.isEqualOrBetterThan(getBestGlobalSolution())) {
+        if (initialSolution.isBetterThan(getBestGlobalSolution())) {
             setBestGlobalSolution(initialSolution.newClone(false));
         }
 

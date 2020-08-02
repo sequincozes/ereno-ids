@@ -5,13 +5,10 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
+import br.uff.midiacom.ereno.exceptions.IncompleteFeatureSelection;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -54,6 +51,7 @@ public class BitFlip implements NeighborhoodStructure {
 
     @Override
     public GraspSolution run(GraspSolution reference) throws Exception {
+        System.out.println("Running BitFlip:");
         bestLocal = reference.newClone(false); // initialization
 
         while (--remLSIterations > 0 && --remLSNoImprovements > 0) {

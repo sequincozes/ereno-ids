@@ -6,15 +6,11 @@
 package br.uff.midiacom.ereno.featureSelection.grasp.localsearch;
 
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
-import br.uff.midiacom.ereno.featureSelection.grasp.GraspRVND;
-import br.uff.midiacom.ereno.featureSelection.grasp.GraspSimple;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
-import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.BitFlip;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
-import static java.lang.Integer.max;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,20 +22,32 @@ import java.util.concurrent.ThreadLocalRandom;
 public class LocalSearches {
 
     public static GraspSolution doVND(GraspSolution semente, Grasp grasp) throws Exception {
+
         ArrayList<NeighborhoodStructure> neighborhoodStructures = new ArrayList<>();
-        neighborhoodStructures.add(new BitFlip(grasp));
-        neighborhoodStructures.add(new IWSS(grasp));
         neighborhoodStructures.add(new IWSSr(grasp));
+        System.out.println("Adding IWWSr...");
+        neighborhoodStructures.add(new IWSS(grasp));
+        System.out.println("Adding IWWS...");
+        boolean includedBF = false;
+        if (grasp.numBitFLipFeatures > 0 && !includedBF) {
+            neighborhoodStructures.add(new BitFlip(grasp));
+            System.out.println("Adding BitFlip...");
+        }
         GraspSolution bestLocal = semente.newClone(false);
-        for (int i = 0; i < 3; i++) {
-            System.out.println("-> BEGIN| Estrutura de Vizinhança: " + i);
-            long tempoInicial = System.currentTimeMillis();
+        for (int i = 0; i < neighborhoodStructures.size(); i++) {
             GraspSolution nova = buscaLocal(semente, neighborhoodStructures.get(i));
-            long tempoFinal = System.currentTimeMillis() - tempoInicial;
-            System.out.println("-> END| Estrutura de Vizinhança: " + i + "[" + tempoFinal + "]");
-            if (nova.isEqualOrBetterThan(bestLocal)) {
+            System.out.println("**** Selected bestLocal: " + bestLocal.getFeatureSet() + "(" + bestLocal.getAccuracy() + "), RCL:" + bestLocal.getRCLfeatures());
+            System.out.println("Running structure: " + i);
+            System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getAccuracy() + "), RCL:" + nova.getRCLfeatures());
+
+            if (nova.isBetterThan(bestLocal)) {
                 bestLocal = nova.newClone(false);
-                System.out.println("LOCAL IMPROVEMENT: " + Arrays.toString(bestLocal.getArrayFeaturesSelecionadas()) + " = " + bestLocal.getEvaluation().getAcuracia());
+            }
+            grasp.numBitFLipFeatures = bestLocal.getNumSelectedFeatures();
+            if (grasp.numBitFLipFeatures > 0 && !includedBF) {
+                includedBF = true;
+                neighborhoodStructures.add(new BitFlip(grasp));
+                System.out.println("Adding BitFlip...");
             }
         }
         return bestLocal;
@@ -48,41 +56,56 @@ public class LocalSearches {
     public static GraspSolution doRVND(GraspSolution semente, Grasp grasp) throws Exception {
         // Inicializar T
         ArrayList<NeighborhoodStructure> neighborhoodStructures = new ArrayList<>();
-        neighborhoodStructures.add(new BitFlip(grasp));
-        neighborhoodStructures.add(new IWSS(grasp));
         neighborhoodStructures.add(new IWSSr(grasp));
+        System.out.println("Adding IWWSr...");
+        neighborhoodStructures.add(new IWSS(grasp));
+        System.out.println("Adding IWWS...");
+        if (grasp.numBitFLipFeatures > 0) {
+            neighborhoodStructures.add(new BitFlip(grasp));
+            System.out.println("Adding BitFlip...");
+        }
         int min = 0;
         int max = neighborhoodStructures.size();
 
         GraspSolution melhor = semente.newClone(false);
+
         boolean firstIteration = true;
         while (neighborhoodStructures.size() > 0) {
             int randomNum = 0;
             try {
                 randomNum = ThreadLocalRandom.current().nextInt(min, max);
                 System.out.println("Running structure: " + randomNum);
-                GraspSolution nova = buscaLocal(semente, neighborhoodStructures.get(randomNum));
-                System.out.println("Melhor/Semente:" + Arrays.toString(melhor.getArrayFeaturesSelecionadas()) + "/" + melhor.getEvaluation().getAcuracia());
-                System.out.println("Nova:" + Arrays.toString(nova.getArrayFeaturesSelecionadas()) + "/" + nova.getEvaluation().getAcuracia());
+                GraspSolution nova = buscaLocal(semente.newClone(false), neighborhoodStructures.get(randomNum));
+                System.out.println("**** Selected melhor: " + melhor.getFeatureSet() + "(" + melhor.getAccuracy() + "), RCL:" + melhor.getRCLfeatures());
+                System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getAccuracy() + "), RCL:" + nova.getRCLfeatures());
                 if (nova.isBetterThan(melhor)) {
                     if (firstIteration) {
                         firstIteration = false;
                         neighborhoodStructures.remove(randomNum);
                         System.out.println("REMOVE(" + randomNum + ") - T: " + neighborhoodStructures.size());
                         max = neighborhoodStructures.size();
+                        grasp.numBitFLipFeatures = nova.getNumSelectedFeatures();
+
                     } else {
                         System.out.println("RESET");
                         melhor = nova.newClone(false);
                         neighborhoodStructures = new ArrayList<>();
-                        neighborhoodStructures.add(new BitFlip(grasp));
-                        neighborhoodStructures.add(new IWSS(grasp));
                         neighborhoodStructures.add(new IWSSr(grasp));
+                        System.out.println("Adding IWWSr...");
+                        neighborhoodStructures.add(new IWSS(grasp));
+                        System.out.println("Adding IWWS...");
+                        if (grasp.numBitFLipFeatures > 0) {
+                            neighborhoodStructures.add(new BitFlip(grasp));
+                            System.out.println("Adding BitFlip...");
+                        }
                         max = neighborhoodStructures.size();
                     }
+                    grasp.numBitFLipFeatures = melhor.getNumSelectedFeatures();
                 } else {
                     neighborhoodStructures.remove(randomNum);
                     System.out.println("REMOVE(" + randomNum + ") - T: " + neighborhoodStructures.size());
                     max = neighborhoodStructures.size();
+                    grasp.numBitFLipFeatures = melhor.getNumSelectedFeatures();
                 }
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Sorteou numero invalido, cancelando a rodada:" + e.getLocalizedMessage());

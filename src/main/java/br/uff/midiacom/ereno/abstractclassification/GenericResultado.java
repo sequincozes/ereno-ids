@@ -28,6 +28,10 @@ public class GenericResultado {
     double cpuLoad;
     double memoryLoad;
 
+    public GenericResultado(double acuracia) {
+        this.acuracia = acuracia;
+    }
+
     public GenericResultado(GenericResultado evaluation) {
         this.Cx = evaluation.getCx();
         this.VP = evaluation.getVP();

@@ -8,26 +8,18 @@ package br.uff.midiacom.ereno.featureSelection.grasp;
 import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.OUTPUT;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.crossvalidation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
-import br.uff.midiacom.ereno.outputManager.FirebaseOutput;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.management.ManagementFactory;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.ThreadLocalRandom;
 import weka.core.Instances;
 
 /**
@@ -38,11 +30,11 @@ public abstract class Grasp {
 
     public static Instances allInstances;
 
-    int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
+    public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
     int maxIterations = 100000; // quantidade total de iteracoes
     public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)
     final int maxNoImprovement = 100000; // iteracoes sem melhorias consecutivas
-    static int NUM_FEATURES = 5;
+    static int NUM_FEATURES = 1;
     //String method = "method";
     //String experimentIdentifier = "0000000";
     boolean localOutput = false;
@@ -50,23 +42,28 @@ public abstract class Grasp {
     // Current Run Data
     int iterationNumber = 0;
     int noImprovements = 0;
-    long currentTime = 0;
+    public long currentTime = 0;
     boolean printSelection = false;
     public int numberEvaluation = 0;
     OutputManager outputManager;
-
+    private GraspSolution bestGlobalSolution;
+    public int numBitFLipFeatures = -1;
     long beginTime = 0;
 
+    // java -jar grasp.jar 2 3 all_in_one_WSN
     public static void main(String[] args) throws IOException, Exception {
-        boolean pregrasp = true;
+        args = new String[]{"3", "5", "wsnteste"};
+
+        boolean pregrasp = false;
         if (pregrasp) {
-            PreGrasp.main(args);;
+            PreGrasp.main(args);
         } else {
 
             //setupStandaloneGrasp("Test");
             //new GraspSimple().runGraspSimple(ALL, "grasp", NeighborhoodStructures.IWSSR);
             if (args.length == 2 && args[0].equals("all")) {
-                String command = "java -jar grasp.jar " + args[1] + " 1 & "
+                String command
+                        = "java -jar grasp.jar " + args[1] + " 1 & "
                         + "java -jar grasp.jar " + args[1] + " 2 &"
                         + "java -jar grasp.jar " + args[1] + " 3 &"
                         + "java -jar grasp.jar " + args[1] + " 4 & "
@@ -95,18 +92,18 @@ public abstract class Grasp {
                 classifier = Integer.valueOf(args[1]) - 1;
                 GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
                 GeneralParameters.FOLDS = Integer.valueOf(args[3]);
-                showOptions(graspAlgoritm, classifier);
+                showOptions(graspAlgoritm, classifier, args[2]);
                 break;
             case 3:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
                 GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
-                showOptions(graspAlgoritm, classifier);
+                showOptions(graspAlgoritm, classifier, args[2]);
                 break;
             case 2:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
-                showOptions(graspAlgoritm, classifier);
+                showOptions(graspAlgoritm, classifier, args[2]); // bug aqui, so existem 2. Corrigir se gor usar
                 break;
             case 0:
                 System.out.println("Please select the experimentation type:");
@@ -117,8 +114,16 @@ public abstract class Grasp {
                 //System.out.println("(5) Multiple Classifier");
                 Scanner t = new Scanner(System.in);
                 graspAlgoritm = t.nextInt();
+                System.out.println("Selected algo: " + graspAlgoritm);
+                System.out.println("Please enter the dataset.csv name:");
+                // System.out.println("(4) Single Classifier");
+                //System.out.println("(5) Multiple Classifier");
+
+                Scanner t2 = new Scanner(System.in);
+                String dataset = t2.nextLine();
+
                 classifier = -1;
-                showOptions(graspAlgoritm, classifier);
+                showOptions(graspAlgoritm, classifier, dataset);
 
                 break;
             default:
@@ -153,7 +158,6 @@ public abstract class Grasp {
     public GraspSolution getBestGlobalSolution() {
         return bestGlobalSolution;
     }
-    private GraspSolution bestGlobalSolution;
 
     public void setBestGlobalSolution(GraspSolution bestGlobalSolution) throws IOException {
         //writeDetails("EVALUATION [" + numberEvaluation + "] - NEW BEST GLOBAL: " + bestGlobalSolution.getFeaturesAndPerformance());
@@ -162,32 +166,57 @@ public abstract class Grasp {
 
     public ArrayList<Integer> buildCustomRCL(int[] RCL) throws Exception {
         ArrayList<Integer> candidates = new ArrayList<>();
-        System.out.print("RCL: {");
+        //System.out.print("RCL: {");
         for (int i = 0; i < RCL.length; i++) {
             candidates.add(RCL[i]);
-            System.out.print(RCL[i]);
+            /*            System.out.print(RCL[i]);
             if (i < RCL.length - 1) {
                 System.out.print(",");
             } else {
                 System.out.println("}");
             }
+             */
         }
         return candidates;
     }
 
-    public GraspSolution buildSolucaoInicial(ArrayList<Integer> RCL) {
+    public GraspSolution reconstructSolution(GraspSolution initialSolution) {
+        ArrayList<Integer> fullRCL = initialSolution.copyRCLFeatures();
+        fullRCL.addAll(initialSolution.copySolutionFeatures());
+        System.out.println("RCL: " + fullRCL);
         /* Seleciona as features das primeiras N posicoes como solução inicial*/
         GraspSolution solution = new GraspSolution();
-
-        Random r = new Random(RCL.size());
+        Random r = new Random(fullRCL.size());
         while (solution.getArrayFeaturesSelecionadas().length < NUM_FEATURES) {
-            solution.addFeature(RCL.remove(r.nextInt(RCL.size())));
+            solution.addFeature(fullRCL.remove(r.nextInt(fullRCL.size())));
         }
 
-        /* As demais features irão compor a RCL_flip */
-        while (RCL.size() > 0) {
-            solution.addFeatureFlip(RCL.remove(0));
+        // As demais features irão compor a RCL_flip 
+        while (fullRCL.size() > 0) {
+            solution.addFeatureFlip(fullRCL.remove(0));
         }
+        System.out.println("Solução Inicial: " + solution.getFeatureSet());
+        System.out.println("RCL Restante: " + solution.getRCLfeatures());
+
+        return solution;
+    }
+
+    public GraspSolution constructSolution(ArrayList<Integer> fullRCL) {
+
+        System.out.println("RCL: " + fullRCL);
+        /* Seleciona as features das primeiras N posicoes como solução inicial*/
+        GraspSolution solution = new GraspSolution();
+        Random r = new Random(fullRCL.size());
+        while (solution.getArrayFeaturesSelecionadas().length < NUM_FEATURES) {
+            solution.addFeature(fullRCL.remove(r.nextInt(fullRCL.size())));
+        }
+
+        // As demais features irão compor a RCL_flip 
+        while (fullRCL.size() > 0) {
+            solution.addFeatureFlip(fullRCL.remove(0));
+        }
+        System.out.println("Solução Inicial: " + solution.getFeatureSet());
+        System.out.println("RCL Restante: " + solution.getRCLfeatures());
 
         return solution;
     }
@@ -199,6 +228,8 @@ public abstract class Grasp {
         String avaliacao = "AVALIAÇÃO " + "(" + numberEvaluation++ + ")" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + " > " + solution.getEvaluation().getAcuracia();
         System.out.println(avaliacao);
         outputManager.writeDetail(new Detail(solution.getAccuracy(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
+
+        //solution.setEvaluation(new GenericResultado(ThreadLocalRandom.current().nextInt(70, 100)));
         return solution;
     }
 
@@ -222,16 +253,27 @@ public abstract class Grasp {
 
     }
 
-    private static void showOptions(int graspAlgoritm, int classifier) throws Exception {
+    private static void showOptions(int graspAlgoritm, int classifier, String dataset) throws Exception {
+        if (dataset.contains("WSN") || dataset.contains("wsn")) {
+            FeatureSubsets.RCL = FeatureSubsets.RCL_WSN_IWSSR[classifier];
+        } else if (dataset.contains("KDD") || dataset.contains("kdd")) {
+            FeatureSubsets.RCL = FeatureSubsets.RCL_KDD_IWSSR[classifier];
+        } else if (dataset.contains("CICIDS") || dataset.contains("cicids")) {
+            FeatureSubsets.RCL = FeatureSubsets.RCL_CICIDS_IWSSR[classifier];
+        } else {
+            System.out.println("Invalid dataset name. Must contains kdd, wsn, or cicids.");
+            System.exit(1);
+        }
+
         switch (graspAlgoritm) {
             case 1:
-                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP);
+                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP, dataset);
                 break;
             case 2:
-                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd");
+                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd", dataset);
                 break;
             case 3:
-                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd");
+                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd", dataset);
                 break;
             case 4:
                 System.out.println("Not implemented yet.");

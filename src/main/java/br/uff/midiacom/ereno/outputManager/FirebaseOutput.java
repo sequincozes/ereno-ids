@@ -37,10 +37,10 @@ public class FirebaseOutput implements OutputManager {
     private String graspMethod;
     private String experimentName;
     int currentIterationNumber = 1;
-    boolean offlinemode = true;
+    boolean offlinemode = false;
 
     @Override
-    public OutputManager initialize(String graspMethod) {
+    public OutputManager initialize(String graspMethod, String dataset) {
         this.experimentName = GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName() + "_" + ManagementFactory.getRuntimeMXBean().getName().replace(".", "_");
         this.graspMethod = graspMethod;
         if (!offlinemode) {
@@ -52,7 +52,7 @@ public class FirebaseOutput implements OutputManager {
                         .setDatabaseUrl("https://ereno-9326b.firebaseio.com")
                         .build();
                 FirebaseApp.initializeApp(options);
-                mDatabase = FirebaseDatabase.getInstance().getReference().child("cicids");
+                mDatabase = FirebaseDatabase.getInstance().getReference().child(dataset);
                 serviceAccount.close();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);

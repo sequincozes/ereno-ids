@@ -22,8 +22,8 @@ public class GraspVND extends Grasp {
         super();
     }
 
-    public GraspSolution runGraspVND(int[] rcl, String methodChoosen) throws Exception {
-        outputManager = new FirebaseOutput().initialize(methodChoosen);
+    public GraspSolution runGraspVND(int[] rcl, String methodChoosen, String dataset) throws Exception {
+        outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
 
@@ -33,7 +33,7 @@ public class GraspVND extends Grasp {
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
 
         // Solução Inicial Factível
-        GraspSolution initialSolution = buildSolucaoInicial(RCL);
+        GraspSolution initialSolution = constructSolution(RCL);
         initialSolution = avaliar(initialSolution);
         setBestGlobalSolution(initialSolution.newClone(false));
 
@@ -55,12 +55,12 @@ public class GraspVND extends Grasp {
             iterationNumber++;
             System.out.println("######### ITERATION (" + iterationNumber + ") #############");
 
-            GraspSolution reconstructedSoluction = initialSolution.reconstruirNewSolucao(NUM_FEATURES);
+            GraspSolution reconstructedSoluction = reconstructSolution(initialSolution);
             avaliar(reconstructedSoluction);
 
             // Busca por Ótimo Local
             reconstructedSoluction = LocalSearches.doVND(reconstructedSoluction, this);
-            if (reconstructedSoluction.isEqualOrBetterThan(getBestGlobalSolution())) {
+            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution())) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
                 System.out.println("GLOBAL IMPROVEMENT: " + Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas()) + " = " + getBestGlobalSolution().getEvaluation().getAcuracia());
                 noImprovements = 0;

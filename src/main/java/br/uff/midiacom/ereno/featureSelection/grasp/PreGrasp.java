@@ -8,7 +8,6 @@ package br.uff.midiacom.ereno.featureSelection.grasp;
 import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.crossvalidation.CrossValidation;
@@ -55,11 +54,11 @@ public abstract class PreGrasp {
         GeneralParameters.ALL_IN_ONE_FILE = dataset;//"/home/silvio/datasets/CICIDS2017/all_in_one/all_in_one_cicids2017.csv";       
         allInstances = Util.loadSingleFile(true);
         if (dataset.contains("CIC")) {
-            new PreGraspSimple().runGraspSimple(FeatureSubsets.CICIDS_FULL, "grasp", NeighborhoodStructures.IWSS);
+            new PreGraspSimple().runGraspSimple(FeatureSubsets.CICIDS_FULL, "grasp", NeighborhoodStructures.IWSS, dataset);
         } else if (dataset.contains("KDD")) {
-            new PreGraspSimple().runGraspSimple(FeatureSubsets.KDD_FULL, "grasp", NeighborhoodStructures.IWSS);
+            new PreGraspSimple().runGraspSimple(FeatureSubsets.KDD_FULL, "grasp", NeighborhoodStructures.IWSS, dataset);
         } else if (dataset.contains("WSN")) {
-            new PreGraspSimple().runGraspSimple(FeatureSubsets.WSN_FULL, "grasp", NeighborhoodStructures.IWSS);
+            new PreGraspSimple().runGraspSimple(FeatureSubsets.WSN_FULL, "grasp", NeighborhoodStructures.IWSS, dataset);
         }
         /*
         if (args.length == 2 && args[0].equals("all")) {
@@ -212,15 +211,16 @@ public abstract class PreGrasp {
     }
 
     private static void showOptions(int graspAlgoritm, int classifier) throws Exception {
+        String dataset = GeneralParameters.ALL_IN_ONE_FILE.replace(".csv", "");
         switch (graspAlgoritm) {
             case 1:
-                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP);
+                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP, dataset);
                 break;
             case 2:
-                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd");
+                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd", dataset);
                 break;
             case 3:
-                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd");
+                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd", dataset);
                 break;
             case 4:
                 System.out.println("Not implemented yet.");

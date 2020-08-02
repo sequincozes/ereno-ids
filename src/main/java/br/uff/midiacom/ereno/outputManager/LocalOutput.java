@@ -112,7 +112,7 @@ public class LocalOutput implements OutputManager {
     }
 
     @Override
-    public OutputManager initialize(String graspMethod) {
+    public OutputManager initialize(String graspMethod, String dataset) {
         this.graspMethod = graspMethod;
         this.experimentName = GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName() + "_" + ManagementFactory.getRuntimeMXBean().getName();
         try {

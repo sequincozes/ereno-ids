@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+import java.util.ArrayList;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -71,7 +72,7 @@ public class Util {
         for (int i = instances.numAttributes() - 1; i > 0; i--) {
             if (instances.numAttributes() <= fs.length) {
                 System.err.println("O número de features precisa ser maior que o filtro.");
-                System.out.println("FS: "+Arrays.toString(fs) + " - Instance[0]: "+instances.get(0).toString());
+                System.out.println("FS: " + Arrays.toString(fs) + " - Instance[0]: " + instances.get(0).toString());
                 System.exit(1);
                 return instances;
             }
@@ -111,7 +112,7 @@ public class Util {
 
     public static Instances[] loadAndFilter(boolean printSelection, int trainProportion) throws Exception {
 
-        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.ALL_IN_ONE_FILE));
+        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
         System.out.println("All instances: " + allInstances.size());
         normalClass = allInstances.get(0).classValue();
 
@@ -159,7 +160,7 @@ public class Util {
 
     public static Instances loadAndFilterSingleFile(boolean printSelection) throws Exception {
 
-        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.ALL_IN_ONE_FILE));
+        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
         if (printSelection) {
             System.out.println("All instances: " + allInstances.size());
         }
@@ -181,7 +182,7 @@ public class Util {
     }
 
     public static Instances loadSingleFile(boolean printSelection) throws Exception {
-        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.ALL_IN_ONE_FILE));
+        Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
         System.out.println("All instances: " + allInstances.size());
 
         if (GeneralParameters.NORMALIZE) {
@@ -202,6 +203,14 @@ public class Util {
 
     }
 
+    public static int[] getArray(ArrayList<Integer> fs) {
+        int[] array = new int[fs.size()];
+        for (int i = 0; i < fs.size(); i++) {
+            array[i] = fs.get(i);
+        }
+        return array;
+    }
+
     public static GenericResultado getResultAverage(GenericResultado[] results) {
         float VP = 0;
         float FN = 0;
@@ -212,18 +221,87 @@ public class Util {
         double recall = 0;
         double precision = 0;
         double f1score = 0;
-        for (GenericResultado res : results) {
-            VP = VP + (res.getVP() / results.length);
-            FN = FN + (res.getFN() / results.length);
-            VN = VN + (res.getVN() / results.length);
-            FP = FP + (res.getFP() / results.length);
-            Time = Time + (res.getTime() / results.length);
-            acuracia = acuracia + (res.getAcuracia() / results.length);
-            recall = recall + (res.getRecall() / results.length);
-            precision = precision + (res.getPrecision() / results.length);
-            f1score = f1score + (res.getF1Score() / results.length);
+
+        try {
+            for (GenericResultado res : results) {
+                VP = VP + (res.getVP() / results.length);
+                FN = FN + (res.getFN() / results.length);
+                VN = VN + (res.getVN() / results.length);
+                FP = FP + (res.getFP() / results.length);
+                Time = Time + (res.getTime() / results.length);
+                acuracia = acuracia + (res.getAcuracia() / results.length);
+                recall = recall + (res.getRecall() / results.length);
+                precision = precision + (res.getPrecision() / results.length);
+                f1score = f1score + (res.getF1Score() / results.length);
+            }
+        } catch (NullPointerException e) {
+            return new GenericResultado();
         }
         return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, Time, acuracia, recall, recall, f1score, recall);
+    }
+
+    public static GenericResultado getResultAverageDetailed(GenericResultado[] results, boolean debug) {
+        float VP = 0;
+        float FN = 0;
+        float VN = 0;
+        float FP = 0;
+        long avgTime = 0;
+        double acuracia = 0;
+        double recall = 0;
+        double precision = 0;
+        double f1score = 0;
+        long[] times = new long[results.length];
+        double stdDvTime = 0;
+        double varianceTime = 0;
+        double loConfIntTime = 0;
+        double hiConfIntTime = 0;
+        try {
+            int pos = 0;
+            for (GenericResultado res : results) {
+                long individualTime = res.getMicrotime();
+                if (debug) {
+                    System.out.println("Individual Time: " + individualTime + " Microsseconds");
+                }
+                times[pos++] = individualTime;
+                VP = VP + (res.getVP() / results.length);
+                FN = FN + (res.getFN() / results.length);
+                VN = VN + (res.getVN() / results.length);
+                FP = FP + (res.getFP() / results.length);
+                avgTime = avgTime + (individualTime / results.length);
+                acuracia = acuracia + (res.getAcuracia() / results.length);
+                recall = recall + (res.getRecall() / results.length);
+                precision = precision + (res.getPrecision() / results.length);
+                f1score = f1score + (res.getF1Score() / results.length);
+            }
+
+            //int MAXN = 100000;
+            //int n = 0;
+            //double[] x = new double[MAXN];
+            // second pass: compute sample variance
+            double xxbar = 0.0;
+            for (int i = 0; i < times.length; i++) {
+                xxbar += (times[i] - avgTime) * (times[i] - avgTime);
+            }
+            varianceTime = xxbar / (times.length - 1);
+            stdDvTime = Math.sqrt(varianceTime);
+            double raizDeN = Math.sqrt(times.length);
+            loConfIntTime = avgTime - 1.96 * stdDvTime / raizDeN;
+            hiConfIntTime = avgTime + 1.96 * stdDvTime / raizDeN;
+
+            if (debug) {
+                // print results
+                System.out.println("average          = " + avgTime);
+                System.out.println("sample variance  = " + varianceTime);
+                System.out.println("sample stddev    = " + stdDvTime);
+                System.out.println("95% approximate confidence interval");
+                System.out.println("[ " + loConfIntTime + ", " + hiConfIntTime + " ]");
+            }
+
+        } catch (NullPointerException e) {
+            //  System.out.println("Null ");
+            return new GenericResultado();
+        }
+        return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, avgTime, acuracia, recall, f1score, varianceTime, stdDvTime, loConfIntTime, hiConfIntTime);
     }
 
     //resultsCompilation[fold][classifierIndex++]
@@ -263,4 +341,5 @@ public class Util {
         }
 
     }
+
 }

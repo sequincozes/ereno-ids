@@ -38,9 +38,9 @@ public class FeatureRanking {
     };
 
     public static void main(String[] args) throws Exception {
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/CICIDS2017/all_in_one/all_in_one_cicids2017.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/CICIDS2017/all_in_one/all_in_one_cicids2017.csv";
         System.out.println("OneR + Blackhole");
-        justRank(GeneralParameters.ALL_IN_ONE_FILE, METODO.OneR);
+        justRank(GeneralParameters.DATASET, METODO.OneR);
 /*
         GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/grayhole/all_in_one_grayhole.csv";
         System.out.println("OneR + grayhole");

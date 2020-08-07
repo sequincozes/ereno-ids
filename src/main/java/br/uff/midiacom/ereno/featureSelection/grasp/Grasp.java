@@ -11,7 +11,7 @@ import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
-import br.uff.midiacom.ereno.crossvalidation.CrossValidation;
+import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public abstract class Grasp {
 
     // java -jar grasp.jar 2 3 all_in_one_WSN
     public static void main(String[] args) throws IOException, Exception {
-        args = new String[]{"3", "5", "wsnteste"};
+        args = new String[]{"3", "5", "wsn"};
 
         boolean pregrasp = false;
         if (pregrasp) {
@@ -78,7 +78,7 @@ public abstract class Grasp {
     }
 
     public static void setupStandaloneGrasp(String classifier) throws Exception {
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/all/all_in_one.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/all/all_in_one.csv";
         GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.NAIVE_BAYES;
         allInstances = Util.loadSingleFile(true);
     }
@@ -90,14 +90,14 @@ public abstract class Grasp {
             case 4:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
-                GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
+                GeneralParameters.DATASET = args[2] + ".csv";
                 GeneralParameters.FOLDS = Integer.valueOf(args[3]);
                 showOptions(graspAlgoritm, classifier, args[2]);
                 break;
             case 3:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
-                GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
+                GeneralParameters.DATASET = args[2] + ".csv";
                 showOptions(graspAlgoritm, classifier, args[2]);
                 break;
             case 2:
@@ -141,7 +141,7 @@ public abstract class Grasp {
             downloadDatabase();
         }
         if (choosenClassifierIndex < 0) {
-            System.out.println("Dataset: " + GeneralParameters.ALL_IN_ONE_FILE);
+            System.out.println("Dataset: " + GeneralParameters.DATASET);
             System.out.println("Choose classifier:");
             System.out.println("(1) RANDOM TREE");
             System.out.println("(2) J48");
@@ -234,12 +234,12 @@ public abstract class Grasp {
     }
 
     public void downloadDatabase() throws InterruptedException, IOException, Exception {
-        System.out.println("Database File '" + GeneralParameters.ALL_IN_ONE_FILE + "' not found. Press (D) for download it or (C) for cancel.");
+        System.out.println("Database File '" + GeneralParameters.DATASET + "' not found. Press (D) for download it or (C) for cancel.");
         Scanner download = new Scanner(System.in);
         if (download.next().equals("D") || download.next().equals("d")) {
             System.out.println("Downloading...");
-            String downloadString = "wget -O " + GeneralParameters.ALL_IN_ONE_FILE + ".zip -b https://drive.google.com/uc?id=1jbC6AyjXmyPVtq2kML5_RWLqrqKqfZ-m&export=download";
-            String unzipString = "unzip " + GeneralParameters.ALL_IN_ONE_FILE + ".zip ";
+            String downloadString = "wget -O " + GeneralParameters.DATASET + ".zip -b https://drive.google.com/uc?id=1jbC6AyjXmyPVtq2kML5_RWLqrqKqfZ-m&export=download";
+            String unzipString = "unzip " + GeneralParameters.DATASET + ".zip ";
             System.out.println("Executing Command: " + downloadString);
             Runtime.getRuntime().exec(downloadString);
             System.out.println("Please wait 30 seconds... ");

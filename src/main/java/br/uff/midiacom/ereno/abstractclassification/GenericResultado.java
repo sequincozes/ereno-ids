@@ -8,6 +8,7 @@ package br.uff.midiacom.ereno.abstractclassification;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,17 +17,29 @@ import java.io.PrintWriter;
 public class GenericResultado {
 
     String Cx;
-    float VP;
-    float FN;
-    float VN;
-    float FP;
+    float VP, FN, VN, FP;
     long Time;
-    double acuracia;
-    double recall;
-    double precision;
-    double f1Score;
-    double cpuLoad;
-    double memoryLoad;
+    double acuracia, recall, precision, f1Score;
+    double cpuLoad, memoryLoad;
+    double varianceTime, stdDvTime, loConfIntTime, hiConfIntTime;
+    ArrayList<Long> detailedClassificationTime;
+    private long nanotime;
+
+    public long getNanotime() {
+        return nanotime;
+    }
+
+    public long getMicrotime() {
+        return nanotime / 1000;
+    }
+
+    public long getMilitime() {
+        return getMicrotime() / 1000;
+    }
+
+    public long getSectime() {
+        return getMilitime() / 1000;
+    }
 
     public GenericResultado(double acuracia) {
         this.acuracia = acuracia;
@@ -38,13 +51,33 @@ public class GenericResultado {
         this.FN = evaluation.getFN();
         this.VN = evaluation.getVN();
         this.FP = evaluation.getFP();
-        long Time = evaluation.getTime();
+        this.Time = evaluation.getTime();
         this.acuracia = evaluation.getAcuracia();
         this.recall = evaluation.getRecall();
         this.precision = evaluation.getPrecision();
         this.f1Score = evaluation.getF1Score();
         this.cpuLoad = evaluation.getCpuLoad();
         this.memoryLoad = evaluation.getMemoryLoad();
+    }
+
+    GenericResultado() {
+
+    }
+
+    GenericResultado(String cx, float VP, float FN, float VN, float FP, long avgTime, double acuracia, double recall, double f1score, double varianceTime, double stdDvTime, double loConfIntTime, double hiConfIntTime) {
+        this.Cx = cx;
+        this.VP = VP;
+        this.FN = FN;
+        this.VN = VN;
+        this.FP = FP;
+        this.Time = avgTime;
+        this.acuracia = acuracia;
+        this.recall = recall;
+        this.f1Score = f1score;
+        this.varianceTime = varianceTime;
+        this.stdDvTime = stdDvTime;
+        this.loConfIntTime = loConfIntTime;
+        this.hiConfIntTime = hiConfIntTime;
     }
 
     public int[][] getConfusionMatrix() {
@@ -78,24 +111,13 @@ public class GenericResultado {
         this.f1Score = f1score;
     }
 
-//    public Resultado(String descricao, float VP, float FN, float VN, float FP, double acuracia, double txDet, double txAFal, long tempo) {
-//        this.Cx = descricao;
-//        this.VP = VP;
-//        this.FN = FN;
-//        this.VN = VN;
-//        this.FP = FP;
-//        this.acuracia = acuracia;
-//        this.recall = txDet;
-//        this.precision = txAFal;
-//        this.Time = tempo;
-//    }
     public GenericResultado(String descricao, float VP, float FN, float VN, float FP, long time) {
         this.Cx = descricao;
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
         this.FP = FP;
-        this.Time = time;
+        this.nanotime = time;
         recalcular();
     }
 
@@ -247,6 +269,25 @@ public class GenericResultado {
         );
     }
 
+    public void printDetailedResults() {
+        recalcular();
+        System.out.println(
+                getCx() + ";"
+                + getAcuracia() + ";"
+                + getPrecision() + ";"
+                + getRecall() + ";"
+                + getF1Score() + ";"
+                + getVP() + ";"
+                + getVN() + ";"
+                + getFP() + ";"
+                + getFN() + ";"
+                + getTime() + ";"
+                + stdDvTime + ";"
+                + hiConfIntTime + ";"
+                + loConfIntTime + ";"
+        );
+    }
+
     public double getCpuLoad() {
         return cpuLoad;
     }
@@ -297,5 +338,23 @@ public class GenericResultado {
 
     public void setPrecision(double taxaAlarmeFalsos) {
         this.precision = taxaAlarmeFalsos;
+    }
+
+    public void printDetailedTime() {
+        System.out.println(
+                getCx() + ";"
+                + getTime() + ";"
+                + hiConfIntTime + ";"
+                + loConfIntTime + ";"
+        );
+    }
+
+    public void printDetailedTime(String details) {
+        System.out.println(
+                 details + ";"
+                + getTime() + ";"
+                + hiConfIntTime + ";"
+                + loConfIntTime + ";"
+        );
     }
 }

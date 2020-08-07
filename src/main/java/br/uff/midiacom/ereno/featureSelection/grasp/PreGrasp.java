@@ -10,7 +10,7 @@ import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
-import br.uff.midiacom.ereno.crossvalidation.CrossValidation;
+import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public abstract class PreGrasp {
         String dataset = args[0];
         Integer classifier = Integer.valueOf(args[1]);
         GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[classifier-1];
-        GeneralParameters.ALL_IN_ONE_FILE = dataset;//"/home/silvio/datasets/CICIDS2017/all_in_one/all_in_one_cicids2017.csv";       
+        GeneralParameters.DATASET = dataset;//"/home/silvio/datasets/CICIDS2017/all_in_one/all_in_one_cicids2017.csv";       
         allInstances = Util.loadSingleFile(true);
         if (dataset.contains("CIC")) {
             new PreGraspSimple().runGraspSimple(FeatureSubsets.CICIDS_FULL, "grasp", NeighborhoodStructures.IWSS, dataset);
@@ -82,14 +82,14 @@ public abstract class PreGrasp {
             case 4:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
-                GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
+                GeneralParameters.DATASET = args[2] + ".csv";
                 GeneralParameters.FOLDS = Integer.valueOf(args[3]);
                 showOptions(graspAlgoritm, classifier);
                 break;
             case 3:
                 graspAlgoritm = Integer.valueOf(args[0]);
                 classifier = Integer.valueOf(args[1]) - 1;
-                GeneralParameters.ALL_IN_ONE_FILE = args[2] + ".csv";
+                GeneralParameters.DATASET = args[2] + ".csv";
                 showOptions(graspAlgoritm, classifier);
                 break;
             case 2:
@@ -125,7 +125,7 @@ public abstract class PreGrasp {
             downloadDatabase();
         }
         if (choosenClassifierIndex < 0) {
-            System.out.println("Dataset: " + GeneralParameters.ALL_IN_ONE_FILE);
+            System.out.println("Dataset: " + GeneralParameters.DATASET);
             System.out.println("Choose classifier:");
             System.out.println("(1) RANDOM TREE");
             System.out.println("(2) J48");
@@ -191,12 +191,12 @@ public abstract class PreGrasp {
     }
 
     public void downloadDatabase() throws InterruptedException, IOException, Exception {
-        System.out.println("Database File '" + GeneralParameters.ALL_IN_ONE_FILE + "' not found. Press (D) for download it or (C) for cancel.");
+        System.out.println("Database File '" + GeneralParameters.DATASET + "' not found. Press (D) for download it or (C) for cancel.");
         Scanner download = new Scanner(System.in);
         if (download.next().equals("D") || download.next().equals("d")) {
             System.out.println("Downloading...");
-            String downloadString = "wget -O " + GeneralParameters.ALL_IN_ONE_FILE + ".zip -b https://drive.google.com/uc?id=1jbC6AyjXmyPVtq2kML5_RWLqrqKqfZ-m&export=download";
-            String unzipString = "unzip " + GeneralParameters.ALL_IN_ONE_FILE + ".zip ";
+            String downloadString = "wget -O " + GeneralParameters.DATASET + ".zip -b https://drive.google.com/uc?id=1jbC6AyjXmyPVtq2kML5_RWLqrqKqfZ-m&export=download";
+            String unzipString = "unzip " + GeneralParameters.DATASET + ".zip ";
             System.out.println("Executing Command: " + downloadString);
             Runtime.getRuntime().exec(downloadString);
             System.out.println("Please wait 30 seconds... ");
@@ -211,7 +211,7 @@ public abstract class PreGrasp {
     }
 
     private static void showOptions(int graspAlgoritm, int classifier) throws Exception {
-        String dataset = GeneralParameters.ALL_IN_ONE_FILE.replace(".csv", "");
+        String dataset = GeneralParameters.DATASET.replace(".csv", "");
         switch (graspAlgoritm) {
             case 1:
                 ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP, dataset);

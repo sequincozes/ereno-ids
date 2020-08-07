@@ -27,7 +27,7 @@ public class Multithread {
     static GenericResultado[] resultsCompilation;
 
     public static void main(String[] args) throws Exception {
-        GeneralParameters.ALL_IN_ONE_FILE = "/home/silvio/datasets/wsn-ds/all/all_in_one_mini.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/all/all_in_one_mini.csv";
         GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.NAIVE_BAYES;
         GeneralParameters.FEATURE_SELECTION = FeatureSubsets.WSN_IG;
 

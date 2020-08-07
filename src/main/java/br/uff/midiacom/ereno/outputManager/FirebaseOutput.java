@@ -52,7 +52,9 @@ public class FirebaseOutput implements OutputManager {
                         .setDatabaseUrl("https://ereno-9326b.firebaseio.com")
                         .build();
                 FirebaseApp.initializeApp(options);
+                System.out.println("dataset");
                 mDatabase = FirebaseDatabase.getInstance().getReference().child(dataset);
+                System.out.println("mDatabase:"+mDatabase);
                 serviceAccount.close();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);

@@ -6,6 +6,7 @@
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
+import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -53,7 +54,7 @@ public class GraspSolution {
         System.out.print("-- Semente: ");
         GraspSolution s = new GraspSolution(featuresSelecionadas, featuresRCL);
         GraspSolution s1 = new GraspSolution(featuresSelecionadas, featuresRCL);
-        System.out.println("Acurácia: " + s.getEvaluation().getAcuracia());
+        System.out.println("F1Score: " + s.getEvaluation().getF1Score());
 
         //long tempoi = System.currentTimeMillis();
         //s = s.IWSSNewSolution();
@@ -110,17 +111,27 @@ public class GraspSolution {
         return arrayFS;
     }
 
-    public boolean isBetterThan(GraspSolution solucao) {
+    // Metric 
+    public boolean isBetterThan(GraspSolution solucao, GraspMetrics metric) {
         if (solucao.getNumSelectedFeatures() == 0) {
             return true;
         } else if (this.getNumSelectedFeatures() == 0) {
             return false;
         }
-        if (this.evaluation.getAcuracia() == solucao.getEvaluation().getAcuracia()) {
-            return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();
-        }
+        if (metric == GraspMetrics.ACCURACY) {
+            if (this.evaluation.getAcuracia() == solucao.getEvaluation().getAcuracia()) {
+                return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();
+            }
 
-        return this.evaluation.getAcuracia() > solucao.getEvaluation().getAcuracia();
+            return this.evaluation.getF1Score() > solucao.getEvaluation().getF1Score();
+        } else if (metric == GraspMetrics.F1SCORE) {
+            if (this.evaluation.getF1Score() == solucao.getEvaluation().getF1Score()) {
+                return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();
+            }
+
+            return this.evaluation.getF1Score() > solucao.getEvaluation().getF1Score();
+        }
+        return this.evaluation.getAcuracia()> solucao.getEvaluation().getAcuracia();
     }
 
     //@TODO: Add support to multiple metrics
@@ -172,7 +183,7 @@ public class GraspSolution {
         System.out.println("RCL Restante: " + newer.getRCLfeatures());
         return newer;
     }
-*/
+     */
     public GraspSolution newClone(boolean resetMetrics) {
         ArrayList<Integer> featuresSelecionadasAux = new ArrayList<>(solutionFeatures);
         ArrayList<Integer> newRcl = new ArrayList<>(RCLfeatures);
@@ -263,7 +274,7 @@ public class GraspSolution {
     }
 
     public String getFeaturesAndPerformance() {
-        return Arrays.toString(getArrayFeaturesSelecionadas()) + " - Acc: " + getEvaluation().getAcuracia();
+        return Arrays.toString(getArrayFeaturesSelecionadas()) + " - F1Score: " + getEvaluation().getF1Score();
     }
 
     public String getFeatureSet() {
@@ -272,5 +283,9 @@ public class GraspSolution {
 
     public String getAccuracy() {
         return String.valueOf(getEvaluation().getAcuracia());
+    }
+
+    public String getF1Score() {
+        return String.valueOf(getEvaluation().getF1Score());
     }
 }

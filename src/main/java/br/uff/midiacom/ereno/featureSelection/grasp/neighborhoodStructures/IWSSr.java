@@ -8,7 +8,6 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -52,17 +51,17 @@ public class IWSSr implements NeighborhoodStructure {
         System.out.println("Running IWSSSr:");
         // Initial solution
         for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
-            System.out.println("IWSSr >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(" + bestLocal.getAccuracy() + ")");
+            System.out.println("IWSSr >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(" + bestLocal.getF1Score()+ ")");
             GraspSolution beforeIncrement = bestLocal.newClone(false);
             for (int solutionIndex = 0; solutionIndex < bestLocal.getNumSelectedFeatures(); solutionIndex++) {
                 GraspSolution swap = performSwapMoviment(beforeIncrement.newClone(true), rclIndex, solutionIndex);
-                if (swap.isBetterThan(bestLocal)) {
+                if (swap.isBetterThan(bestLocal,  grasp.criteriaMetric)) {
                     bestLocal = swap.newClone(false);
                 }
             }
 
             GraspSolution add = performAddMoviment(beforeIncrement.newClone(true), rclIndex);
-            if (add.isBetterThan(bestLocal)) {
+            if (add.isBetterThan(bestLocal, grasp.criteriaMetric)) {
                 bestLocal = add.newClone(false);
             }
         }

@@ -58,7 +58,7 @@ public class BitFlip implements NeighborhoodStructure {
             GraspSolution neighborSolution;
             try {
                 neighborSolution = performSingleMoviment(reference);
-                if (neighborSolution.isBetterThan(bestLocal)) {
+                if (neighborSolution.isBetterThan(bestLocal,  grasp.criteriaMetric)) {
                     bestLocal = neighborSolution.newClone(false);
                     remLSNoImprovements = 10;
                 }

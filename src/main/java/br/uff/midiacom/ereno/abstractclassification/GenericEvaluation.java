@@ -134,16 +134,12 @@ public class GenericEvaluation {
         }
 
         // Resultados
-        double acuracia = 0;
-        double txDec = 0;
-        double txAFal = 0;
+
         int VP = 0;
         int VN = 0;
         int FP = 0;
         int FN = 0;
-        long time = System.nanoTime();
         long cumulativo = 0;
-        int vectorPosErrors[] = new int[1000];
 
         for (int i = 0; i < test.size(); i++) {
             try {
@@ -183,15 +179,6 @@ public class GenericEvaluation {
             int ll = 0;
         }
 
-        try {
-            acuracia = Float.valueOf(((VP + VN)) * 100) / Float.valueOf((VP + VN + FP + FN));
-            txDec = Float.valueOf((VP * 100)) / Float.valueOf((VP + FN));  // Sensitividade ou Taxa de Detecção
-            txAFal = Float.valueOf((FP * 100)) / Float.valueOf((VN + FP)); // Especificade ou Taxa de Alarmes Falsos    
-        } catch (java.lang.ArithmeticException e) {
-            System.out.println("Divisão por zero ((" + VP + " + " + VN + ") * 100) / (" + VP + " + " + VN + "+ " + FP + "+" + FN + "))");
-        }
-
-//        Resultado r = new Resultado(descricao, VP, FN, VN, FP, acuracia, txDec, txAFal, cumulativo / (VP + VN + FP + FN));
         GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, cumulativo);
         return r;
 

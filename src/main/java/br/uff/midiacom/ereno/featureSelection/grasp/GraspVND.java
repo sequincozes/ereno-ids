@@ -40,7 +40,7 @@ public class GraspVND extends Grasp {
         /* Gera uma solução vizinha igual ou melhor */
         initialSolution = LocalSearches.doVND(initialSolution, this);
         iterationNumber++;
-        if (initialSolution.isBetterThan(getBestGlobalSolution())) {
+        if (initialSolution.isBetterThan(getBestGlobalSolution(), criteriaMetric)) {
             setBestGlobalSolution(initialSolution.newClone(false));
         }
 
@@ -60,9 +60,9 @@ public class GraspVND extends Grasp {
 
             // Busca por Ótimo Local
             reconstructedSoluction = LocalSearches.doVND(reconstructedSoluction, this);
-            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution())) {
+            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution(), criteriaMetric)) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
-                System.out.println("GLOBAL IMPROVEMENT: " + Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas()) + " = " + getBestGlobalSolution().getEvaluation().getAcuracia());
+                System.out.println("GLOBAL IMPROVEMENT: " + Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas()) + " = " + getBestGlobalSolution().getEvaluation().getF1Score());
                 noImprovements = 0;
             } else {
                 System.out.print("Sem melhoras: " + noImprovements + " atualizado para ");
@@ -70,8 +70,8 @@ public class GraspVND extends Grasp {
                 System.out.println("Sem melhoras: " + noImprovements);
             }
             currentTime = System.currentTimeMillis() - beginTime;
-            System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - Acc:" + String.valueOf(getBestGlobalSolution().getEvaluation().getAcuracia()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));// " PROVA: " + ValidacaoCICIDS2017.executar(bestGlobal.getArrayFeaturesSelecionadas()).getAcuracia()));
-            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getAccuracy(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60) + "min"));
+            System.out.println("######### Fim ITERAÇÂO (" + iterationNumber + " / Current Time:" + (currentTime / 1000 / 60) + "min) - F1Score:" + String.valueOf(getBestGlobalSolution().getEvaluation().getF1Score()) + "% - Conjunto = " + (Arrays.toString(getBestGlobalSolution().getArrayFeaturesSelecionadas())));
+            outputManager.writeIteration(new Iteration(getBestGlobalSolution().getF1Score(), getBestGlobalSolution().getFeatureSet(), iterationNumber, noImprovements, numberEvaluation, (currentTime / 1000 / 60) + "min"));
 
         }
         return getBestGlobalSolution();

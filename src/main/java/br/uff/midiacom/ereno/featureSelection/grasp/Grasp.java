@@ -12,6 +12,7 @@ import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
+import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import br.uff.midiacom.ereno.evaluation.TimeAnalysis;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
@@ -31,6 +32,8 @@ public abstract class Grasp {
 
     public static Instances allInstances;
 
+    public static GraspMetrics criteriaMetric = GraspMetrics.F1SCORE;
+    
     public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
     int maxIterations = 100000; // quantidade total de iteracoes
     public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)
@@ -229,9 +232,9 @@ public abstract class Grasp {
         GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
         GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
         solution.setEvaluation(Util.getResultAverage(resultado));
-        String avaliacao = "AVALIAÇÃO " + "(" + numberEvaluation++ + ")" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + " > " + solution.getEvaluation().getAcuracia();
+        String avaliacao = "AVALIAÇÃO " + "(" + numberEvaluation++ + ")" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + " > " + solution.getEvaluation().getF1Score();
         System.out.println(avaliacao);
-        outputManager.writeDetail(new Detail(solution.getAccuracy(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
+        outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
 
         //solution.setEvaluation(new GenericResultado(ThreadLocalRandom.current().nextInt(70, 100)));
         return solution;

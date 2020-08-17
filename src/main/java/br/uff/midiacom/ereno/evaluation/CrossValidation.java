@@ -25,17 +25,8 @@ public class CrossValidation {
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = false;
 
-        // Util.getResultAverage(setupAndRun(5, 5, GenericClassifiers.RANDOM_TREE, new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78}));//.printResults();
-        // Util.getResultAverage(setupAndRun(5, 5, GenericClassifiers.RANDOM_TREE, new int[]{1}));//.printResults();
-        ArrayList<Integer> fs = new ArrayList<>();
-        for (int i = 1; i <= 79; i++) {
-            fs.add(i);
-            //      System.out.print(i + ",");
-        }
-        for (int i = 78; i > 0; i--) {
-            fs.remove(0);
-            Util.getResultAverage(setupAndRun(5, 5, GenericClassifiers.RANDOM_TREE, getArray(fs)));//.printResults();
-        }
+        Util.getResultAverage(setupAndRun(5, 5, GenericClassifiers.J48, new int[]{1, 6, 10, 16, 24, 25, 33, 34, 39, 44, 46, 47, 48, 49, 50, 51, 52, 57, 58, 59, 60, 61, 62, 67, 68, 72, 75})).printResults();
+
         /*System.out.println("CICIDS GR");
         Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.CICIDS_GR)).printResults();
         Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.CICIDS_GR)).printResults();
@@ -50,7 +41,6 @@ public class CrossValidation {
         //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_GR)).printResults();
         //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.RCL_CICIDS_IG)).printResults();
         // System.exit(0);
-
         //Util.printAverageResults(runMultipleClassifier(5, 7)); ancienttulip189
     }
 

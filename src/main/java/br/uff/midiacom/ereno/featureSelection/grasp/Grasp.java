@@ -12,6 +12,7 @@ import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
+import br.uff.midiacom.ereno.evaluation.TimeAnalysis;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
 import java.io.IOException;
@@ -52,10 +53,13 @@ public abstract class Grasp {
 
     // java -jar grasp.jar 2 3 all_in_one_WSN
     public static void main(String[] args) throws IOException, Exception {
-        args = new String[]{"3", "5", "wsn"};
+        //args = new String[]{"3", "5", "wsn"};
 
         boolean pregrasp = false;
-        if (pregrasp) {
+        boolean timeAnalysis = false;
+        if (timeAnalysis) {
+            TimeAnalysis.main(args);
+        } else if (pregrasp) {
             PreGrasp.main(args);
         } else {
 

@@ -18,12 +18,26 @@ public class GenericResultado {
 
     String Cx;
     float VP, FN, VN, FP;
-    long Time;
+    //long Time;
     double acuracia, recall, precision, f1Score;
     double cpuLoad, memoryLoad;
     double varianceTime, stdDvTime, loConfIntTime, hiConfIntTime;
     ArrayList<Long> detailedClassificationTime;
     private long nanotime;
+    private int testDatasetSize;
+    float avgTime;
+    long Time;
+
+    public void setAvgTime(float avgTime) {
+        this.avgTime = avgTime;
+    }
+
+    public float getAvgTime() {
+        return avgTime;
+    }
+    public int getTestDatasetSize() {
+        return testDatasetSize;
+    }
 
     public long getNanotime() {
         return nanotime;
@@ -64,13 +78,13 @@ public class GenericResultado {
 
     }
 
-    GenericResultado(String cx, float VP, float FN, float VN, float FP, long avgTime, double acuracia, double recall, double f1score, double varianceTime, double stdDvTime, double loConfIntTime, double hiConfIntTime) {
+    GenericResultado(String cx, float VP, float FN, float VN, float FP, float avgTime, double acuracia, double recall, double f1score, double varianceTime, double stdDvTime, double loConfIntTime, double hiConfIntTime) {
         this.Cx = cx;
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
         this.FP = FP;
-        this.Time = avgTime;
+        this.avgTime = avgTime;
         this.acuracia = acuracia;
         this.recall = recall;
         this.f1Score = f1score;
@@ -343,7 +357,7 @@ public class GenericResultado {
     public void printDetailedTime() {
         System.out.println(
                 getCx() + ";"
-                + getTime() + ";"
+                + getAvgTime() + ";"
                 + hiConfIntTime + ";"
                 + loConfIntTime + ";"
         );
@@ -352,9 +366,13 @@ public class GenericResultado {
     public void printDetailedTime(String details) {
         System.out.println(
                  details + ";"
-                + getTime() + ";"
+                + getAvgTime()+ ";"
                 + hiConfIntTime + ";"
                 + loConfIntTime + ";"
         );
+    }
+
+    public void setTestSize(int size) {
+        this.testDatasetSize = size;
     }
 }

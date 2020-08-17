@@ -216,7 +216,7 @@ public class Util {
         float FN = 0;
         float VN = 0;
         float FP = 0;;
-        long Time = 0;
+        float avgTime = 0;
         double acuracia = 0;
         double recall = 0;
         double precision = 0;
@@ -228,7 +228,7 @@ public class Util {
                 FN = FN + (res.getFN() / results.length);
                 VN = VN + (res.getVN() / results.length);
                 FP = FP + (res.getFP() / results.length);
-                Time = Time + (res.getTime() / results.length);
+                avgTime = avgTime + (res.avgTime / results.length);
                 acuracia = acuracia + (res.getAcuracia() / results.length);
                 recall = recall + (res.getRecall() / results.length);
                 precision = precision + (res.getPrecision() / results.length);
@@ -237,47 +237,44 @@ public class Util {
         } catch (NullPointerException e) {
             return new GenericResultado();
         }
-        return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, Time, acuracia, recall, recall, f1score, recall);
+        return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, (long) avgTime, acuracia, recall, recall, f1score, recall);
     }
 
-    public static GenericResultado getResultAverageDetailed(GenericResultado[] results, boolean debug) {
+    public static GenericResultado getResultAverageDetailed(GenericResultado[] foldResults, boolean debug) {
         float VP = 0;
         float FN = 0;
         float VN = 0;
         float FP = 0;
-        long avgTime = 0;
+        float avgTime = 0;
         double acuracia = 0;
         double recall = 0;
         double precision = 0;
         double f1score = 0;
-        long[] times = new long[results.length];
+        float[] times = new float[foldResults.length];
         double stdDvTime = 0;
         double varianceTime = 0;
         double loConfIntTime = 0;
         double hiConfIntTime = 0;
         try {
             int pos = 0;
-            for (GenericResultado res : results) {
-                long individualTime = res.getMicrotime();
+            for (GenericResultado eachFoldResult : foldResults) {
+                float foldTime = eachFoldResult.getMicrotime();
+                float individualTime = foldTime / eachFoldResult.getTestDatasetSize();
                 if (debug) {
-                    System.out.println("Individual Time: " + individualTime + " Microsseconds");
+                    System.out.println("Fold: " + foldTime + "/" + eachFoldResult.getTestDatasetSize() + "=" + individualTime);
                 }
                 times[pos++] = individualTime;
-                VP = VP + (res.getVP() / results.length);
-                FN = FN + (res.getFN() / results.length);
-                VN = VN + (res.getVN() / results.length);
-                FP = FP + (res.getFP() / results.length);
-                avgTime = avgTime + (individualTime / results.length);
-                acuracia = acuracia + (res.getAcuracia() / results.length);
-                recall = recall + (res.getRecall() / results.length);
-                precision = precision + (res.getPrecision() / results.length);
-                f1score = f1score + (res.getF1Score() / results.length);
+                VP = VP + (eachFoldResult.getVP() / foldResults.length);
+                FN = FN + (eachFoldResult.getFN() / foldResults.length);
+                VN = VN + (eachFoldResult.getVN() / foldResults.length);
+                FP = FP + (eachFoldResult.getFP() / foldResults.length);
+                avgTime = avgTime + (individualTime / foldResults.length);
+                acuracia = acuracia + (eachFoldResult.getAcuracia() / foldResults.length);
+                recall = recall + (eachFoldResult.getRecall() / foldResults.length);
+                precision = precision + (eachFoldResult.getPrecision() / foldResults.length);
+                f1score = f1score + (eachFoldResult.getF1Score() / foldResults.length);
             }
 
-            //int MAXN = 100000;
-            //int n = 0;
-            //double[] x = new double[MAXN];
-            // second pass: compute sample variance
             double xxbar = 0.0;
             for (int i = 0; i < times.length; i++) {
                 xxbar += (times[i] - avgTime) * (times[i] - avgTime);
@@ -301,7 +298,7 @@ public class Util {
             //  System.out.println("Null ");
             return new GenericResultado();
         }
-        return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, avgTime, acuracia, recall, f1score, varianceTime, stdDvTime, loConfIntTime, hiConfIntTime);
+        return new GenericResultado(foldResults[0].getCx(), VP, FN, VN, FP, avgTime, acuracia, recall, f1score, varianceTime, stdDvTime, loConfIntTime, hiConfIntTime);
     }
 
     //resultsCompilation[fold][classifierIndex++]
@@ -324,7 +321,7 @@ public class Util {
                 classifierResultsAvg[classifierIndex].VN = classifierResultsAvg[classifierIndex].VN + (foldClassifierResults[foldIndex][classifierIndex].getVN() / foldCount);
                 classifierResultsAvg[classifierIndex].FP = classifierResultsAvg[classifierIndex].FP + (foldClassifierResults[foldIndex][classifierIndex].getFP() / foldCount);
                 classifierResultsAvg[classifierIndex].FN = classifierResultsAvg[classifierIndex].FN + (foldClassifierResults[foldIndex][classifierIndex].getFN() / foldCount);
-                classifierResultsAvg[classifierIndex].Time = classifierResultsAvg[classifierIndex].Time + (foldClassifierResults[foldIndex][classifierIndex].getTime() / foldCount);
+                classifierResultsAvg[classifierIndex].avgTime = classifierResultsAvg[classifierIndex].avgTime + (foldClassifierResults[foldIndex][classifierIndex].getTime() / foldCount);
                 classifierResultsAvg[classifierIndex].acuracia = classifierResultsAvg[classifierIndex].acuracia + (foldClassifierResults[foldIndex][classifierIndex].getAcuracia() / foldCount);
                 classifierResultsAvg[classifierIndex].recall = classifierResultsAvg[classifierIndex].recall + (foldClassifierResults[foldIndex][classifierIndex].getRecall() / foldCount);
                 classifierResultsAvg[classifierIndex].precision = classifierResultsAvg[classifierIndex].precision + (foldClassifierResults[foldIndex][classifierIndex].getPrecision() / foldCount);

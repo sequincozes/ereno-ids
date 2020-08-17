@@ -21,6 +21,18 @@ public class GeneralParameters {
 
     // Run Settings java 
 //  java -jar preGrasp.jar all_in_one_WSN.csv 4 >> pregrasp_WSN_RANDOM_FOREST.txt
+    public static String[] DATASETS_FOREACH = {
+        CICIDS_DATASET,
+        KDD_DATASET,
+        WSN_DATASET
+    };
+
+    public static int[][] DATASETS_FEATURES_FOREACH = {
+        FeatureSubsets.CICIDS_FULL,
+        FeatureSubsets.KDD_FULL,
+        FeatureSubsets.WSN_FULL
+    };
+
     public static ClassifierExtended[] CLASSIFIERS_FOREACH = {
         GenericClassifiers.RANDOM_TREE,
         GenericClassifiers.J48,

@@ -5,8 +5,6 @@
  */
 package br.uff.midiacom.ereno.abstractclassification;
 
-import static br.uff.midiacom.ereno.abstractclassification.GenericClassifiers.NAIVE_BAYES;
-import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -101,7 +99,7 @@ public class GenericEvaluation {
 
         return r;
     }
-    
+
     public static GenericResultado runSingleClassifier(Instances train, Instances test) throws Exception {
         ClassifierExtended classififer = GeneralParameters.SINGLE_CLASSIFIER_MODE;
         GenericResultado r = testaEssaGalera(classififer, train, test, false);
@@ -120,7 +118,7 @@ public class GenericEvaluation {
                     + r.getTime()
             );
         } else if (SIMPLE) {
-            System.out.println("Classificador: " + classififer.getClassifierName() + " -> " + String.valueOf(r.getAcuracia()).substring(0, 5) + "%");
+            System.out.println("Classificador: " + classififer.getClassifierName() + " -> " + String.valueOf(r.getF1Score()).substring(0, 5) + "%");
         }
 
         return r;
@@ -134,24 +132,16 @@ public class GenericEvaluation {
         }
 
         // Resultados
-
         int VP = 0;
         int VN = 0;
         int FP = 0;
         int FN = 0;
-        long cumulativo = 0;
 
+        long begin = System.nanoTime();
         for (int i = 0; i < test.size(); i++) {
             try {
                 Instance testando = test.instance(i);
-                long antes = System.nanoTime();
                 double res1 = selectedClassifier.getClassifier().classifyInstance(testando);
-                long depois = (System.nanoTime() - antes);
-                if (timeTest) {
-                    System.out.println(depois);
-                }
-
-                cumulativo = cumulativo + depois;
                 if (res1 == testando.classValue()) {
                     if (res1 == normalClass) {
                         VN = VN + 1;
@@ -159,30 +149,27 @@ public class GenericEvaluation {
                         VP = VP + 1;
                     }
                 } else {
-                    //  String str = testando.toStringMaxDecimalDigits(10).substring(0, 3).replace("0,", "0").replace("1,", "0.1");
-                    // float pos = Float.valueOf(str) * 10;
-                    // int posi = (int) pos;
-
                     if (res1 == normalClass) {
                         FN = FN + 1;
                     } else {
                         FP = FP + 1;
-                        // vectorPosErrors[posi] = vectorPosErrors[posi] + 1;
                     }
                 }
             } catch (Exception e) {
                 System.out.println("Erro: " + e.getLocalizedMessage());
             }
         }
+        long end = System.nanoTime();
+
         if (ERROR) {
             System.out.println("Results");
-            int ll = 0;
         }
-
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, cumulativo);
+        long time = (end - begin)/test.size() / 1000;
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, time);
         return r;
 
     }
+
     private static GenericResultado testaEssaGaleraWithDeadline(ClassifierExtended selectedClassifier, Instances train, Instances test, boolean timeTest, long deadline) throws Exception {
         selectedClassifier.getClassifier().buildClassifier(train);
         if (timeTest) {
@@ -203,7 +190,7 @@ public class GenericEvaluation {
         int vectorPosErrors[] = new int[1000];
 
         for (int i = 0; i < test.size(); i++) {
-            
+
             try {
                 Instance testando = test.instance(i);
                 long antes = System.nanoTime();
@@ -214,8 +201,8 @@ public class GenericEvaluation {
                 }
 
                 cumulativo = cumulativo + depois;
-                if(cumulativo >= deadline){
-                    System.out.println(testando.numAttributes()+","+i);
+                if (cumulativo >= deadline) {
+                    System.out.println(testando.numAttributes() + "," + i);
                     break;
                 }
                 if (res1 == testando.classValue()) {

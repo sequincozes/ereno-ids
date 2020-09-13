@@ -24,7 +24,8 @@ import weka.filters.unsupervised.attribute.Normalize;
  */
 public class FeatureRanking {
 
-static boolean CSV = true;
+    static boolean CSV = true;
+
     private static Instances normalizar(Instances instances) throws Exception {
         Normalize filter = new Normalize();
         filter.setInputFormat(instances);
@@ -39,11 +40,11 @@ static boolean CSV = true;
     public static void main(String[] args) throws Exception {
 //        avaliarESelecionar(14, METODO.OneR, false); 
 
-    GeneralParameters.DATASET  = "/home/silvio/datasets/wsn-ds/blackhole/train_5.csv";
+        GeneralParameters.DATASET = GeneralParameters.KDD_DATASET;
 
-
-        avaliarESelecionar(18, METODO.IG, false); 
-        avaliarESelecionar(18, METODO.GR, false); 
+//        avaliarESelecionar(42, METODO.IG, false); 
+//        avaliarESelecionar(42, METODO.GR, false); 
+        avaliarESelecionar(40, METODO.OneR, false);
 
     }
 
@@ -60,10 +61,10 @@ static boolean CSV = true;
                 System.out.println("IG:");
                 for (int i = 0; i < instances.numAttributes(); i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
-                    if(CSV){
-                        System.out.println("IG;" + allFeatures[i].indiceFeature+";"+instances.attribute(i).name()+";" + allFeatures[i].valorFeature);
+                    if (CSV) {
+                        System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
                     } else {
-                        System.out.println("IG: [" + allFeatures[i].indiceFeature+"] Ganho: " + allFeatures[i].valorFeature + " ("+instances.attribute(i).name()+ ")");                        
+                        System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
                     }
                 }
                 break;
@@ -77,10 +78,10 @@ static boolean CSV = true;
                 System.out.println("GR:");
                 for (int i = 0; i < instances.numAttributes(); i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
-                    if(CSV){
-                        System.out.println("GR;" + allFeatures[i].indiceFeature+";"+instances.attribute(i).name()+";" + allFeatures[i].valorFeature);
+                    if (CSV) {
+                        System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
                     } else {
-                        System.out.println("GR: [" + allFeatures[i].indiceFeature+"] Ganho: " + allFeatures[i].valorFeature + " ("+instances.attribute(i).name()+ ")");                        
+                        System.out.println("GR: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
                     }
 
                 }
@@ -89,6 +90,8 @@ static boolean CSV = true;
                 System.out.println("OneR:");
                 for (int i = 0; i < instances.numAttributes(); i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                    System.out.println(allFeatures[i].indiceFeature+";"+allFeatures[i].valorFeature);
+
                 }
                 break;
             default:

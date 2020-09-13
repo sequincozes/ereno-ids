@@ -123,7 +123,7 @@ public class GraspSolution {
                 return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();
             }
 
-            return this.evaluation.getF1Score() > solucao.getEvaluation().getF1Score();
+            return this.evaluation.getAcuracia() > solucao.getEvaluation().getAcuracia();
         } else if (metric == GraspMetrics.F1SCORE) {
             if (this.evaluation.getF1Score() == solucao.getEvaluation().getF1Score()) {
                 return this.getNumSelectedFeatures() < solucao.getNumSelectedFeatures();

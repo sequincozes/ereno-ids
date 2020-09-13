@@ -5,7 +5,7 @@
  */
 package br.uff.midiacom.ereno.multithread;
 
-import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;

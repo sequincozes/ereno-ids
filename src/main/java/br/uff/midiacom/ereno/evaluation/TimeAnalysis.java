@@ -6,13 +6,14 @@
 package br.uff.midiacom.ereno.evaluation;
 
 import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
-import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import weka.core.Instances;
 
@@ -23,13 +24,19 @@ import weka.core.Instances;
 public class TimeAnalysis {
 
     public static void main(String[] args) throws Exception {
-
-        System.out.println("Usage: java -jar timeanalysis.jar [datasetIndex] [classifierIndex] [nFolds]");
-        String dataset = GeneralParameters.DATASETS_FOREACH[Integer.valueOf(args[0])];
-        int[] allFeatures = GeneralParameters.DATASETS_FEATURES_FOREACH[Integer.valueOf(args[0])];
-        ClassifierExtended classifier = GeneralParameters.CLASSIFIERS_FOREACH[Integer.valueOf(args[1])];
-        int folds = Integer.valueOf(args[2]);
-
+        String dataset = GeneralParameters.DATASETS_FOREACH[0];
+        int[] allFeatures = GeneralParameters.DATASETS_FEATURES_FOREACH[0];
+        ClassifierExtended classifier =GenericClassifiers.NAIVE_BAYES;// GeneralParameters.CLASSIFIERS_FOREACH[0];
+        int folds = 5;//Integer.valueOf(args[2]);
+        
+        if (false) { //Automatic
+            System.out.println("Usage: java -jar timeanalysis.jar [datasetIndex] [classifierIndex] [nFolds]");
+            dataset = GeneralParameters.DATASETS_FOREACH[Integer.valueOf(args[0])];
+            allFeatures = GeneralParameters.DATASETS_FEATURES_FOREACH[Integer.valueOf(args[0])];
+            classifier = GeneralParameters.CLASSIFIERS_FOREACH[Integer.valueOf(args[3])];
+            folds = Integer.valueOf(args[2]);
+        }
+        
         GeneralParameters.CSV = false;
         boolean debug = false;
         boolean printSelection = false;
@@ -58,6 +65,7 @@ public class TimeAnalysis {
 
     public static GenericResultado[] run(Instances instances, int folds, int seed, long deadline, int[] fs, boolean printSelection) throws Exception {
         GeneralParameters.FEATURE_SELECTION = fs;
+        System.out.println("fs: "+Arrays.toString(fs));
         Instances filtered = Util.copyAndFilter(instances, printSelection);
         if (deadline > 0) {
             return runSingleClassifierWithDeadline(filtered, folds, seed, deadline);
@@ -69,8 +77,6 @@ public class TimeAnalysis {
     public static GenericResultado[] runSingleClassifier(Instances allInstances, int totalFolds, int seed) throws Exception {
         /* Inicializações */
         GenericResultado[] resultsCompilation = new GenericResultado[totalFolds];
-        float totalTrain = 0;
-        float totalTest = 0;
 
         /* Particionar em @TotalFolds */
         Random rand = new Random(seed);
@@ -81,11 +87,8 @@ public class TimeAnalysis {
         // long begin = System.currentTimeMillis();
         for (int fold = 0; fold < totalFolds; fold++) { // Vai ter uma fold que o conjunto de treino e teste são idênticos
             Instances train = randData.trainCV(totalFolds, 1, rand); // Treinar uma só vez e não contabilizar
-            long previous = System.currentTimeMillis();
             Instances test = randData.testCV(totalFolds, fold);
             resultsCompilation[fold] = GenericEvaluation.runSingleClassifier(train, test);
-            resultsCompilation[fold].setTime(System.currentTimeMillis() - previous);
-            resultsCompilation[fold].setTestSize(test.size());
         }
         //long end = System.currentTimeMillis();
         ///System.out.println(allInstances.get(0).numAttributes() + /*";" + totalTrain + ";" + totalTest +*/ ";" + (end - begin) / totalFolds);

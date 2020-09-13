@@ -6,12 +6,15 @@
 package br.uff.midiacom.ereno.evaluation;
 
 import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
-import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.abstractclassification.Util;
+import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
+import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
+import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
 import java.util.ArrayList;
 import java.util.Random;
 import weka.core.Instances;
@@ -24,23 +27,42 @@ public class CrossValidation {
 
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = false;
+        GeneralParameters.DATASET = GeneralParameters.WSN_DATASET;
 
-        Util.getResultAverage(setupAndRun(5, 5, GenericClassifiers.J48, new int[]{1, 6, 10, 16, 24, 25, 33, 34, 39, 44, 46, 47, 48, 49, 50, 51, 52, 57, 58, 59, 60, 61, 62, 67, 68, 72, 75})).printResults();
+        System.out.println("IG");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, WsnFeatures.WSN_IG)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, WsnFeatures.WSN_IG)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, WsnFeatures.WSN_IG)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, WsnFeatures.WSN_IG)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, WsnFeatures.WSN_IG)).printResults();
 
-        /*System.out.println("CICIDS GR");
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.CICIDS_GR)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.CICIDS_GR)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.CICIDS_GR)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.CICIDS_GR)).printResults();
-        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.CICIDS_GR)).printResults();
+        System.out.println("GR");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, WsnFeatures.WSN_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, WsnFeatures.WSN_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, WsnFeatures.WSN_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, WsnFeatures.WSN_GR)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, WsnFeatures.WSN_GR)).printResults();
+
+        System.out.println("GBDT");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, WsnFeatures.WSN_GBDT)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, WsnFeatures.WSN_GBDT)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, WsnFeatures.WSN_GBDT)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, WsnFeatures.WSN_GBDT)).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, WsnFeatures.WSN_GBDT)).printResults();
+
+        System.out.println("GRASP");
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, WsnFeatures.WSN_GRASPP_BITFLIP[0])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, WsnFeatures.WSN_GRASPP_BITFLIP[1])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, WsnFeatures.WSN_GRASPP_BITFLIP[2])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, WsnFeatures.WSN_GRASPP_BITFLIP[3])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, WsnFeatures.WSN_GRASPP_BITFLIP[4])).printResults();
+        /*
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, KddFeatures.FULL_RCL_RVND[0])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, KddFeatures.FULL_RCL_RVND[1])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, KddFeatures.FULL_RCL_RVND[2])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, KddFeatures.FULL_RCL_RVND[3])).printResults();
+        Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, KddFeatures.FULL_RCL_RVND[4])).printResults();
          */
-        //System.out.println("CICIDS IG/OneR");
-        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_TREE, FeatureSubsets.RCL_CICIDS_IG)).printResults();
-        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.J48, FeatureSubsets.RCL_CICIDS_IG)).printResults();
-        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.REP_TREE, FeatureSubsets.RCL_CICIDS_IG)).printResults();
-        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.NAIVE_BAYES, FeatureSubsets.WSN_GR)).printResults();
-        //Util.getResultAverage(setupAndRun(5, 7, GenericClassifiers.RANDOM_FOREST, FeatureSubsets.RCL_CICIDS_IG)).printResults();
-        // System.exit(0);
         //Util.printAverageResults(runMultipleClassifier(5, 7)); ancienttulip189
     }
 
@@ -68,33 +90,14 @@ public class CrossValidation {
         Instances randData = new Instances(allInstances);   // create copy of original data
         randData.randomize(rand);         // randomize data with number generator
         GenericResultado[] resultsCompilation = new GenericResultado[totalFolds];
-        float totalTrain = 0;
-        float totalTest = 0;
-
-        long begin = System.currentTimeMillis();
         for (int fold = 0; fold < totalFolds; fold++) {
-            /* Tempo de treinamento */
-            long beginTimestamp = System.nanoTime();
             Instances train = randData.trainCV(totalFolds, fold, rand);
-            long trainigTimestamp = System.nanoTime();
-            totalTrain = totalTrain + ((trainigTimestamp - beginTimestamp) / train.size());
-            //System.out.println("Total Time:" + (System.currentTimeMillis() - begin));
-
-            /* Tempo de teste */
-            // long begin = System.currentTimeMillis();
             Instances test = randData.testCV(totalFolds, fold);
-            long evaluationTimestamp = System.nanoTime();
-            totalTest = totalTest + ((evaluationTimestamp - trainigTimestamp) / test.size());
             resultsCompilation[fold] = GenericEvaluation.runSingleClassifier(train, test);
         }
-        long end = System.currentTimeMillis();
 
-        totalTrain = (totalTrain / totalFolds);
-        totalTest = (totalTest / totalFolds);
-        //totalTrain = 1 / ((totalTrain) / 1000000 / 5);
-        //totalTest =  1 / ((totalTest) / 1000000 / 5);
-        System.out.println(allInstances.get(0).numAttributes() + ";" + totalTrain + ";" + totalTest + ";" + (end - begin) / totalFolds);
-
+        //totalTest = (totalTest / totalFolds);
+        //  System.out.println(allInstances.get(0).numAttributes() + ";" + totalTrain + ";" + totalTest + ";" + (end - begin) / totalFolds);
         return resultsCompilation;
     }
 
@@ -108,7 +111,6 @@ public class CrossValidation {
         System.out.print("--- FOLD: ");
         for (int fold = 0; fold < totalFolds; fold++) {
             System.out.print("[" + fold + "]");
-
             Instances train = randData.trainCV(totalFolds, fold, rand);
             Instances test = randData.testCV(totalFolds, fold);
             GenericResultado[] classifiersResults = GenericEvaluation.runMultipleClassifier(train, test);

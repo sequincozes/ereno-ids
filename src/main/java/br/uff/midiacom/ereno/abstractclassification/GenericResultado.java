@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -19,40 +20,43 @@ public class GenericResultado {
     String Cx;
     float VP, FN, VN, FP;
     //long Time;
-    double acuracia, recall, precision, f1Score;
+    double acuracia, recall, precision, f1score;
     double cpuLoad, memoryLoad;
     double varianceTime, stdDvTime, loConfIntTime, hiConfIntTime;
     ArrayList<Long> detailedClassificationTime;
     private long nanotime;
     private int testDatasetSize;
-    float avgTime;
+    double avgTime;
     long Time;
+    public double microtime;
 
-    public void setAvgTime(float avgTime) {
+    GenericResultado(String cx, float VP, float FN, float VN, float FP, double avgTime, double acuracia, double recall, double precision, double f1score) {
+        this.Cx = cx;
+        this.VP = VP;
+        this.FN = FN;
+        this.VN = VN;
+        this.FP = FP;
+        this.acuracia = acuracia;
+        this.recall = recall;
+        this.precision = precision;
+        this.f1score = f1score;
         this.avgTime = avgTime;
     }
 
-    public float getAvgTime() {
+    public void setAvgTime(double avgTime) {
+        this.avgTime = avgTime;
+    }
+
+    public double getAvgTime() {
         return avgTime;
     }
+
     public int getTestDatasetSize() {
         return testDatasetSize;
     }
 
     public long getNanotime() {
         return nanotime;
-    }
-
-    public long getMicrotime() {
-        return nanotime / 1000;
-    }
-
-    public long getMilitime() {
-        return getMicrotime() / 1000;
-    }
-
-    public long getSectime() {
-        return getMilitime() / 1000;
     }
 
     public GenericResultado(double acuracia) {
@@ -69,7 +73,7 @@ public class GenericResultado {
         this.acuracia = evaluation.getAcuracia();
         this.recall = evaluation.getRecall();
         this.precision = evaluation.getPrecision();
-        this.f1Score = evaluation.getF1Score();
+        this.f1score = evaluation.getF1Score();
         this.cpuLoad = evaluation.getCpuLoad();
         this.memoryLoad = evaluation.getMemoryLoad();
     }
@@ -78,7 +82,7 @@ public class GenericResultado {
 
     }
 
-    GenericResultado(String cx, float VP, float FN, float VN, float FP, float avgTime, double acuracia, double recall, double f1score, double varianceTime, double stdDvTime, double loConfIntTime, double hiConfIntTime) {
+    GenericResultado(String cx, float VP, float FN, float VN, float FP, double avgTime, double acuracia, double recall, double f1score, double varianceTime, double stdDvTime, double loConfIntTime, double hiConfIntTime) {
         this.Cx = cx;
         this.VP = VP;
         this.FN = FN;
@@ -87,7 +91,7 @@ public class GenericResultado {
         this.avgTime = avgTime;
         this.acuracia = acuracia;
         this.recall = recall;
-        this.f1Score = f1score;
+        this.f1score = f1score;
         this.varianceTime = varianceTime;
         this.stdDvTime = stdDvTime;
         this.loConfIntTime = loConfIntTime;
@@ -113,25 +117,25 @@ public class GenericResultado {
         this.memoryLoad = memoryLoad;
     }
 
-    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, double acuracia, double txDet, double txAFal, double f1score) {
+    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, double acuracia, double recall, double precision, double f1score) {
         this.Cx = descricao;
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
         this.FP = FP;
         this.acuracia = acuracia;
-        this.recall = txDet;
-        this.precision = txAFal;
-        this.f1Score = f1score;
+        this.recall = recall;
+        this.precision = precision;
+        this.f1score = f1score;
     }
 
-    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, long time) {
+    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, float time) {
         this.Cx = descricao;
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
         this.FP = FP;
-        this.nanotime = time;
+        this.microtime = time;
         recalcular();
     }
 
@@ -158,7 +162,9 @@ public class GenericResultado {
         this.acuracia = Float.valueOf(((getVP() + getVN()) * 100) / (getVP() + getVN() + getFP() + getFN())) / 100;
         this.recall = Float.valueOf((getVP() * 100) / (getVP() + getFN())) / 100;
         this.precision = Float.valueOf((getVP() * 100) / (getVP() + getFP())) / 100;
-        this.f1Score = Float.valueOf((float) (2 * (recall * precision))) / ((recall + precision));
+        this.f1score = Float.valueOf((float) (2 * (recall * precision))) / ((recall + precision));
+        // System.out.println("Recalcular -  VP" + getVP() + ", VN: " + getVN()+ ", FP: " + getFP()+ ", FN: " + getFN()+ ", Acc: " + getAcuracia()+ ", F1: " + getF1Score());
+
         return this;
     }
 
@@ -279,7 +285,8 @@ public class GenericResultado {
                 + getVN() + ";"
                 + getFP() + ";"
                 + getFN() + ";"
-                + getTime()
+                + getAvgTime() + ";"
+                + Arrays.toString(GeneralParameters.FEATURE_SELECTION)
         );
     }
 
@@ -339,7 +346,12 @@ public class GenericResultado {
     }
 
     public double getF1Score() {
-        return f1Score;
+        String f1 = String.valueOf(f1score);
+        if (f1.length() > 6) {
+            f1 = f1.substring(0, 7);
+        }
+        f1score = Double.valueOf(f1);
+        return f1score;
     }
 
     public void setRecall(double taxaDeteccao) {
@@ -365,8 +377,8 @@ public class GenericResultado {
 
     public void printDetailedTime(String details) {
         System.out.println(
-                 details + ";"
-                + getAvgTime()+ ";"
+                details + ";"
+                + getAvgTime() + ";"
                 + hiConfIntTime + ";"
                 + loConfIntTime + ";"
         );

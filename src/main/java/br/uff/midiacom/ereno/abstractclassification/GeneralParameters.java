@@ -5,6 +5,8 @@
  */
 package br.uff.midiacom.ereno.abstractclassification;
 
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
+
 public class GeneralParameters {
 
     public static boolean CSV = false;

@@ -5,7 +5,7 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
-import br.uff.midiacom.ereno.abstractclassification.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.ThreadLocalRandom;
 import weka.core.Instances;
 
 /**
@@ -32,13 +31,13 @@ public abstract class Grasp {
 
     public static Instances allInstances;
 
-    public static GraspMetrics criteriaMetric = GraspMetrics.F1SCORE;
-    
+    public static GraspMetrics criteriaMetric = GraspMetrics.ACCURACY;// GraspMetrics.F1SCORE;
+
     public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
     int maxIterations = 100000; // quantidade total de iteracoes
     public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)
     final int maxNoImprovement = 100000; // iteracoes sem melhorias consecutivas
-    static int NUM_FEATURES = 1;
+    static int NUM_FEATURES = 5;
     //String method = "method";
     //String experimentIdentifier = "0000000";
     boolean localOutput = false;
@@ -54,9 +53,13 @@ public abstract class Grasp {
     public int numBitFLipFeatures = -1;
     long beginTime = 0;
 
-    // java -jar grasp.jar 2 3 all_in_one_WSN
+        /* java -jar grasp.jar 3 1 cicids >> full_rcl_3_1.txt&
+         java -jar grasp.jar 3 2 cicids >> full_rcl_3_2.txt&
+         java -jar grasp.jar 3 3 cicids >> full_rcl_3_3.txt&
+         java -jar grasp.jar 3 4 cicids >> full_rcl_3_4.txt&
+         java -jar grasp.jar 3 5 cicids >> full_rcl_3_5.txt&*/
     public static void main(String[] args) throws IOException, Exception {
-        //args = new String[]{"3", "5", "wsn"};
+       // args = new String[]{"1","1",  "cicids", "5"};
 
         boolean pregrasp = false;
         boolean timeAnalysis = false;
@@ -232,7 +235,11 @@ public abstract class Grasp {
         GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
         GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
         solution.setEvaluation(Util.getResultAverage(resultado));
-        String avaliacao = "AVALIAÇÃO " + "(" + numberEvaluation++ + ")" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + " > " + solution.getEvaluation().getF1Score();
+        String avaliacao = "AVALIAÇÃO "
+                + "(" + numberEvaluation++ + ")" 
+                + Arrays.toString(solution.getArrayFeaturesSelecionadas())
+                + " > " + solution.getEvaluation().getF1Score()
+                + "(acc: " + solution.getEvaluation().getAcuracia();
         System.out.println(avaliacao);
         outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
 

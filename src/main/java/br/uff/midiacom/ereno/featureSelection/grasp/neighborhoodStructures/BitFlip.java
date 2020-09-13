@@ -18,8 +18,8 @@ public class BitFlip implements NeighborhoodStructure {
 
     GraspSolution bestLocal;
     Grasp grasp;
-    int remLSIterations = 20;
-    int remLSNoImprovements = 10;
+    int remLSIterations = 50;
+    int remLSNoImprovements = 20;
 
     public BitFlip(Grasp grasp) {
         this.grasp = grasp;

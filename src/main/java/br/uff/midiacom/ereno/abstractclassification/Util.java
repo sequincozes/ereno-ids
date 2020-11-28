@@ -212,10 +212,24 @@ public class Util {
     }
 
     public static GenericResultado getResultAverage(GenericResultado[] results) {
+        if (GeneralParameters.DEBUG_MODE) {
+            for (GenericResultado res : results) {
+                System.out.println("F1:" + res.getF1Score());
+                System.out.println("Acc:" + res.getAcuracia());
+                System.out.println("Precision:" + res.getPrecision());
+                System.out.println("Recall:" + res.getRecall());
+                System.out.println("VN:" + res.VN);
+                System.out.println("VP:" + res.VP);
+                System.out.println("FN:" + res.FN);
+                System.out.println("FP:" + res.FP);
+                System.out.println("-----");
+
+            }
+        }
         float VP = 0;
         float FN = 0;
         float VN = 0;
-        float FP = 0;;
+        float FP = 0;
         double avgTime = 0;
         double acuracia = 0;
         double recall = 0;
@@ -240,7 +254,12 @@ public class Util {
             return new GenericResultado();
         }
         avgTime = totalMicroTime / results.length;
-        return new GenericResultado(results[0].getCx(), VP, FN, VN, FP, avgTime, acuracia, recall, precision, f1score);
+
+        GenericResultado compilledResult = new GenericResultado(results[0].getCx(), VP, FN, VN, FP, avgTime, acuracia, recall, precision, f1score, results[0].usedFS);
+//        System.out.println("getResultAverage: " + results[0].getCx() + " -> " + Arrays.toString(results[0].usedFS));
+//        System.out.println("getResultAverage: " + compilledResult.getCx() + " -> " + Arrays.toString(compilledResult.usedFS));
+
+        return compilledResult;
     }
 
     public static GenericResultado getResultAverageDetailed(GenericResultado[] foldResults, boolean debug) {
@@ -264,7 +283,7 @@ public class Util {
             int pos = 0;
             for (GenericResultado eachFoldResult : foldResults) {
                 times[pos++] = eachFoldResult.microtime;
-                System.out.println("TIME: "+eachFoldResult.microtime);
+                System.out.println("TIME: " + eachFoldResult.microtime);
                 VP = VP + (eachFoldResult.getVP() / foldResults.length);
                 FN = FN + (eachFoldResult.getFN() / foldResults.length);
                 VN = VN + (eachFoldResult.getVN() / foldResults.length);

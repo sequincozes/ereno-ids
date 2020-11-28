@@ -40,7 +40,7 @@ public class IWSS implements NeighborhoodStructure {
         fullList = bestLocal.copyRCLFeatures();
 
         for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
-            System.out.println("IWSS >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(" + bestLocal.getF1Score() + ")");
+            System.out.println("IWSS >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(Acc: " + bestLocal.getAccuracy()+ "), (F1: " + bestLocal.getF1Score() + ")");
 
             if (grasp.currentTime >= grasp.maxTime) {
                 return bestLocal;

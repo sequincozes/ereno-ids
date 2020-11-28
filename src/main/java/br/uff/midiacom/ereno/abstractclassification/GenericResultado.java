@@ -8,6 +8,7 @@ package br.uff.midiacom.ereno.abstractclassification;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class GenericResultado {
 
     String Cx;
-    float VP, FN, VN, FP;
+    public float VP, FN, VN, FP;
     //long Time;
     double acuracia, recall, precision, f1score;
     double cpuLoad, memoryLoad;
@@ -27,10 +28,33 @@ public class GenericResultado {
     private long nanotime;
     private int testDatasetSize;
     double avgTime;
+    @Deprecated
     long Time;
     public double microtime;
+    public int[] usedFS;
 
     GenericResultado(String cx, float VP, float FN, float VN, float FP, double avgTime, double acuracia, double recall, double precision, double f1score) {
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
+        this.Cx = cx;
+        this.VP = VP;
+        this.FN = FN;
+        this.VN = VN;
+        this.FP = FP;
+        this.acuracia = acuracia;
+        this.recall = recall;
+        this.precision = precision;
+        this.f1score = f1score;
+        this.avgTime = avgTime;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+    }
+
+    GenericResultado(String cx, float VP, float FN, float VN, float FP, double avgTime, double acuracia, double recall, double precision, double f1score, int[] usedFS) {
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
+        this.usedFS = usedFS;
         this.Cx = cx;
         this.VP = VP;
         this.FN = FN;
@@ -61,6 +85,7 @@ public class GenericResultado {
 
     public GenericResultado(double acuracia) {
         this.acuracia = acuracia;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
     }
 
     public GenericResultado(GenericResultado evaluation) {
@@ -76,6 +101,10 @@ public class GenericResultado {
         this.f1score = evaluation.getF1Score();
         this.cpuLoad = evaluation.getCpuLoad();
         this.memoryLoad = evaluation.getMemoryLoad();
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
     }
 
     GenericResultado() {
@@ -96,12 +125,16 @@ public class GenericResultado {
         this.stdDvTime = stdDvTime;
         this.loConfIntTime = loConfIntTime;
         this.hiConfIntTime = hiConfIntTime;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
     }
 
     public int[][] getConfusionMatrix() {
         return confusionMatrix;
     }
-    public int[][] confusionMatrix = new int[6][6];
+    public int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
 
     public GenericResultado(String Cx, float VP, float FN, float VN, float FP, long Time, double acuracia, double txDet, double txAFal, double cpuLoad, double memoryLoad) {
         this.Cx = Cx;
@@ -115,6 +148,10 @@ public class GenericResultado {
         this.precision = txAFal;
         this.cpuLoad = cpuLoad;
         this.memoryLoad = memoryLoad;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
     }
 
     public GenericResultado(String descricao, float VP, float FN, float VN, float FP, double acuracia, double recall, double precision, double f1score) {
@@ -127,6 +164,10 @@ public class GenericResultado {
         this.recall = recall;
         this.precision = precision;
         this.f1score = f1score;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
     }
 
     public GenericResultado(String descricao, float VP, float FN, float VN, float FP, float time) {
@@ -135,18 +176,28 @@ public class GenericResultado {
         this.FN = FN;
         this.VN = VN;
         this.FP = FP;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
         this.microtime = time;
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
         recalcular();
     }
 
-    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, long time, int[][] confusionMatrix) {
+    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, long nanotime, int[][] confusionMatrix) {
         this.Cx = descricao;
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
         this.FP = FP;
-        this.Time = time;
+        this.nanotime = nanotime;
+        this.microtime = nanotime / 1000;
+        this.Time = nanotime / 1000;
         this.confusionMatrix = confusionMatrix;
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
         recalcular();
     }
 
@@ -155,16 +206,32 @@ public class GenericResultado {
         this.VP = VP;
         this.FN = FN;
         this.VN = VN;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
         this.FP = FP;
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
     }
 
     public GenericResultado recalcular() {
+
         this.acuracia = Float.valueOf(((getVP() + getVN()) * 100) / (getVP() + getVN() + getFP() + getFN())) / 100;
         this.recall = Float.valueOf((getVP() * 100) / (getVP() + getFN())) / 100;
         this.precision = Float.valueOf((getVP() * 100) / (getVP() + getFP())) / 100;
-        this.f1score = Float.valueOf((float) (2 * (recall * precision))) / ((recall + precision));
-        // System.out.println("Recalcular -  VP" + getVP() + ", VN: " + getVN()+ ", FP: " + getFP()+ ", FN: " + getFN()+ ", Acc: " + getAcuracia()+ ", F1: " + getF1Score());
 
+        this.f1score = Float.valueOf(
+                (float) (2 * ((recall * precision) / (recall + precision)))
+        );
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("Recalcular = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + "), "
+                    + "Acc (" + getAcuracia() + "), F1 (" + getF1Score() + ")"
+                    + "Recalll (" + getRecall() + ")," + "Precision (" + getPrecision() + ")");
+            System.out.println("Soma: " + getRecall() + getPrecision());
+            System.out.println("Multi: " + getRecall() * getPrecision());
+            System.out.println("Multi/Soma: " + (getRecall() * getPrecision()) / (getRecall() + getPrecision()));
+            System.out.println("Multi/Soma X 2: " + 2 * (getRecall() * getPrecision()) / (getRecall() + getPrecision()));
+
+        }
         return this;
     }
 
@@ -217,12 +284,20 @@ public class GenericResultado {
     }
 
     public double getAcuracia() {
-        String acc = String.valueOf(acuracia);
+        /*  String acc = String.valueOf(acuracia);
         if (acc.length() > 6) {
             acc = acc.substring(0, 7);
         }
         acuracia = Double.valueOf(acc);
         return acuracia;
+         */
+        DecimalFormat numberFormat = new DecimalFormat("#.#######");
+        double cuttedAccuracy = Double.valueOf(numberFormat.format(acuracia).replace(",", "."));
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("ACC: " + acuracia + " = " + cuttedAccuracy);
+        }
+
+        return cuttedAccuracy;
     }
 
     public void printResults(String nome, boolean persistOnDisk) throws IOException {
@@ -286,8 +361,24 @@ public class GenericResultado {
                 + getFP() + ";"
                 + getFN() + ";"
                 + getAvgTime() + ";"
-                + Arrays.toString(GeneralParameters.FEATURE_SELECTION)
+                + Arrays.toString(usedFS)
         );
+    }
+
+    public String printResultsGetString() {
+        recalcular();
+        return getCx() + ";"
+                + getAcuracia() + ";"
+                + getPrecision() + ";"
+                + getRecall() + ";"
+                + getF1Score() + ";"
+                + getVP() + ";"
+                + getVN() + ";"
+                + getFP() + ";"
+                + getFN() + ";"
+                + getAvgTime() + ";"
+                + Arrays.toString(usedFS) + ";";
+
     }
 
     public void printDetailedResults() {
@@ -346,12 +437,16 @@ public class GenericResultado {
     }
 
     public double getF1Score() {
-        String f1 = String.valueOf(f1score);
-        if (f1.length() > 6) {
-            f1 = f1.substring(0, 7);
+        if (!(f1score > 0)) {
+            return 0;
         }
-        f1score = Double.valueOf(f1);
-        return f1score;
+        DecimalFormat numberFormat = new DecimalFormat("#.#######");
+        double cuttedF1 = Double.valueOf(numberFormat.format(f1score).replace(",", "."));
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("F1: " + f1score + " = " + cuttedF1);
+        }
+
+        return cuttedF1;
     }
 
     public void setRecall(double taxaDeteccao) {

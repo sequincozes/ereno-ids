@@ -138,23 +138,43 @@ public class GenericEvaluation {
         int FN = 0;
 
         long begin = System.nanoTime();
+        int[][] confusionMatrix = new int[6][6];
+
         for (int i = 0; i < test.size(); i++) {
             try {
                 Instance testando = test.instance(i);
-                double res1 = selectedClassifier.getClassifier().classifyInstance(testando);
-                if (res1 == testando.classValue()) {
-                    if (res1 == normalClass) {
-                        VN = VN + 1;
+                double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
+//                if (resultado == testando.classValue()) {
+//                    if (resultado == normalClass) {
+//                        VN = VN + 1;
+//                    } else {
+//                        VP = VP + 1;
+//                    }
+//                } else {
+//                    if (resultado == normalClass) {
+//                        FN = FN + 1;
+//                    } else {
+//                        FP = FP + 1;
+//                    }
+//                }
+
+                if (resultado == normalClass) {
+                    if (resultado == testando.classValue()) {
+                        VN = VN + 1; // resultado normal, resultado verdadeiro
                     } else {
-                        VP = VP + 1;
+                        FN = FN + 1; // resultado normal, resultado falso
                     }
-                } else {
-                    if (res1 == normalClass) {
-                        FN = FN + 1;
+                } else { //Intrusion detected!
+                    if (normalClass == testando.classValue()) {
+                        FP = FP + 1; // resultado ataque, resultado falso 
                     } else {
-                        FP = FP + 1;
+                        VP = VP + 1; // resultado ataque, resultado verdadeiro
                     }
                 }
+                ///
+                double esperado = testando.classValue();
+                // Confusion matrix:
+                confusionMatrix[(int) esperado][(int) resultado] = confusionMatrix[(int) esperado][(int) resultado] + 1;
             } catch (Exception e) {
                 System.out.println("Erro: " + e.getLocalizedMessage());
             }
@@ -164,8 +184,10 @@ public class GenericEvaluation {
         if (ERROR) {
             System.out.println("Results");
         }
-        long time = (end - begin)/test.size() / 1000;
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, time);
+        long time = (end - begin) / test.size(); //nano time
+
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, time, confusionMatrix);
+        //System.out.println(r.getCx()+" - "+r.getAcuracia()+" (F1: "+r.getF1Score());
         return r;
 
     }

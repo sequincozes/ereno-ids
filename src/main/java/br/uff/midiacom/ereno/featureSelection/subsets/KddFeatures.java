@@ -25,13 +25,14 @@ public class KddFeatures {
     public static final int[] IWSS_VND_J48 = new int[]{17, 1, 3, 5, 6, 12, 13, 19, 24, 25, 27, 29, 30, 31, 32, 33, 41, 4, 15};
     public static final int[] IWSS_VND_RandomForest = new int[]{34, 1, 3, 4, 5, 6, 12, 23, 30, 37, 38, 39, 40, 16};
     public static final int[] IWSS_VND_RepTree = new int[]{40, 1, 3, 4, 5, 6, 12, 17, 18, 19, 24, 25, 27, 30, 32, 34, 37, 16};
-    public static final int[] IWSS_VND[] = {IWSS_VND_RandomTree, IWSS_VND_J48, IWSS_VND_RepTree, IWSS_VND_NaiveBayes, IWSS_VND_RandomForest};
+    public static final int[][] I_G_VND = {IWSS_VND_RandomTree, IWSS_VND_J48, IWSS_VND_RepTree, IWSS_VND_NaiveBayes, IWSS_VND_RandomForest};
 
-    public static final int[] IG_GRASP_NaiveBayes = new int[]{};
-    public static final int[] IG_GRASP_RandomTree = new int[]{};
-    public static final int[] IG_GRASP_J48 = new int[]{};
-    public static final int[] IG_GRASP_RandomForest = new int[]{};
-    public static final int[] IG_GRASP_RepTree = new int[]{};
+
+    public static final int[] IG_GRASP_RandomTree = new int[]{26, 6, 23, 17, 3};
+    public static final int[] IG_GRASP_J48 = new int[]{19, 32, 12, 5, 3};
+    public static final int[] IG_GRASP_RepTree = new int[]{20, 3, 30, 7, 5};
+    public static final int[] IG_GRASP_NaiveBayes = new int[]{14, 3, 21, 11, 4};
+    public static final int[] IG_GRASP_RandomForest = new int[]{16, 40, 3, 34, 5};
     public static final int[] IG_GRASP[] = {IG_GRASP_RandomTree, IG_GRASP_J48, IG_GRASP_RepTree, IG_GRASP_NaiveBayes, IG_GRASP_RandomForest};
 
     public static final int[] IG_VND_NaiveBayes = new int[]{21, 13, 8, 4, 3};
@@ -46,7 +47,7 @@ public class KddFeatures {
     public static final int[] IG_RVND_J48 = new int[]{17, 1, 3, 5, 6, 12, 13, 19, 24, 25, 27, 29, 30, 31, 32, 33, 41, 4, 15};
     public static final int[] IG_RVND_RandomForest = new int[]{1, 3, 4, 5, 6, 12, 23, 30, 37, 38, 40, 41};
     public static final int[] IG_RVND_RepTree = new int[]{40, 1, 3, 4, 5, 6, 12, 17, 18, 19, 24, 25, 27, 30, 32, 34, 37, 16};
-    public static final int[] IG_RVND[] = {IG_RVND_RandomTree, IG_RVND_J48, IG_RVND_RepTree, IG_RVND_NaiveBayes, IG_RVND_RandomForest};
+    public static final int[][] IG_RVND = {IG_RVND_RandomTree, IG_RVND_J48, IG_RVND_RepTree, IG_RVND_NaiveBayes, IG_RVND_RandomForest};
 
     public static final int[] FULL_RCL_VND_RandomTree = new int[]{41, 40, 38, 37, 35, 34, 31, 22, 13, 12, 6, 5, 4, 3, 2, 1};
     public static final int[] FULL_RCL_VND_J48 = new int[]{41, 37, 36, 35, 33, 26, 24, 23, 22, 12, 10, 7, 6, 5, 4, 3, 2};

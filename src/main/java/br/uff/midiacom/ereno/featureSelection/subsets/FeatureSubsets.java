@@ -57,11 +57,11 @@ public class FeatureSubsets {
     public static final int[] RCL_CICIDS_IWSSR_RepTree = new int[]{1, 10, 11, 25, 26, 27, 31, 32, 33, 34, 44, 45, 46, 49, 50, 51, 57, 58, 59, 60, 61, 62, 63, 65, 66, 67, 68, 69, 71, 72, 73, 76, 78};
     public static final int[] RCL_CICIDS_IWSSR[] = {RCL_CICIDS_IWSSR_RandomTree, RCL_CICIDS_IWSSR_J48, RCL_CICIDS_IWSSR_RepTree, RCL_CICIDS_IWSSR_NaiveBayes, RCL_CICIDS_IWSSR_RandomForest};
 
-    public static final int[] RCL_WSN_IWSSR_NaiveBayes = new int[]{6, 7, 8, 13, 18};
     public static final int[] RCL_WSN_IWSSR_RandomTree = new int[]{2, 3, 4, 6, 7, 9, 15, 18};
     public static final int[] RCL_WSN_IWSSR_J48 = new int[]{2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18};
-    public static final int[] RCL_WSN_IWSSR_RandomForest = new int[]{2, 6, 7, 9, 10, 15, 16, 17, 18};
     public static final int[] RCL_WSN_IWSSR_RepTree = new int[]{2, 3, 4, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    public static final int[] RCL_WSN_IWSSR_NaiveBayes = new int[]{6, 7, 8, 13, 18};
+    public static final int[] RCL_WSN_IWSSR_RandomForest = new int[]{2, 6, 7, 9, 10, 15, 16, 17, 18};
     public static final int[] RCL_WSN_IWSSR[] = {RCL_WSN_IWSSR_RandomTree, RCL_WSN_IWSSR_J48, RCL_WSN_IWSSR_RepTree, RCL_WSN_IWSSR_NaiveBayes, RCL_WSN_IWSSR_RandomForest};
 
     public static final int[] RCL_KDD_IWSSR_NaiveBayes = new int[]{3, 4, 8, 9, 11, 13, 14, 15, 18, 20, 21, 41};

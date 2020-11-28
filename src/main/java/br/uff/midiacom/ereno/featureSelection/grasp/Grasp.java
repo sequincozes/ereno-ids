@@ -15,8 +15,11 @@ import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import br.uff.midiacom.ereno.evaluation.TimeAnalysis;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
+import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
+import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -31,7 +34,7 @@ public abstract class Grasp {
 
     public static Instances allInstances;
 
-    public static GraspMetrics criteriaMetric = GraspMetrics.ACCURACY;// GraspMetrics.F1SCORE;
+    public static GraspMetrics criteriaMetric = GraspMetrics.F1SCORE;// GraspMetrics.F1SCORE;
 
     public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
     int maxIterations = 100000; // quantidade total de iteracoes
@@ -50,17 +53,16 @@ public abstract class Grasp {
     public int numberEvaluation = 0;
     OutputManager outputManager;
     private GraspSolution bestGlobalSolution;
-    public int numBitFLipFeatures = -1;
+    public int numBitFLipFeatures = 5;
     long beginTime = 0;
 
-        /* java -jar grasp.jar 3 1 cicids >> full_rcl_3_1.txt&
-         java -jar grasp.jar 3 2 cicids >> full_rcl_3_2.txt&
-         java -jar grasp.jar 3 3 cicids >> full_rcl_3_3.txt&
-         java -jar grasp.jar 3 4 cicids >> full_rcl_3_4.txt&
-         java -jar grasp.jar 3 5 cicids >> full_rcl_3_5.txt&*/
+    /* java -jar grasp.jar 2 1 wsn >> full_rcl_2_1.txt&
+         java -jar graspAcc.jar 2 2 wsn >> full_rcl_2_2.txt&
+         java -jar graspAcc.jar 2 3 wsn >> full_rcl_2_3.txt&
+         java -jar graspAcc.jar 2 4 wsn >> full_rcl_2_4.txt&
+         java -jar graspAcc.jar 2 5 wsn >> full_rcl_2_5.txt&*/
     public static void main(String[] args) throws IOException, Exception {
-       // args = new String[]{"1","1",  "cicids", "5"};
-
+        //   args = new String[]{"2", "4", "wsn", "5"};
         boolean pregrasp = false;
         boolean timeAnalysis = false;
         if (timeAnalysis) {
@@ -68,21 +70,7 @@ public abstract class Grasp {
         } else if (pregrasp) {
             PreGrasp.main(args);
         } else {
-
-            //setupStandaloneGrasp("Test");
-            //new GraspSimple().runGraspSimple(ALL, "grasp", NeighborhoodStructures.IWSSR);
-            if (args.length == 2 && args[0].equals("all")) {
-                String command
-                        = "java -jar grasp.jar " + args[1] + " 1 & "
-                        + "java -jar grasp.jar " + args[1] + " 2 &"
-                        + "java -jar grasp.jar " + args[1] + " 3 &"
-                        + "java -jar grasp.jar " + args[1] + " 4 & "
-                        + "java -jar grasp.jar " + args[1] + " 5 &";
-                Runtime.getRuntime().exec(command);
-
-            } else {
-                enableMicroservices(args);
-            }
+            enableMicroservices(args);
         }
 
     }
@@ -232,16 +220,32 @@ public abstract class Grasp {
     }
 
     public GraspSolution avaliar(GraspSolution solution) throws Exception {
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("Dataset: " + GeneralParameters.DATASET);
+            System.out.println("Classifier: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
+            System.out.println("Folds: " + GeneralParameters.FOLDS);
+            System.out.println("Seed: " + GeneralParameters.GRASP_SEED);
+        }
+
         GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
         GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
         solution.setEvaluation(Util.getResultAverage(resultado));
         String avaliacao = "AVALIAÇÃO "
-                + "(" + numberEvaluation++ + ")" 
+                + "(" + numberEvaluation++ + ") - Selected: "
                 + Arrays.toString(solution.getArrayFeaturesSelecionadas())
-                + " > " + solution.getEvaluation().getF1Score()
+                + " F1Score > " + solution.getEvaluation().getF1Score()
                 + "(acc: " + solution.getEvaluation().getAcuracia();
+
         System.out.println(avaliacao);
-        outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
+        if (GeneralParameters.DEBUG_MODE) {
+
+            if (!(solution.getEvaluation().getF1Score() > 0)) {
+                System.err.print("Problema na F1 Score: " + solution.getEvaluation().getF1Score());
+                System.exit(0);
+            }
+        }
+        if(outputManager!=null)
+          outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getEvaluation().getTime()));
 
         //solution.setEvaluation(new GenericResultado(ThreadLocalRandom.current().nextInt(70, 100)));
         return solution;
@@ -270,10 +274,17 @@ public abstract class Grasp {
     private static void showOptions(int graspAlgoritm, int classifier, String dataset) throws Exception {
         if (dataset.contains("WSN") || dataset.contains("wsn")) {
             FeatureSubsets.RCL = FeatureSubsets.RCL_WSN_IWSSR[classifier];
+//            FeatureSubsets.RCL = FeatureSubsets.WSN_FULL;
+
         } else if (dataset.contains("KDD") || dataset.contains("kdd")) {
-            FeatureSubsets.RCL = FeatureSubsets.RCL_KDD_IWSSR[classifier];
+//            FeatureSubsets.RCL = FeatureSubsets.RCL_KDD_IWSSR[classifier];
+//            FeatureSubsets.RCL = FeatureSubsets.KDD_FULL;
+            FeatureSubsets.RCL = KddFeatures.IG_RCL20;
+
         } else if (dataset.contains("CICIDS") || dataset.contains("cicids")) {
-            FeatureSubsets.RCL = FeatureSubsets.RCL_CICIDS_IWSSR[classifier];
+//            FeatureSubsets.RCL = FeatureSubsets.RCL_CICIDS_IWSSR[classifier];
+            FeatureSubsets.RCL = CicidsFeatures.RCL_IG;
+
         } else {
             System.out.println("Invalid dataset name. Must contains kdd, wsn, or cicids.");
             System.exit(1);

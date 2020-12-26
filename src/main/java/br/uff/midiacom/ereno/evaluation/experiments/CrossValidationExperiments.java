@@ -10,10 +10,16 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
+import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
+import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
+import br.uff.midiacom.ereno.featureSelection.Util;
 import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
 import br.uff.midiacom.ereno.featureSelection.subsets.FullConsistencySubset;
 import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
 import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
+import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
+import java.io.IOException;
+import weka.core.Instances;
 
 /**
  *
@@ -23,30 +29,43 @@ public class CrossValidationExperiments {
 
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = true;
-        fullConsistencyV2CrossValidation();
+//        reduceInstances();
+        fullConsistencyV3CrossValidation(0);
+        fullConsistencyV3CrossValidation(1);
+        fullConsistencyV3CrossValidation(2);
+        fullConsistencyV3CrossValidation(3);
+        fullConsistencyV3CrossValidation(4);
+
 //        wsnCrossValidation();
+    }
+
+    public static void reduceInstances() throws IOException {
+        Instances allInstances = Util.cutFold(10, 1, 7, new String[]{
+            GeneralParameters.DATASET});
+        System.out.println("Tamanho: " + allInstances.size());
+        Util.writeInstancesToFile(allInstances, GeneralParameters.CONSISTENCY_DATASET.replace(".csv", "_10percent.csv"));
     }
 
     public static void wsnCrossValidation() throws Exception {
         boolean printConfusionMatrix = false;
         System.out.println("--- WSN_FULL");
-        CrossValidation.printFoldResults(WsnFeatures.WSN_IG, 0, printConfusionMatrix);
-        CrossValidation.printFoldResults(WsnFeatures.WSN_IG, 1, printConfusionMatrix);
-        CrossValidation.printFoldResults(WsnFeatures.WSN_IG, 2, printConfusionMatrix);
-        CrossValidation.printFoldResults(WsnFeatures.WSN_IG, 3, printConfusionMatrix);
-        CrossValidation.printFoldResults(WsnFeatures.WSN_IG, 4, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 0, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 1, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 2, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 3, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 4, printConfusionMatrix);
     }
 
-    private static void fullConsistencyV2CrossValidation() throws Exception {
+    private static void fullConsistencyV3CrossValidation(int classifierIndex) throws Exception {
+        /*@attribute @class@ {normal, random_replay, inverse_replay, masquerade_fake_fault, masquerade_fake_normal, injection, poisoned_high_rate}*/
+        boolean printConfusionMatrix = false;
+//        CrossValidation.runFastFirstFold(FullConsistencySubset.FULL, classifierIndex, printConfusionMatrix);
 
-        boolean printConfusionMatrix = true;
-        System.out.println("--- FULL_GOOSE");
-
-        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 0, printConfusionMatrix);
-        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 1, printConfusionMatrix);
-        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 2, printConfusionMatrix);
-        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 3, printConfusionMatrix);
-        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 4, printConfusionMatrix);
+        FeatureRanking.justRank(GeneralParameters.CONSISTENCY_DATASET_1percent, METODO.IG);
+//        FeatureRanking.justMergeAndRank(allInstances, METODO.IG);
+//        CrossValidation.printFoldResults(FullConsistencySubset.FULL, 1, printConfusionMatrix);
+//        FeatureRanking.justRank(GeneralParameters.CONSISTENCY_DATASET, METODO.OneR);
+//        FeatureRanking.justRank(GeneralParameters.CONSISTENCY_DATASET, METODO.GR);
     }
 
     public void otherTestes() throws Exception {

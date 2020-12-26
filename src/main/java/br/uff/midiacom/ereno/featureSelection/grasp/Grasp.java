@@ -77,7 +77,7 @@ public abstract class Grasp {
 
     public static void setupStandaloneGrasp(String classifier) throws Exception {
         GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/all/all_in_one.csv";
-        GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.NAIVE_BAYES;
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.J48;
         allInstances = Util.loadSingleFile(true);
     }
 

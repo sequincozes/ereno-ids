@@ -43,6 +43,129 @@ public class FeatureRanking {
 
     }
 
+    public static void justMergeAndRank(String file1,String file2, METODO metodo) throws Exception {
+        System.out.println("Método: " + metodo);
+        Instances instances1 = new Instances(readDataFile(file1));
+        Instances instances = new Instances(readDataFile(file2));
+        instances.addAll(instances1);
+
+        instances.setClassIndex(instances.numAttributes() - 1);
+        if (NORMALIZE) {
+            instances = normalizar(instances);
+        }
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()-1];
+        switch (metodo) {
+            case IG:
+                System.out.println("IG:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    try{
+                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                       if (CSV) {
+                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                       } else {
+                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                       }
+                    } catch (java.lang.IllegalArgumentException e){
+                       e.printStackTrace();
+                    }
+                }
+                break;
+            case Relief:
+                System.out.println("Relief:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
+                }
+                break;
+            case GR:
+                System.out.println("GR:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
+                    if (CSV) {
+                        System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                    } else {
+                        System.out.println("GR: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                    }
+
+                }
+                break;
+            case OneR:
+                System.out.println("OneR:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                }
+                break;
+            default:
+                System.out.println("Método incorreto.");
+        }
+
+        Util.quickSort(allFeatures, 0, allFeatures.length - 1);
+        int i = 0;
+
+        for (FeatureAvaliada feature : allFeatures) {
+            System.out.println(feature.getIndiceFeature() + "-" + feature.getValorFeature());
+        }
+    }
+
+    public static void justMergeAndRank(Instances instances, METODO metodo) throws Exception {
+        System.out.println("Método: " + metodo);
+
+        instances.setClassIndex(instances.numAttributes() - 1);
+        if (NORMALIZE) {
+            instances = normalizar(instances);
+        }
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()-1];
+        switch (metodo) {
+            case IG:
+                System.out.println("IG:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    try{
+                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                       if (CSV) {
+                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                       } else {
+                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                       }
+                    } catch (java.lang.IllegalArgumentException e){
+                       e.printStackTrace();
+                    }
+                }
+                break;
+            case Relief:
+                System.out.println("Relief:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
+                }
+                break;
+            case GR:
+                System.out.println("GR:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
+                    if (CSV) {
+                        System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                    } else {
+                        System.out.println("GR: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                    }
+
+                }
+                break;
+            case OneR:
+                System.out.println("OneR:");
+                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                }
+                break;
+            default:
+                System.out.println("Método incorreto.");
+        }
+
+        Util.quickSort(allFeatures, 0, allFeatures.length - 1);
+        int i = 0;
+
+        for (FeatureAvaliada feature : allFeatures) {
+            System.out.println(feature.getIndiceFeature() + "-" + feature.getValorFeature());
+        }
+    }
+    
     public static void justRank(String file, METODO metodo) throws Exception {
         System.out.println("Método: " + metodo);
         Instances instances = new Instances(readDataFile(file));
@@ -55,11 +178,15 @@ public class FeatureRanking {
             case IG:
                 System.out.println("IG:");
                 for (int i = 0; i < instances.numAttributes()-1; i++) {
-                    allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
-                    if (CSV) {
-                        System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
-                    } else {
-                        System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                    try{
+                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                       if (CSV) {
+                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                       } else {
+                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                       }
+                    } catch (java.lang.IllegalArgumentException e){
+                       e.printStackTrace();
                     }
                 }
                 break;

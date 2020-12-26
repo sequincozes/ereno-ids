@@ -12,6 +12,12 @@ import java.io.FileReader;
 import java.util.Arrays;
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
 import static br.uff.midiacom.ereno.sv2020_consistency.Parameters.MULTICLASS_FILES;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Random;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -291,5 +297,36 @@ public class Util {
 
     }
 
+    public static Instances cutFold(int totalFolds, int fold, int seed, String[] allInstancesFiles) throws IOException {
+        Instances allInstances = new Instances(readDataFile(allInstancesFiles[0]));
+        for (int i = 1; i < allInstancesFiles.length; i++) {
+            Instances moreInstances = new Instances(readDataFile(allInstancesFiles[i]));
+            allInstances.addAll(moreInstances);
+            System.out.println("Size: " + allInstancesFiles[i] + ": " + moreInstances.size());
+        }
+
+        Random rand = new Random(seed); // create seeded number generator
+        Instances randData = new Instances(allInstances); // create copy of original data
+        randData.randomize(rand);
+        return randData.testCV(totalFolds, fold);
+    }
+
+    public static Instances cutFold(int totalFolds, int fold, int seed, Instances allInstances) {
+        Random rand = new Random(seed);   // create seeded number generator
+        Instances randData = new Instances(allInstances);   // create copy of original data
+        randData.randomize(rand);
+        return randData.trainCV(totalFolds, fold, rand);
+    }
+
+    public static void writeInstancesToFile(Instances instances, String outputFile) throws FileNotFoundException, IOException {
+        File fout = new File(outputFile);
+        FileOutputStream fos = new FileOutputStream(fout);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        for (Instance i : instances) {
+            bw.write(i.toString());
+            bw.newLine();
+        }
+        bw.close();
+    }
 
 }

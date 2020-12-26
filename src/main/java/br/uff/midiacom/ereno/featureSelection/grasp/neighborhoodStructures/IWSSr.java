@@ -5,10 +5,13 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
+import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FullConsistencySubset;
 import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
 import java.util.ArrayList;
 
@@ -30,14 +33,14 @@ public class IWSSr implements NeighborhoodStructure {
         IWSSr iwssr = new IWSSr(graspVnd);
         iwssr.fullList = new ArrayList<>();
 
-        int[] WSN_FULL = new int[]{18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-        for (int feature : WSN_FULL) {
+        int[] rcl = FullConsistencySubset.FULL_IG;
+        for (int feature : rcl) {
             iwssr.fullList.add(feature);
         }
 
         ArrayList<Integer> seedFS = new ArrayList<>();
 
-        seedFS.add(iwssr.fullList.remove(WSN_FULL.length - 1));
+        seedFS.add(iwssr.fullList.remove(rcl.length - 1));
         GraspSolution seedSolution = new GraspSolution(seedFS, iwssr.fullList);
         seedSolution = graspVnd.avaliar(seedSolution);
 

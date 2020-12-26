@@ -138,7 +138,7 @@ public class GenericEvaluation {
         int FN = 0;
 
         long begin = System.nanoTime();
-        int[][] confusionMatrix = new int[6][6];
+        int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
 
         for (int i = 0; i < test.size(); i++) {
             try {

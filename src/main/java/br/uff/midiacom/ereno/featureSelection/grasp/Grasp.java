@@ -273,13 +273,13 @@ public abstract class Grasp {
 
     private static void showOptions(int graspAlgoritm, int classifier, String dataset) throws Exception {
         if (dataset.contains("WSN") || dataset.contains("wsn")) {
-            FeatureSubsets.RCL = FeatureSubsets.RCL_WSN_IWSSR[classifier];
-//            FeatureSubsets.RCL = FeatureSubsets.WSN_FULL;
+//            FeatureSubsets.RCL = FeatureSubsets.RCL_WSN_IWSSR[classifier];
+            FeatureSubsets.RCL = FeatureSubsets.WSN_FULL;
 
         } else if (dataset.contains("KDD") || dataset.contains("kdd")) {
 //            FeatureSubsets.RCL = FeatureSubsets.RCL_KDD_IWSSR[classifier];
-//            FeatureSubsets.RCL = FeatureSubsets.KDD_FULL;
-            FeatureSubsets.RCL = KddFeatures.IG_RCL20;
+            FeatureSubsets.RCL = FeatureSubsets.KDD_FULL;
+//            FeatureSubsets.RCL = KddFeatures.IG_RCL20;
 
         } else if (dataset.contains("CICIDS") || dataset.contains("cicids")) {
 //            FeatureSubsets.RCL = FeatureSubsets.RCL_CICIDS_IWSSR[classifier];

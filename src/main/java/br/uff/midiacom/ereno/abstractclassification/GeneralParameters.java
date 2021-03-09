@@ -9,13 +9,15 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 
 public class GeneralParameters {
 
+    public static boolean PRINT_SELECTION = false;
     public static boolean DEBUG_MODE = false;
 
     public static boolean CSV = false;
     public static String WSN_DATASET = "all_in_one_wsn.csv";
     public static String WSN_DATASET_MINI = "all_mini_one_wsn.csv";
     public static String TESTE_DATASET = "all_in_one_wsn.csv";
-    public static String CICIDS_DATASET = "all_in_one_cicids.csv";
+    public static String CICIDS_DATASET = "/home/silvio/datasets/CICIDS2017/all_in_one/cicids.csv";
+//    public static String CICIDS_DATASET = "all_in_one_cicids.csv";
     public static String KDD_DATASET = "all_in_one_kdd.csv";
     public static String CONSISTENCY_DATASET_UC00 = "/home/silvio/datasets/Full_SV_2020/consistency_v3/uc00_fullgoose_multiclass.csv";
     public static String CONSISTENCY_DATASET_UC01 = "/home/silvio/datasets/Full_SV_2020/consistency_v3/uc01_fullgoose_multiclass.csv";
@@ -33,11 +35,13 @@ public class GeneralParameters {
 
     public static String WSN_5CLASS = "/home/silvio/datasets/wsn-ds/WSN-DS-5class.csv";
     public static String WSN_2CLASS = "/home/silvio/datasets/wsn-ds/WSN-DS-2class.csv";
+    public static String WSN_ATTACKS = "/home/silvio/datasets/wsn-ds/separated/";
 
     // GRASP
     public static String OUTPUT = "outputs/";
     public static int FOLDS = 5;
     public static int GRASP_SEED = 5;
+    public static int EVALUATION_SEED = 7;
 
     // Run Settings java 
 //  java -jar preGrasp.jar all_in_one_WSN.csv 4 >> pregrasp_WSN_RANDOM_FOREST.txt
@@ -62,12 +66,13 @@ public class GeneralParameters {
     };// KNN está fora
 
     public static ClassifierExtended SINGLE_CLASSIFIER_MODE = GenericClassifiers.J48;
+
     public static final boolean VERBOSO = true;
 
-    public static final boolean NORMALIZE = false;
+    public static boolean NORMALIZE = false;
 
     public static int[] FEATURE_SELECTION = {};// FeatureSubsets.RCL_CICIDS_IG;
-    static int NUM_CLASSES = 7;
+    static int NUM_CLASSES = 11;
 
     public static int getTotalFeatures() {
         return FEATURE_SELECTION.length;

@@ -6,7 +6,6 @@
 package br.uff.midiacom.ereno.featureSelection.subsets;
 
 /**
- *
  * @author silvio
  */
 public class CicidsFeatures {
@@ -81,4 +80,13 @@ public class CicidsFeatures {
     public static int[] OneR = new int[]{2, 37, 19, 17, 24};
     public static int[] IG = new int[]{2, 37, 19, 17, 16}; // same oneR, coincidentally
     public static int[] GR = new int[]{40, 67, 68, 70, 1};
+
+    public static final int[] GR_G_RVND_RandomTree = new int[]{1, 4, 36, 40, 49, 62, 63, 67, 68};
+    public static final int[] GR_G_RVND_J48 = new int[]{1, 3, 7, 8, 13, 15, 25, 31, 35, 38, 39, 43, 49, 53, 54, 56, 64, 66, 67, 68, 70, 77, 78};
+    public static final int[] GR_G_RVND_REPTree = new int[]{1, 3, 20, 25, 26, 39, 40, 49, 66, 67, 68, 78};
+    public static final int[] GR_G_RVND_NaiveBayes = new int[]{1, 4, 8, 9, 12, 16, 21, 23, 42, 44, 45, 47, 74};
+    public static final int[] GR_G_RVND_RandomForest = new int[]{1, 6, 12, 25, 35, 43, 48, 49, 54, 67, 68, 78};
+    public static final int[][] GR_G_RVND = {GR_G_RVND_RandomTree, GR_G_RVND_J48, GR_G_RVND_REPTree, GR_G_RVND_NaiveBayes, GR_G_RVND_RandomForest};
+
+
 }

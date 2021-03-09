@@ -24,6 +24,7 @@ import java.util.Arrays;
 public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
     public GraspSolution runGraspSimple(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood, String dataset) throws Exception {
+        System.out.println("Wellcome to GRASP!");
         outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();

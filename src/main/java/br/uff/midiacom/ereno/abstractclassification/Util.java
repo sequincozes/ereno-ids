@@ -9,8 +9,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
+
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+
 import java.util.ArrayList;
+
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -18,7 +21,6 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
 /**
- *
  * @author silvio
  */
 public class Util {
@@ -161,6 +163,32 @@ public class Util {
     public static Instances loadAndFilterSingleFile(boolean printSelection) throws Exception {
 
         Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
+        if (printSelection) {
+            System.out.println("All instances: " + allInstances.size());
+        }
+        if (GeneralParameters.NORMALIZE) {
+            allInstances = normalizar(allInstances);
+        }
+
+        if (GeneralParameters.FEATURE_SELECTION.length > 0) {
+            allInstances = Util.applyFilterKeep(allInstances);
+            if (printSelection) {
+                System.out.print(Arrays.toString(GeneralParameters.FEATURE_SELECTION) + " - ");
+                System.out.println("All instances: " + allInstances.numAttributes());
+            }
+        }
+        allInstances.setClassIndex(allInstances.numAttributes() - 1);
+        normalClass = allInstances.get(0).classValue();
+        return allInstances;
+
+    }
+
+    public static Instances loadAndFilter(String[] files, boolean printSelection) throws Exception {
+        Instances allInstances = new Instances(Util.readDataFile(files[0]));
+        for (int classe = 1; classe < files.length; classe++) {
+            allInstances.addAll(new Instances(Util.readDataFile(files[classe])));
+        }
+
         if (printSelection) {
             System.out.println("All instances: " + allInstances.size());
         }

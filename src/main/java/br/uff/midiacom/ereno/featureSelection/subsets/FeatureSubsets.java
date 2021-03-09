@@ -6,7 +6,6 @@
 package br.uff.midiacom.ereno.featureSelection.subsets;
 
 /**
- *
  * @author silvio
  */
 public class FeatureSubsets {
@@ -116,5 +115,41 @@ public class FeatureSubsets {
     public static int[] WSN_FLOODING_GRASP_BITFLIP_RepTree_5 = new int[]{1, 6, 11, 4, 2};
     public static int[] WSN_FLOODING_GRASP_BITFLIP_NaiveBayes_5 = new int[]{17, 8, 6, 1, 2};
     public static int[] WSN_FLOODING_GRASP_BITFLIP_RandomForest_5 = new int[]{12, 4, 2, 6, 14};
+
+    // GRASP Extended CIoT
+    public static int[] Expert_Grayhole_J48 = new int[]{15, 16, 1, 18, 6};
+    public static int[] Expert_Grayhole_Naive_Bayes = new int[]{16, 7, 2, 3, 6};
+    public static int[] Expert_Grayhole_Random_Forest = new int[]{16, 4, 6, 14, 15};
+    public static int[] Expert_Grayhole_Random_Tree = new int[]{1, 6, 2, 9, 15};
+    public static int[] Expert_Grayhole_REP_Tree = new int[]{15, 4, 1, 18, 6};
+    public static int[][] Expert_Grayhole = new int[][]{Expert_Grayhole_J48, Expert_Grayhole_Naive_Bayes, Expert_Grayhole_Random_Forest, Expert_Grayhole_Random_Tree, Expert_Grayhole_REP_Tree};
+
+    public static int[] Expert_Blackhole_J48 = new int[]{16, 6, 2, 8, 14};
+    public static int[] Expert_Blackhole_Naive_Bayes = new int[]{16, 4, 7, 3, 8};
+    public static int[] Expert_Blackhole_Random_Forest = new int[]{16, 1, 2, 3, 14};
+    public static int[] Expert_Blackhole_Random_Tree = new int[]{16, 7, 2, 3, 14};
+    public static int[] Expert_Blackhole_REP_Tree = new int[]{4, 1, 2, 6, 15};
+    public static int[][] Expert_Blackhole = new int[][]{Expert_Blackhole_J48, Expert_Blackhole_Naive_Bayes, Expert_Blackhole_Random_Forest, Expert_Blackhole_Random_Tree, Expert_Blackhole_REP_Tree};
+
+    public static int[] Expert_Flooding_J48 = new int[]{4, 7, 2, 6, 11};
+    public static int[] Expert_Flooding_Naive_Bayes = new int[]{4, 1, 6, 2, 7};
+    public static int[] Expert_Flooding_Random_Forest = new int[]{16, 1, 2, 6, 14};
+    public static int[] Expert_Flooding_Random_Tree = new int[]{1, 6, 2, 7, 16};
+    public static int[] Expert_Flooding_REP_Tree = new int[]{4, 1, 2, 6, 11};
+    public static int[][] Expert_Flooding = new int[][]{Expert_Flooding_J48, Expert_Flooding_Naive_Bayes, Expert_Flooding_Random_Forest, Expert_Flooding_Random_Tree, Expert_Flooding_REP_Tree};
+
+    public static int[] Binary_J48 = new int[]{15, 16, 1, 18, 6};
+    public static int[] Binary_Naive_Bayes = new int[]{1, 7, 2, 3, 10};
+    public static int[] Binary_Random_Forest = new int[]{15, 16, 4, 18, 3};
+    public static int[] Binary_Random_Tree = new int[]{1, 7, 2, 6, 15};
+    public static int[] Binary_REP_Tree = new int[]{15, 16, 4, 18, 6};
+    public static int[][] Binary = new int[][]{Binary_J48, Binary_Naive_Bayes, Binary_Random_Forest, Binary_Random_Tree, Binary_REP_Tree};
+
+    public static int[] Multiclass_J48 = new int[]{15, 16, 4, 18, 6};
+    public static int[] Multiclass_Naive_Bayes = new int[]{16, 7, 2, 3, 6};
+    public static int[] Multiclass_Random_Forest = new int[]{15, 4, 1, 18, 6};
+    public static int[] Multiclass_Random_Tree = new int[]{1, 7, 2, 6, 15};
+    public static int[] Multiclass_REP_Tree = new int[]{4, 7, 2, 6, 15};
+    public static int[][] Multiclass = new int[][]{Multiclass_J48, Multiclass_Naive_Bayes, Multiclass_Random_Forest, Multiclass_Random_Tree, Multiclass_REP_Tree};
 
 }

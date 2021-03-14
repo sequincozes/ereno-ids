@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public class GraspRVND extends Grasp {
 
-    public GraspSolution runGraspRVND(int[] rcl, String methodChoosen, String dataset) throws Exception {
+    public GraspSolution run(int[] rcl, String methodChoosen, String dataset) throws Exception {
         outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();

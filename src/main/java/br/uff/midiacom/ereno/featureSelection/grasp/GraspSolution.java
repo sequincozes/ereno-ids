@@ -9,8 +9,6 @@ import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
 import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -22,6 +20,19 @@ public class GraspSolution {
     private final ArrayList<Integer> RCLfeatures;
     private GenericResultado evaluation;
     private boolean VERBOSE = false;
+    private long currentTimeSeconds;
+
+    public long getCurrentTimeSeconds() {
+        return currentTimeSeconds;
+    }
+
+    public void setCurrentTimeSeconds(long currentTimeSeconds) {
+        this.currentTimeSeconds = currentTimeSeconds;
+    }
+
+    public ArrayList<Integer> getSolutionFeatures() {
+        return solutionFeatures;
+    }
 
     public void example(String[] args) {
         ArrayList<Integer> featuresSelecionadas = new ArrayList<>();

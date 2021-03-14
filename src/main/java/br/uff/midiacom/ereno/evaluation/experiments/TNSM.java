@@ -269,7 +269,7 @@ public class TNSM {
                 break;
             case FULL:
                 for (int classifierIndex = 0; classifierIndex < GenericClassifiers.all.length; classifierIndex++) {
-                    GeneralParameters.FEATURE_SELECTION = CicidsFeatures.FULLs[classifierIndex];
+                    GeneralParameters.FEATURE_SELECTION = CicidsFeatures.CICIDS_FULL;
                     GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.all[classifierIndex];
                     filteredDataset = Util.copyAndFilter(dataset, GeneralParameters.PRINT_SELECTION);
                     // Classifica

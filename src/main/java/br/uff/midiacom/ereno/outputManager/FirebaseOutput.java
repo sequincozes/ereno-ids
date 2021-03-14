@@ -18,6 +18,7 @@ import br.uff.midiacom.ereno.outputManager.model.Error;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author silvio
  */
 public class FirebaseOutput implements OutputManager {
@@ -54,7 +54,7 @@ public class FirebaseOutput implements OutputManager {
                 FirebaseApp.initializeApp(options);
                 System.out.println("dataset");
                 mDatabase = FirebaseDatabase.getInstance().getReference().child(dataset);
-                System.out.println("mDatabase:"+mDatabase);
+                System.out.println("mDatabase:" + mDatabase);
                 serviceAccount.close();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(FirebaseOutput.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,7 +74,7 @@ public class FirebaseOutput implements OutputManager {
 
             final DatabaseReference iterationReference = pathReference
                     .child("iterations")
-                    .child(String.valueOf(currentIterationNumber - 1));
+                    .child(String.valueOf(currentIterationNumber));
             final DatabaseReference detailsReference = iterationReference.child("details").child(String.valueOf(detail.evaluation));
 
             System.out.println("detailsReference: " + detailsReference);
@@ -121,6 +121,37 @@ public class FirebaseOutput implements OutputManager {
             });
         } else {
             iteration.print();
+        }
+    }
+
+    @Override
+    public void writeBestImprovement(Detail detailOfBestSolution) {
+        if (!offlinemode) {
+            final DatabaseReference pathReference = (getPath(experimentName));
+
+            final DatabaseReference bestSolutionReference = pathReference.child("curent_best_solution");
+
+            System.out.println("bestSolutionReference: " + bestSolutionReference);
+
+            bestSolutionReference.setValue(detailOfBestSolution, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            bestSolutionReference.child("best_evaluation").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                    System.out.println("DatabaseError: " + de.getMessage());
+                    System.out.println("DatabaseReference: " + dr.toString());
+                }
+            });
+        } else {
+            detailOfBestSolution.print();
         }
     }
 

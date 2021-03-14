@@ -26,4 +26,5 @@ public interface OutputManager {
 
     void writeIteration(Iteration iteration);
 
+    void writeBestImprovement(Detail detail);
 }

@@ -6,21 +6,20 @@
 package br.uff.midiacom.ereno.featureSelection.subsets;
 
 /**
- *
  * @author silvio
  */
-public class WsnFeatures {
+public class WsnFeatures extends FeatureSubsets {
 
-    public static final int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 
+    public WsnFeatures() {
+        super(RCL_FULL, RCL_GR, RCL_I);
+    }
     public static final int[] RCL_WSN_IWSSR_NaiveBayes = new int[]{2, 3, 18}; // 15 minutes
     public static final int[] RCL_WSN_IWSSR_RandomTree = new int[]{2, 6, 8, 10, 14, 15, 17, 18};
     public static final int[] RCL_WSN_IWSSR_J48 = new int[]{2, 4, 7, 8, 9, 10, 14, 15, 18}; //2 h 14 min
     public static final int[] RCL_WSN_IWSSR_RandomForest = new int[]{2, 4, 6, 7, 10, 14, 15, 16, 17, 1}; //  1 d 05:02 h
     public static final int[] RCL_WSN_IWSSR_RepTree = new int[]{2, 4, 6, 10, 11, 14, 15, 18}; // 30+ minutes
     public static final int[] RCL_WSN_IWSSR[] = {RCL_WSN_IWSSR_RandomTree, RCL_WSN_IWSSR_J48, RCL_WSN_IWSSR_RepTree, RCL_WSN_IWSSR_NaiveBayes, RCL_WSN_IWSSR_RandomForest};
-
-    public static int[] RCL = {};
 
     public static int[] WSN_IG = new int[]{12, 18, 13, 3, 6};
     public static int[] WSN_GR = new int[]{8, 10, 13, 6, 3};
@@ -34,18 +33,16 @@ public class WsnFeatures {
     public static int[] GR_G_BF_J48_5 = new int[]{9, 14, 6, 7, 15};
     public static int[] GR_G_BF_RandomForest_5 = new int[]{6, 9, 10, 18, 15};
     public static int[] GR_G_BF_RepTree_5 = new int[]{10, 3, 7, 13, 15};
-    public static int[] GR_G_BF[] = {GR_G_BF_RepTree_5, GR_G_BF_J48_5, GR_G_BF_RepTree_5, GR_G_BF_NaiveBayes_5, GR_G_BF_RandomForest_5};
+    public static int[] GR_G_BF[] = {GR_G_BF_RandomTree_5, GR_G_BF_J48_5, GR_G_BF_RepTree_5, GR_G_BF_NaiveBayes_5, GR_G_BF_RandomForest_5};
 
     public static final int[] I_G_VND_RandomTree = new int[]{2, 3, 15, 9, 6};
     public static final int[] I_G_VND_J48 = new int[]{4, 3, 18, 9, 15, 14, 11, 10, 7, 6, 2};
     public static final int[] I_G_VND_RepTree = new int[]{10, 15, 14, 11, 6, 4, 2};
     public static final int[] I_G_VND_NaiveBayes = new int[]{6, 13, 7, 8};
     public static final int[] I_G_VND_RandomForest = new int[]{18, 10, 7, 9, 6, 16, 15, 2};
-    public static final int[][] I_G_VND = {I_G_VND_RandomTree, I_G_VND_J48, I_G_VND_RepTree, I_G_VND_NaiveBayes,
-        I_G_VND_RandomForest
-    };
+    public static final int[][] I_G_VND = {I_G_VND_RandomTree, I_G_VND_J48, I_G_VND_RepTree, I_G_VND_NaiveBayes, I_G_VND_RandomForest};
 
-//    public static final int[] RCL_VND_RandomTree = new int[]{2, 9, 6, 15, 4, 3, 8};
+    //    public static final int[] RCL_VND_RandomTree = new int[]{2, 9, 6, 15, 4, 3, 8};
 //    public static final int[] RCL_VND_J48 = new int[]{4, 16, 15, 17, 14, 13, 11, 10, 9};
 //    public static final int[] RCL_VND_RepTree = new int[]{18, 4, 16, 15, 17, 14, 13};
 //    public static final int[] RCL_VND_NaiveBayes = new int[]{6, 7};
@@ -71,7 +68,12 @@ public class WsnFeatures {
     public static final int[] GR_G_VND_RandomForest = new int[]{6, 9, 7, 10, 18};
     public static final int[] GR_G_VND[] = {GR_G_VND_RandomTree, GR_G_VND_J48, GR_G_VND_RepTree, GR_G_VND_NaiveBayes, GR_G_VND_RandomForest};
 
-// GRASP CIoT
+    // Standard FeatureSubsets RCLSs
+    public static final int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    public static final int[] RCL_GR = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    public static final int[][] RCL_I = RCL_WSN_IWSSR;
+
+    // GRASP CIoT
     public static int[] WSN_BLACKHOLE_IG_5 = new int[]{3, 6, 12, 13, 18};
     public static int[] WSN_BLACKHOLE_GR_5 = new int[]{3, 6, 9, 10, 13};
     public static int[] WSN_BLACKHOLE_ONER_5 = new int[]{3, 4, 6, 7, 18};

@@ -10,7 +10,17 @@ package br.uff.midiacom.ereno.featureSelection.subsets;
  */
 public class FeatureSubsets {
 
-    public static final int[] RCL_CICIDS_IG = new int[]{28, 36, 73, 43, 42, 8, 7, 13, 55, 14, 39, 11, 6, 66, 76, 40, 67, 68, 70, 1};
+    public FeatureSubsets(int[] RCL_FULL, int[] RCL_GR, int[][] RCL_I) {
+        this.RCL_FULL = RCL_FULL;
+        this.RCL_GR = RCL_GR;
+        this.RCL_I = RCL_I;
+    }
+
+    // Standard FeatureSubsets RCLSs
+    public static int[] RCL_FULL = null;
+    public static int[] RCL_GR = null;
+    public static int[][] RCL_I = null;
+
 
     public static final int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
     public static final int[] CICIDS_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78};
@@ -49,6 +59,9 @@ public class FeatureSubsets {
     public static final int[] GRASP_RVND_CICIDS_IG_RepTree = new int[]{14, 8, 6, 66, 6};
 
     // RCLs
+    public static final int[] RCL_CICIDS_IG = new int[]{28, 36, 73, 43, 42, 8, 7, 13, 55, 14, 39, 11, 6, 66, 76, 40, 67, 68, 70, 1};
+
+
     public static final int[] RCL_CICIDS_IWSSR_NaiveBayes = new int[]{1, 3, 4, 6, 8, 10, 11, 19, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 38};
     public static final int[] RCL_CICIDS_IWSSR_RandomTree = new int[]{1, 4, 13, 43, 49, 51, 56, 66, 67, 68, 78};
     public static final int[] RCL_CICIDS_IWSSR_J48 = new int[]{1, 6, 10, 16, 24, 25, 33, 34, 39, 44, 46, 47, 48, 49, 50, 51, 52, 57, 58, 59, 60, 61, 62, 67, 68, 72, 75};

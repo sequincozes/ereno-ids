@@ -17,7 +17,7 @@ public class GeneralParameters {
     public static String WSN_DATASET_MINI = "all_mini_one_wsn.csv";
     public static String TESTE_DATASET = "all_in_one_wsn.csv";
     public static String CICIDS_DATASET = "/home/silvio/datasets/CICIDS2017/all_in_one/cicids.csv";
-//    public static String CICIDS_DATASET = "all_in_one_cicids.csv";
+    //    public static String CICIDS_DATASET = "all_in_one_cicids.csv";
     public static String KDD_DATASET = "all_in_one_kdd.csv";
     public static String CONSISTENCY_DATASET_UC00 = "/home/silvio/datasets/Full_SV_2020/consistency_v3/uc00_fullgoose_multiclass.csv";
     public static String CONSISTENCY_DATASET_UC01 = "/home/silvio/datasets/Full_SV_2020/consistency_v3/uc01_fullgoose_multiclass.csv";
@@ -46,23 +46,27 @@ public class GeneralParameters {
     // Run Settings java 
 //  java -jar preGrasp.jar all_in_one_WSN.csv 4 >> pregrasp_WSN_RANDOM_FOREST.txt
     public static String[] DATASETS_FOREACH = {
-        CICIDS_DATASET,
-        KDD_DATASET,
-        WSN_DATASET
+            CICIDS_DATASET,
+            KDD_DATASET,
+            WSN_DATASET
+    };
+
+    public static String[] GRASP_METHOD = {
+            "GR-G-BF", "GR-G-VND", "GR-G-RVND", "F-G-VND", "F-G-RVND", "I-G-VND"
     };
 
     public static int[][] DATASETS_FEATURES_FOREACH = {
-        FeatureSubsets.CICIDS_FULL,
-        FeatureSubsets.KDD_FULL,
-        FeatureSubsets.WSN_FULL
+            FeatureSubsets.CICIDS_FULL,
+            FeatureSubsets.KDD_FULL,
+            FeatureSubsets.WSN_FULL
     };
 
     public static ClassifierExtended[] CLASSIFIERS_FOREACH = {
-        GenericClassifiers.RANDOM_TREE,
-        GenericClassifiers.J48,
-        GenericClassifiers.REP_TREE,
-        GenericClassifiers.NAIVE_BAYES,
-        GenericClassifiers.RANDOM_FOREST
+            GenericClassifiers.RANDOM_TREE,
+            GenericClassifiers.J48,
+            GenericClassifiers.REP_TREE,
+            GenericClassifiers.NAIVE_BAYES,
+            GenericClassifiers.RANDOM_FOREST
     };// KNN está fora
 
     public static ClassifierExtended SINGLE_CLASSIFIER_MODE = GenericClassifiers.J48;

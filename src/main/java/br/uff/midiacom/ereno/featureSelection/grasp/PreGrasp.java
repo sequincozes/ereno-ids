@@ -214,13 +214,13 @@ public abstract class PreGrasp {
         String dataset = GeneralParameters.DATASET.replace(".csv", "");
         switch (graspAlgoritm) {
             case 1:
-                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).runGraspSimple(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP, dataset);
+                ((GraspSimple) new GraspSimple().setupGraspMicroservice(classifier)).run(FeatureSubsets.RCL, "grasp", NeighborhoodStructures.BIT_FLIP, dataset);
                 break;
             case 2:
-                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).runGraspVND(FeatureSubsets.RCL, "grasp_vnd", dataset);
+                ((GraspVND) new GraspVND().setupGraspMicroservice(classifier)).run(FeatureSubsets.RCL, "grasp_vnd", dataset);
                 break;
             case 3:
-                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).runGraspRVND(FeatureSubsets.RCL, "grasp_rvnd", dataset);
+                ((GraspRVND) new GraspRVND().setupGraspMicroservice(classifier)).run(FeatureSubsets.RCL, "grasp_rvnd", dataset);
                 break;
             case 4:
                 System.out.println("Not implemented yet.");

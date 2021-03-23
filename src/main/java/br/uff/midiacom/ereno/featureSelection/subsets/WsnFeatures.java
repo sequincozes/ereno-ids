@@ -12,7 +12,7 @@ public class WsnFeatures extends FeatureSubsets {
 
 
     public WsnFeatures() {
-        super(RCL_FULL, RCL_GR, RCL_I);
+        super(WSN_FULL, WSN_RCL_GR, WSN_RCL_I);
     }
     public static final int[] RCL_WSN_IWSSR_NaiveBayes = new int[]{2, 3, 18}; // 15 minutes
     public static final int[] RCL_WSN_IWSSR_RandomTree = new int[]{2, 6, 8, 10, 14, 15, 17, 18};
@@ -70,8 +70,8 @@ public class WsnFeatures extends FeatureSubsets {
 
     // Standard FeatureSubsets RCLSs
     public static final int[] WSN_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
-    public static final int[] RCL_GR = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
-    public static final int[][] RCL_I = RCL_WSN_IWSSR;
+    public static final int[] WSN_RCL_GR = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    public static final int[][] WSN_RCL_I = RCL_WSN_IWSSR;
 
     // GRASP CIoT
     public static int[] WSN_BLACKHOLE_IG_5 = new int[]{3, 6, 12, 13, 18};

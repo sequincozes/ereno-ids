@@ -90,6 +90,39 @@ public class CrossValidation {
         }
     }
 
+    public static void runWithInstances(Instances dataset, Instances datasetForTestOnly, int[] features, ClassifierExtended classifierIndex, boolean printConfusionMatrix) throws Exception {
+        System.out.print(classifierIndex.getClassifierName() + ";");
+
+        // Compute for all folds
+        GenericResultado[] results = setupAndRun(GeneralParameters.FOLDS, 7, classifierIndex, features, dataset, datasetForTestOnly);
+
+        // Just print
+        for (int i = 0; i < GeneralParameters.FOLDS; i++) {
+            try {
+                System.out.print("fold[" + i + "];" + results[i].getF1Score() + ";");
+            } catch (Exception ex) {
+                Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("");
+
+        // Just print matrix
+        if (printConfusionMatrix) {
+            int numFold = 0;
+            for (GenericResultado foldResult : results) {
+                System.out.println("Fold: " + numFold++);
+                //Para cada fold, mostrar matriz
+                for (int classIndex = 0; classIndex < foldResult.getConfusionMatrix().length; classIndex++) {
+                    System.out.print("Esperado: " + classIndex + ";resultados:;");
+                    for (int expectedIndex = 0; expectedIndex < foldResult.getConfusionMatrix().length; expectedIndex++) {
+                        System.out.print(foldResult.getConfusionMatrix()[classIndex][expectedIndex] + ";");
+                    }
+                    System.out.println("");
+                }
+            }
+        }
+    }
+
     public static void runFastFirstFold(int[] features, int onlyThis, boolean printConfusionMatrix) throws Exception {
 //        System.out.print(GenericClassifiers.all[onlyThis].getClassifierName() + ";");
 
@@ -159,6 +192,13 @@ public class CrossValidation {
         GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
         GeneralParameters.FEATURE_SELECTION = fs;
         GenericResultado[] result = runSingleClassifierBinaryMatrix(datasetBinary, datasetMulticlass, folds, seed);
+        return result;
+    }
+
+    public static GenericResultado[] setupAndRun(int folds, int seed, ClassifierExtended classifier, int[] fs, Instances dataset, Instances datasetForTestOnly) throws Exception {
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
+        GeneralParameters.FEATURE_SELECTION = fs;
+        GenericResultado[] result = runSingleClassifier(dataset, datasetForTestOnly, folds, seed);
         return result;
     }
 
@@ -336,4 +376,33 @@ public class CrossValidation {
             System.out.println("");
         }
     }
+
+    public static GenericResultado[] runSingleClassifier(Instances trainInstances, Instances allInstancesForTestOnly, int totalFolds, int seed) throws Exception {
+        Random rand = new Random(seed);   // create seeded number generator
+        Instances randomInstancesTrain = new Instances(trainInstances);   // create copy of original data
+        Instances randomInstancesTest = new Instances(allInstancesForTestOnly);   // create copy of original data
+        randomInstancesTrain.randomize(rand);         // randomize data with number generator
+        randomInstancesTest.randomize(rand);         // randomize data with number generator
+        GenericResultado[] resultsCompilation = new GenericResultado[totalFolds];
+        for (int fold = 0; fold < totalFolds; fold++) {
+            Instances train = randomInstancesTrain.trainCV(totalFolds, fold, rand);
+            Instances test = randomInstancesTest.testCV(totalFolds, fold);
+            resultsCompilation[fold] = GenericEvaluation.runSingleClassifier(train, test);
+
+            if (GeneralParameters.DEBUG_MODE) {
+                System.out.println("runSingleClassifier - F1:" + resultsCompilation[fold].getF1Score());
+                System.out.println("runSingleClassifier - Acc:" + resultsCompilation[fold].getAcuracia());
+                System.out.println("runSingleClassifier - Precision:" + resultsCompilation[fold].getPrecision());
+                System.out.println("runSingleClassifier - Recall:" + resultsCompilation[fold].getRecall());
+                System.out.println("runSingleClassifier - VN:" + resultsCompilation[fold].VN);
+                System.out.println("runSingleClassifier - VP:" + resultsCompilation[fold].VP);
+                System.out.println("runSingleClassifier - FN:" + resultsCompilation[fold].FN);
+                System.out.println("runSingleClassifier - FP:" + resultsCompilation[fold].FP);
+                System.out.println("-----");
+            }
+        }
+
+        return resultsCompilation;
+    }
+
 }

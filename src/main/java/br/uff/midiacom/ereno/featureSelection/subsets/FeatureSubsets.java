@@ -151,6 +151,17 @@ public class FeatureSubsets {
     public static int[] Expert_Flooding_REP_Tree = new int[]{4, 1, 2, 6, 11};
     public static int[][] Expert_Flooding = new int[][]{Expert_Flooding_J48, Expert_Flooding_Naive_Bayes, Expert_Flooding_Random_Forest, Expert_Flooding_Random_Tree, Expert_Flooding_REP_Tree};
 
+
+
+
+
+    public static int[] Expert_TDMA_J48 = new int[]{16, 1, 2, 10, 14};
+    public static int[] Expert_TDMA_Naive_Bayes = new int[]{16, 1, 2, 10, 7};
+    public static int[] Expert_TDMA_Random_Forest = new int[]{16, 6, 2, 9, 10};
+    public static int[] Expert_TDMA_Random_Tree = new int[]{16, 6, 2, 10, 9};
+    public static int[] Expert_TDMA_REP_Tree = new int[]{4, 6, 2, 10, 9};
+    public static int[][] Expert_TDMA = new int[][]{Expert_TDMA_J48, Expert_TDMA_Naive_Bayes, Expert_TDMA_Random_Forest, Expert_TDMA_Random_Tree, Expert_TDMA_REP_Tree};
+
     public static int[] Binary_J48 = new int[]{15, 16, 1, 18, 6};
     public static int[] Binary_Naive_Bayes = new int[]{1, 7, 2, 3, 10};
     public static int[] Binary_Random_Forest = new int[]{15, 16, 4, 18, 3};

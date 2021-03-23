@@ -11,7 +11,7 @@ package br.uff.midiacom.ereno.featureSelection.subsets;
 public class KddFeatures extends FeatureSubsets {
 
     public KddFeatures() {
-        super(RCL_FULL, RCL_GR, RCL_I);
+        super(KDD_RCL_FULL, KDD_RCL_GR, KDD_RCL_I);
     }
 
     public static final int[] RCL_IWSSR_NaiveBayes = new int[]{3, 4, 8, 9, 11, 13, 14, 15, 18, 20, 21, 41};
@@ -69,7 +69,7 @@ public class KddFeatures extends FeatureSubsets {
     public static final int[] OneR5 = new int[]{5, 6, 3, 4, 30};
 
     // Standard FeatureSubsets RCLSs
-    public static final int[] FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41};
-    public static final int[] RCL_GR = new int[]{5, 6, 3, 4, 30, 29, 33, 34, 35, 12, 23, 38, 25, 39, 26, 37, 32, 36, 31, 41};
-    public static final int[][] RCL_I = RCL_IWSSR;
+    public static final int[] KDD_RCL_FULL = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41};
+    public static final int[] KDD_RCL_GR = new int[]{5, 6, 3, 4, 30, 29, 33, 34, 35, 12, 23, 38, 25, 39, 26, 37, 32, 36, 31, 41};
+    public static final int[][] KDD_RCL_I = RCL_IWSSR;
 }

@@ -32,8 +32,28 @@ public class ExtendedCIoT {
 
 //        runWithExpertClassifiers();
 //        runWithBinaryClassifiers();
-        runWithMulticlassClassifiers();
+        runWithExpertClassifiersSacanagem();
 //        runWithBinaryMatrix();
+    }
+
+    public static void runWithExpertClassifiersSacanagem() throws Exception {
+        System.out.println("--- Expert classifier analysis sacanagem");
+
+        System.out.println("--- Expert classifier FLOODING");
+        String forTrainOnly = GeneralParameters.WSN_ATTACKS + "WSN-DS-2class.csv";
+        String forTestOnly = GeneralParameters.WSN_ATTACKS + "WSN-DS-5class.csv";
+        String forTrainOnlys[] = new String[]{forTrainOnly};
+        String forTestOnlys[] = new String[]{forTestOnly};
+
+        for (int i = 0; i < 5; i++) {
+            GeneralParameters.FEATURE_SELECTION = FeatureSubsets.Expert_TDMA[i];
+            GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.allCustom[i];
+            boolean printConfusionMatrix = true;
+            Instances dataset = Util.loadAndFilter(forTrainOnlys, true);
+            Instances datasetForTestOnly = Util.loadAndFilter(forTestOnlys, true);
+            CrossValidation.runWithInstances(dataset, datasetForTestOnly, GeneralParameters.FEATURE_SELECTION, GeneralParameters.SINGLE_CLASSIFIER_MODE, printConfusionMatrix);
+        }
+
     }
 
 
@@ -41,8 +61,8 @@ public class ExtendedCIoT {
     public static void runWithBinaryMatrix() throws Exception {
         String binaryFile = GeneralParameters.WSN_ATTACKS + "WSN-DS-2class.csv";
         String multiClassFile = GeneralParameters.WSN_ATTACKS + "WSN-DS-5class.csv";
-        String [] classes = new String[]{binaryFile};
-        String [] classesMulti = new String[]{multiClassFile};
+        String[] classes = new String[]{binaryFile};
+        String[] classesMulti = new String[]{multiClassFile};
 
         for (int i = 0; i < 5; i++) {
             GeneralParameters.FEATURE_SELECTION = FeatureSubsets.Binary[i];
@@ -100,7 +120,7 @@ public class ExtendedCIoT {
     public static void runWithBinaryClassifiers() throws Exception {
         System.out.println("--- Binary classifier analysis");
         String singleFile = GeneralParameters.WSN_ATTACKS + "WSN-DS-2class.csv";
-        String [] classes = new String[]{singleFile};
+        String[] classes = new String[]{singleFile};
         for (int i = 0; i < 5; i++) {
             GeneralParameters.FEATURE_SELECTION = FeatureSubsets.Binary[i];
             GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.allCustom[i];
@@ -112,8 +132,10 @@ public class ExtendedCIoT {
 
     // Multi-class analysis
     public static void runWithMulticlassClassifiers() throws Exception {
-        String singleFile = GeneralParameters.WSN_ATTACKS + "normal_tdma.csv";
-        String [] classes = new String[]{singleFile};
+//        String singleFile = GeneralParameters.WSN_ATTACKS + "normal_tdma.csv";
+        String multiClassFile = GeneralParameters.WSN_ATTACKS + "WSN-DS-5class.csv";
+
+        String[] classes = new String[]{multiClassFile};
         System.out.println("--- Multiclass classifier analysis");
         for (int i = 0; i < 5; i++) {
             GeneralParameters.FEATURE_SELECTION = FeatureSubsets.Multiclass[i];

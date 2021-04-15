@@ -17,6 +17,12 @@ public class ClassifierExtended {
     private Classifier classifier;
     private String ClassifierName;
 
+    public ClassifierExtended(Classifier classifier, String ClassifierName) {
+        this.includeOnTests = true;
+        this.classifier = classifier;
+        this.ClassifierName = ClassifierName;
+    }
+
     public ClassifierExtended(boolean includeOnTests, Classifier classifier, String ClassifierName) {
         this.includeOnTests = includeOnTests;
         this.classifier = classifier;

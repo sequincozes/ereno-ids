@@ -29,14 +29,15 @@ public class CrossValidationExperiments {
 
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = true;
-//        reduceInstances();
-        fullConsistencyV3CrossValidation(0);
-        fullConsistencyV3CrossValidation(1);
-        fullConsistencyV3CrossValidation(2);
-        fullConsistencyV3CrossValidation(3);
-        fullConsistencyV3CrossValidation(4);
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc00_uc01.csv";
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[0];
+        fullConsistencyV4CrossValidation();
+    }
 
-//        wsnCrossValidation();
+
+    private static void fullConsistencyV4CrossValidation() throws Exception {
+        int[] fs = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42};
+        CrossValidation.printFolds(fs);
     }
 
     public static void reduceInstances() throws IOException {

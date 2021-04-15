@@ -17,7 +17,11 @@ import weka.core.Instances;
  * @author silvio
  */
 public class BemSimples {
-
+/**
+ * Pensar em feature enrichment
+ * Extraction Enrichment
+ * Extract of Randomly Enriched Network Operations
+ * */
     private static Instances[] allInstances;
     private static Classifier selectedClassifier = Parameters.NAIVE_BAYES.getClassifier();
     private static boolean rawOutput = false;

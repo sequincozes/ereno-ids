@@ -21,6 +21,7 @@
             <artifactId>firebase-admin</artifactId>
             <version>6.8.1</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.gms/google-services -->
         <dependency>
             <groupId>com.google.gms</groupId>

@@ -9,6 +9,7 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 
 public class GeneralParameters {
 
+    public static final boolean NUMERIC_CLEANNER = true;
     public static boolean PRINT_SELECTION = false;
     public static boolean DEBUG_MODE = false;
 
@@ -39,7 +40,7 @@ public class GeneralParameters {
 
     // GRASP
     public static String OUTPUT = "outputs/";
-    public static int FOLDS = 5;
+    public static int FOLDS = 10;
     public static int GRASP_SEED = 5;
     public static int EVALUATION_SEED = 7;
 
@@ -64,10 +65,10 @@ public class GeneralParameters {
     public static ClassifierExtended[] CLASSIFIERS_FOREACH = {
             GenericClassifiers.RANDOM_TREE,
             GenericClassifiers.J48,
-            GenericClassifiers.REP_TREE,
-            GenericClassifiers.NAIVE_BAYES,
-            GenericClassifiers.RANDOM_FOREST
-    };// KNN está fora
+//            GenericClassifiers.REP_TREE,
+//            GenericClassifiers.NAIVE_BAYES,
+//            GenericClassifiers.RANDOM_FOREST
+    };
 
     public static ClassifierExtended SINGLE_CLASSIFIER_MODE = GenericClassifiers.J48;
 

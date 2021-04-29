@@ -17,6 +17,7 @@ import weka.attributeSelection.ReliefFAttributeEval;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
+import weka.filters.unsupervised.attribute.NumericCleaner;
 
 /**
  *
@@ -170,6 +171,50 @@ public class FeatureRanking {
         System.out.println("Método: " + metodo);
         Instances instances = new Instances(readDataFile(file));
         instances.setClassIndex(instances.numAttributes() - 1);
+//        instances.deleteAttributeAt(42);
+//        instances.deleteAttributeAt(41);
+//        instances.deleteAttributeAt(40);
+//        instances.deleteAttributeAt(39);
+//        instances.deleteAttributeAt(38);
+//        instances.deleteAttributeAt(37);
+//        instances.deleteAttributeAt(36);
+//        instances.deleteAttributeAt(35);
+//        instances.deleteAttributeAt(34);
+//        instances.deleteAttributeAt(33);
+//        instances.deleteAttributeAt(32);
+//        instances.deleteAttributeAt(31);
+//        instances.deleteAttributeAt(30);
+//        instances.deleteAttributeAt(29);
+//        instances.deleteAttributeAt(28);
+//        instances.deleteAttributeAt(27);
+//        instances.deleteAttributeAt(26);
+//        instances.deleteAttributeAt(25);
+//        instances.deleteAttributeAt(24);
+//        instances.deleteAttributeAt(23);
+//        instances.deleteAttributeAt(22);
+//        instances.deleteAttributeAt(21);
+//        instances.deleteAttributeAt(20);
+//        instances.deleteAttributeAt(19);
+//        instances.deleteAttributeAt(18);
+//        instances.deleteAttributeAt(17);
+//        instances.deleteAttributeAt(16);
+//        instances.deleteAttributeAt(15);
+//        instances.deleteAttributeAt(14);
+//        instances.deleteAttributeAt(13);
+//        instances.deleteAttributeAt(12);
+//        instances.deleteAttributeAt(11);
+//        instances.deleteAttributeAt(10); // A nominal attribute (vsmA) cannot have duplicate labels ('(-0.088808--0.088808]').
+//        instances.deleteAttributeAt(9);
+//        instances.deleteAttributeAt(8);
+//        instances.deleteAttributeAt(7); // A nominal attribute (vsbA) cannot have duplicate labels ('(0.094344-0.094344]').
+//        instances.deleteAttributeAt(6); // A nominal attribute (ismC) cannot have duplicate labels ('(0.062934-0.062934]').
+//        instances.deleteAttributeAt(5); // A nominal attribute (ismB) cannot have duplicate labels ('(-0.000051--0.000051]').
+//        instances.deleteAttributeAt(4); // A nominal attribute (ismA) cannot have duplicate labels ('(-0.000023--0.000023]').
+//        instances.deleteAttributeAt(3); //  A nominal attribute (isbC) cannot have duplicate labels ('(-0.064013--0.064013]').
+//        instances.deleteAttributeAt(2);
+//        instances.deleteAttributeAt(1);
+//        instances.deleteAttributeAt(0);
+        System.out.println("instances attrs " + instances.numAttributes());
         if (NORMALIZE) {
             instances = normalizar(instances);
         }
@@ -198,7 +243,14 @@ public class FeatureRanking {
                 break;
             case GR:
                 System.out.println("GR:");
+                if(GeneralParameters.NUMERIC_CLEANNER) {
+                    NumericCleaner decimals = new NumericCleaner();                         // new instance of filter
+                    decimals.setInputFormat(instances);
+                    decimals.setDecimals(5);
+                    instances = Filter.useFilter(instances, decimals);   // apply filter
+                }
                 for (int i = 0; i < instances.numAttributes()-1; i++) {
+
                     allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
                     if (CSV) {
                         System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
@@ -211,7 +263,12 @@ public class FeatureRanking {
             case OneR:
                 System.out.println("OneR:");
                 for (int i = 0; i < instances.numAttributes()-1; i++) {
-                    allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                    try {
+                        allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                    } catch (Exception e){
+                        System.out.println("Erro ao avaliar Feature "+i+" "+e.getMessage()+", set OneR value to 0.");
+                        allFeatures[i] = new FeatureAvaliada(0, i + 1);
+                    }
                 }
                 break;
             default:
@@ -423,5 +480,81 @@ public class FeatureRanking {
         ase.buildEvaluator(instances);
         return ase.evaluateAttribute(featureIndice);
     }
+
+    public static FeatureAvaliada[] avaliarESelecionarFromGeneralParamter(int featuresSelecionar, METODO metodo, boolean debug) throws Exception {
+        System.out.println("Método: " + metodo);
+        Instances instances = new Instances(readDataFile(GeneralParameters.DATASET));
+        instances.setClassIndex(instances.numAttributes() - 1);
+        if (NORMALIZE) {
+            instances = normalizar(instances);
+        }
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()];
+        switch (metodo) {
+            case IG:
+                System.out.println("IG:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                    if (CSV) {
+                        System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                    } else {
+                        System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                    }
+                }
+                break;
+            case Relief:
+                System.out.println("Relief:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
+                }
+                break;
+            case GR:
+                System.out.println("GR:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
+                    if (CSV) {
+                        System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                    } else {
+                        System.out.println("GR: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                    }
+
+                }
+                break;
+            case OneR:
+                System.out.println("OneR:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                }
+                break;
+            default:
+                System.out.println("Método incorreto.");
+        }
+
+        Util.quickSort(allFeatures, 0, allFeatures.length - 1);
+        FeatureAvaliada[] filter = new FeatureAvaliada[featuresSelecionar];
+        int i = 0;
+
+//        for (FeatureAvaliada feature : allFeatures) {
+//            System.out.println(feature.getIndiceFeature() + "-" + feature.getValorFeature());
+//        }
+        for (int j = allFeatures.length; j > allFeatures.length - featuresSelecionar; j--) {
+//            System.out.println(featuresSelecionar + "[" + i + "]" + "/[" + (j - 1) + "]" + allFeatures.length);
+            filter[i++] = allFeatures[j - 1];
+        }
+
+        if (debug) {
+            for (FeatureAvaliada filter1 : filter) {
+                System.out.println(filter1.getIndiceFeature() + "-" + filter1.getValorFeature());
+            }
+        } else {
+            System.out.print("{");
+            for (FeatureAvaliada filter1 : filter) {
+                System.out.print(filter1.getIndiceFeature() + ", ");
+            }
+            System.out.println("}");
+        }
+
+        return filter;
+    }
+
 
 }

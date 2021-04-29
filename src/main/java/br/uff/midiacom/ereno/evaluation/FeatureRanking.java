@@ -44,7 +44,7 @@ public class FeatureRanking {
 
 //        avaliarESelecionar(42, METODO.IG, false); 
 //        avaliarESelecionar(42, METODO.GR, false); 
-        avaliarESelecionar(40, METODO.OneR, false);
+        avaliarESelecionar(40, METODO.GR, false);
 
     }
 

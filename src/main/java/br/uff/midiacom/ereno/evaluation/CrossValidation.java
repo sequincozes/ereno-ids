@@ -18,6 +18,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import weka.core.Instances;
+import weka.core.NominalAttributeInfo;
+import weka.core.Utils;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.NumericCleaner;
 
 /**
  * @author silvio
@@ -155,7 +159,7 @@ public class CrossValidation {
     }
 
     public static void runAndPrintFoldResults(int[] features, int classifierIndex, boolean printConfusionMatrix) throws Exception {
-        System.out.print(GenericClassifiers.all[classifierIndex].getClassifierName() + ";");
+//        System.out.print(GenericClassifiers.all[classifierIndex].getClassifierName() + ";");
 
         // Compute for all folds
         GenericResultado[] results = setupAndRun(GeneralParameters.FOLDS, 7, GenericClassifiers.all[classifierIndex], features);
@@ -358,16 +362,16 @@ public class CrossValidation {
     public static void printFolds(int[] features) throws Exception {
         int numFolds = 5;
         // Compute all folds, for each classifier
-        GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.all.length][];
-        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.all.length; classifierIndex++) {
-            System.out.print(GenericClassifiers.all[classifierIndex].getClassifierName() + ";");
-            GenericResultado[] foldResults = setupAndRun(numFolds, 7, GenericClassifiers.all[classifierIndex], features);
+        GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.allCustom.length][];
+        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+            GenericResultado[] foldResults = setupAndRun(numFolds, 7, GenericClassifiers.allCustom[classifierIndex], features);
             allClassifiers[classifierIndex] = foldResults;
         }
 
         //Just print
-        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.all.length; classifierIndex++) {
-            System.out.print(GenericClassifiers.all[classifierIndex].getClassifierName() + ";");
+        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
             for (int fold = 0; fold < GeneralParameters.FOLDS; fold++) {
                 try {
                     System.out.print(allClassifiers[classifierIndex][fold].getF1Score() + ";");

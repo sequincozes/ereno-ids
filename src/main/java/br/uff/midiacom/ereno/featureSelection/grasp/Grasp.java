@@ -5,6 +5,7 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
+import br.uff.midiacom.ereno.evaluation.experiments.FeatureSelectionExperiments;
 import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
@@ -62,6 +63,13 @@ public abstract class Grasp {
 
     //         java -jar graspAcc.jar GR-G-VND 2 wsn >> full_rcl_2_2.txt&
     public static void main(String[] args) throws IOException, Exception {
+
+        /* TEMPORARIO, LEVA PARA O FS*/
+        if(true) {
+            FeatureSelectionExperiments.main(args);
+        } else {
+        /* FIM TEMPORARIO, LEVA PARA O FS*/
+
         //   args = new String[]{"2", "4", "wsn", "5"};
         boolean pregrasp = false;
         boolean timeAnalysis = false;
@@ -72,7 +80,7 @@ public abstract class Grasp {
         } else {
 //            enableMicroservicesOld(args);
             enableMicroservices(args);
-        }
+        }}
 
     }
 

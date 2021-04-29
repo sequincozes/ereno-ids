@@ -6,7 +6,6 @@
 package br.uff.midiacom.ereno.evaluation.experiments;
 
 import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
-import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
@@ -14,70 +13,43 @@ import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
 import br.uff.midiacom.ereno.featureSelection.Util;
 import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
-import br.uff.midiacom.ereno.featureSelection.subsets.FullConsistencySubset;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
 import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
-
-import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
+import weka.core.Instances;
 
 import java.io.IOException;
-
-import weka.core.Instances;
-import weka.filters.unsupervised.attribute.NumericCleaner;
 
 /**
  * @author silvio
  */
-public class CrossValidationExperiments {
-//    public static void main(String[] args) throws Exception {
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_flooding" + ".csv", "GR"});
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_grayhole" + ".csv", "GR"});
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_blackhole" + ".csv", "GR"});
-//
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_flooding" + ".csv", "IG"});
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_grayhole" + ".csv", "IG"});
-//        mainOriginal(new String[]{GeneralParameters.WSN_ATTACKS + "normal_blackhole" + ".csv", "IG"});
-//
-//
-//    }
+public class FeatureSelectionExperiments {
+
     public static void main(String[] args) throws Exception {
         GeneralParameters.CSV = true;
-        args = new String[2];
-        int numUc = 4;
-//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc04/uc00_uc0"+numUc+"_1s.csv";
-//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0" + numUc + "/uc00_uc0" + numUc + ".csv";
-//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0" + numUc + "/uc00_uc0" + numUc + "_1s.csv";
+
+//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0"+uc+"/uc00_uc0"+uc+"_1s.csv";
+//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0" + uc + "/uc00_uc0" + uc + ".csv";
 //        args[0] = GeneralParameters.WSN_DATASET;
-        args[0] = GeneralParameters.WSN_ATTACKS + "normal_grayhole" + ".csv";
-        System.out.println(args[0]);
-        args[1] = "IG";
 
         METODO method = null;
-//        System.out.println("Usage: java -jar featureRanking.jar [dataset] [method]");
+        System.out.println("Usage: java -jar featureRanking.jar [dataset] [method]");
+        System.out.println("Example: java -jar featureRanking.jar uc00_uc01 GR");
         String uc = args[0];
-        if (args[1].contains("IG")) {
+        if (args[1].equalsIgnoreCase("IG")) {
             method = METODO.IG;
-        } else if (args[1].contains("GR")) {
+        } else if (args[1].equalsIgnoreCase("GR")) {
             method = METODO.GR;
-        } else if (args[1].contains("OneR")) {
+        } else if (args[1].equalsIgnoreCase("OneR")) {
             method = METODO.OneR;
         } else {
             System.out.println("Method must be IG, GR, or OneR");
             System.exit(1);
         }
-        System.out.println("uc00_uc0" + uc + "_"+method.name());
-//
-//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0" + numUc + "/uc00_uc0" + numUc + "_1s.csv";//uc;
-//
-//        GeneralParameters.SINGLE_CLASSIFIER_MODE = GenericClassifiers.RANDOM_TREE;
-//        FeatureRanking.justRank(GeneralParameters.DATASET, method);
-//        fullConsistencyV4CrossValidation();
-
-//        wsnCrossValidation();
-
-        GeneralParameters.DATASET = GeneralParameters.KDD_DATASET;
-        SWATCrossValidation();
-
+//        System.out.println("uc00_uc0" + uc + "_"+method.name());
+        System.out.println(uc + "_"+method.name());
+        GeneralParameters.DATASET = uc;
+        FeatureRanking.justRank(GeneralParameters.DATASET, method);
     }
 
 
@@ -93,60 +65,14 @@ public class CrossValidationExperiments {
         Util.writeInstancesToFile(allInstances, GeneralParameters.CONSISTENCY_DATASET.replace(".csv", "_10percent.csv"));
     }
 
-    public static void SWATCrossValidation() throws Exception {
-        int[] completo = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
-        int[] top5 = new int[]{12, 26, 4, 25, 39};
-        CrossValidation.runAndPrintFoldResults(new int[]{12, 26, 4, 25, 39}, 2, false);
-
-    }
-
-        public static void wsnCrossValidation() throws Exception {
+    public static void wsnCrossValidation() throws Exception {
         boolean printConfusionMatrix = false;
-        System.out.println("--- WSN_FULL WSN_BLACKHOLE_GR_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_GR_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_GR_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_GR_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_BLACKHOLE_IG_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_IG_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_IG_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_IG_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_BLACKHOLE_ONER_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_ONER_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_ONER_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_BLACKHOLE_ONER_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_GRAYHOLE_GR_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_GRAYHOLE_IG_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_GRAYHOLE_ONER_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_ONER_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_ONER_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_ONER_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_FLOODING_GR_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_GR_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_FLOODING_IG_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_GRAYHOLE_IG_5, 2, printConfusionMatrix);
-
-        System.out.println("--- WSN_FULL WSN_FLOODING_ONER_5");
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_FLOODING_ONER_5, 0, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_FLOODING_ONER_5, 1, printConfusionMatrix);
-        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_FLOODING_ONER_5, 2, printConfusionMatrix);
-
+        System.out.println("--- WSN_FULL");
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 0, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 1, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 2, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 3, printConfusionMatrix);
+        CrossValidation.runAndPrintFoldResults(WsnFeatures.WSN_IG, 4, printConfusionMatrix);
     }
 
     private static void fullConsistencyV3CrossValidation(int classifierIndex) throws Exception {

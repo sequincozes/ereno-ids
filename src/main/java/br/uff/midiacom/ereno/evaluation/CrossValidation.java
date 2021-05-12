@@ -360,12 +360,11 @@ public class CrossValidation {
 
 
     public static void printFolds(int[] features) throws Exception {
-        int numFolds = 5;
         // Compute all folds, for each classifier
         GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.allCustom.length][];
         for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
-            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
-            GenericResultado[] foldResults = setupAndRun(numFolds, 7, GenericClassifiers.allCustom[classifierIndex], features);
+//            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+            GenericResultado[] foldResults = setupAndRun(GeneralParameters.FOLDS, 7, GenericClassifiers.allCustom[classifierIndex], features);
             allClassifiers[classifierIndex] = foldResults;
         }
 
@@ -376,12 +375,42 @@ public class CrossValidation {
                 try {
                     System.out.print(allClassifiers[classifierIndex][fold].getF1Score() + ";");
                 } catch (Exception ex) {
+                    System.out.println("FOLD: " + fold);
+                    ex.printStackTrace();
                     Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             System.out.println("");
         }
     }
+
+    public static void printFolds(int[] features, boolean printSummary) throws Exception {
+        // Compute all folds, for each classifier
+        GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.allCustom.length][];
+        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+//            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+            GenericResultado[] foldResults = setupAndRun(GeneralParameters.FOLDS, 7, GenericClassifiers.allCustom[classifierIndex], features);
+            allClassifiers[classifierIndex] = foldResults;
+        }
+
+        if (printSummary) {
+            //Just print
+            for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+                System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+                for (int fold = 0; fold < GeneralParameters.FOLDS; fold++) {
+                    try {
+                        System.out.print(allClassifiers[classifierIndex][fold].getF1Score() + ";");
+                    } catch (Exception ex) {
+                        System.out.println("FOLD: " + fold);
+                        ex.printStackTrace();
+                        Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                System.out.println("");
+            }
+        }
+    }
+
     public static void printFolds(int[][] features) throws Exception {
         int numFolds = 5;
         // Compute all folds, for each classifier

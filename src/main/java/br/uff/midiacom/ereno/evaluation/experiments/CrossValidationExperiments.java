@@ -14,16 +14,12 @@ import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
 import br.uff.midiacom.ereno.featureSelection.Util;
 import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
-import br.uff.midiacom.ereno.featureSelection.subsets.FullConsistencySubset;
 import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
 import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
-
-import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
 
 import java.io.IOException;
 
 import weka.core.Instances;
-import weka.filters.unsupervised.attribute.NumericCleaner;
 
 /**
  * @author silvio

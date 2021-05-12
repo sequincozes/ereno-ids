@@ -6,8 +6,7 @@
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
 import br.uff.midiacom.ereno.evaluation.experiments.FeatureSelectionExperiments;
-import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
-import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
+import br.uff.midiacom.ereno.featureSelection.subsets.*;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
@@ -17,8 +16,6 @@ import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import br.uff.midiacom.ereno.evaluation.TimeAnalysis;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructures;
-import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
-import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
 import br.uff.midiacom.ereno.outputManager.model.Detail;
 
 import java.io.IOException;
@@ -63,24 +60,25 @@ public abstract class Grasp {
 
     //         java -jar graspAcc.jar GR-G-VND 2 wsn >> full_rcl_2_2.txt&
     public static void main(String[] args) throws IOException, Exception {
-
+        args = new String[]{"GR-G-BF", "2", "all_in_one_wsn"};
         /* TEMPORARIO, LEVA PARA O FS*/
-        if(true) {
+        if (false) {
             FeatureSelectionExperiments.main(args);
         } else {
-        /* FIM TEMPORARIO, LEVA PARA O FS*/
+            /* FIM TEMPORARIO, LEVA PARA O FS*/
 
-        //   args = new String[]{"2", "4", "wsn", "5"};
-        boolean pregrasp = false;
-        boolean timeAnalysis = false;
-        if (timeAnalysis) {
-            TimeAnalysis.main(args);
-        } else if (pregrasp) {
-            PreGrasp.main(args);
-        } else {
+            //   args = new String[]{"2", "4", "wsn", "5"};
+            boolean pregrasp = false;
+            boolean timeAnalysis = false;
+            if (timeAnalysis) {
+                TimeAnalysis.main(args);
+            } else if (pregrasp) {
+                PreGrasp.main(args);
+            } else {
 //            enableMicroservicesOld(args);
-            enableMicroservices(args);
-        }}
+                enableMicroservices(args);
+            }
+        }
 
     }
 
@@ -91,6 +89,7 @@ public abstract class Grasp {
     }
 
     private static void enableMicroservices(String[] args) throws Exception {
+
         String graspAlgoritm = args[0];
         int classifier = Integer.valueOf(args[1]) - 1;
         switch (args.length) {
@@ -277,7 +276,7 @@ public abstract class Grasp {
     }
 
     public GraspSolution avaliar(GraspSolution solution) throws Exception {
-        solution.setCurrentTimeSeconds((beginTime/1000) - (System.currentTimeMillis() / 1000));
+        solution.setCurrentTimeSeconds((beginTime / 1000) - (System.currentTimeMillis() / 1000));
         if (GeneralParameters.DEBUG_MODE) {
             System.out.println("Dataset: " + GeneralParameters.DATASET);
             System.out.println("Classifier: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
@@ -376,6 +375,9 @@ public abstract class Grasp {
             featureSubsets = new KddFeatures();
         } else if (dataset.toLowerCase().contains("cicids")) {
             featureSubsets = new CicidsFeatures();
+        } else if (dataset.toLowerCase().contains("swat")) {
+            featureSubsets = new SWATFeatures();
+
         } else {
             System.out.println("Invalid dataset name. Must contains kdd, wsn, or cicids.");
             System.exit(1);

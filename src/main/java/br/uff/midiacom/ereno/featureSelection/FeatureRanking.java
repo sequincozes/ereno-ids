@@ -7,9 +7,12 @@ package br.uff.midiacom.ereno.featureSelection;
 
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+
 import java.util.Random;
+
 import static br.uff.midiacom.ereno.legacy.substation.Parameters.NORMALIZE;
 import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
+
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.OneRAttributeEval;
@@ -20,7 +23,6 @@ import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.NumericCleaner;
 
 /**
- *
  * @author sequi
  */
 public class FeatureRanking {
@@ -36,7 +38,9 @@ public class FeatureRanking {
 
     public static enum METODO {
         GR, IG, Relief, OneR;
-    };
+    }
+
+    ;
 
     public static void main(String[] args) throws Exception {
         System.out.println("WSN OneR");
@@ -44,7 +48,7 @@ public class FeatureRanking {
 
     }
 
-    public static void justMergeAndRank(String file1,String file2, METODO metodo) throws Exception {
+    public static void justMergeAndRank(String file1, String file2, METODO metodo) throws Exception {
         System.out.println("Método: " + metodo);
         Instances instances1 = new Instances(readDataFile(file1));
         Instances instances = new Instances(readDataFile(file2));
@@ -54,32 +58,32 @@ public class FeatureRanking {
         if (NORMALIZE) {
             instances = normalizar(instances);
         }
-        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()-1];
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes() - 1];
         switch (metodo) {
             case IG:
                 System.out.println("IG:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
-                    try{
-                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
-                       if (CSV) {
-                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
-                       } else {
-                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
-                       }
-                    } catch (java.lang.IllegalArgumentException e){
-                       e.printStackTrace();
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
+                    try {
+                        allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                        if (CSV) {
+                            System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                        } else {
+                            System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                        }
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
             case Relief:
                 System.out.println("Relief:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
                 }
                 break;
             case GR:
                 System.out.println("GR:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
                     if (CSV) {
                         System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
@@ -91,7 +95,7 @@ public class FeatureRanking {
                 break;
             case OneR:
                 System.out.println("OneR:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
                 }
                 break;
@@ -114,32 +118,32 @@ public class FeatureRanking {
         if (NORMALIZE) {
             instances = normalizar(instances);
         }
-        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()-1];
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes() - 1];
         switch (metodo) {
             case IG:
                 System.out.println("IG:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
-                    try{
-                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
-                       if (CSV) {
-                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
-                       } else {
-                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
-                       }
-                    } catch (java.lang.IllegalArgumentException e){
-                       e.printStackTrace();
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
+                    try {
+                        allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                        if (CSV) {
+                            System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                        } else {
+                            System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                        }
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
             case Relief:
                 System.out.println("Relief:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
                 }
                 break;
             case GR:
                 System.out.println("GR:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
                     if (CSV) {
                         System.out.println("GR;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
@@ -151,7 +155,7 @@ public class FeatureRanking {
                 break;
             case OneR:
                 System.out.println("OneR:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
                 }
                 break;
@@ -166,9 +170,9 @@ public class FeatureRanking {
             System.out.println(feature.getIndiceFeature() + "-" + feature.getValorFeature());
         }
     }
-    
+
     public static void justRank(String file, METODO metodo) throws Exception {
-        System.out.println("Método: " + metodo);
+        System.out.println("Método: " + metodo + "/ dataset: " + file);
         Instances instances = new Instances(readDataFile(file));
         instances.setClassIndex(instances.numAttributes() - 1);
 //        instances.deleteAttributeAt(42);
@@ -218,38 +222,38 @@ public class FeatureRanking {
         if (NORMALIZE) {
             instances = normalizar(instances);
         }
-        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()-1];
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes() - 1];
         switch (metodo) {
             case IG:
                 System.out.println("IG:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
-                    try{
-                       allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
-                       if (CSV) {
-                           System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
-                       } else {
-                           System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
-                       }
-                    } catch (java.lang.IllegalArgumentException e){
-                       e.printStackTrace();
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
+                    try {
+                        allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                        if (CSV) {
+                            System.out.println("IG;" + allFeatures[i].indiceFeature + ";" + instances.attribute(i).name() + ";" + allFeatures[i].valorFeature);
+                        } else {
+                            System.out.println("IG: [" + allFeatures[i].indiceFeature + "] Ganho: " + allFeatures[i].valorFeature + " (" + instances.attribute(i).name() + ")");
+                        }
+                    } catch (java.lang.IllegalArgumentException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
             case Relief:
                 System.out.println("Relief:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
                 }
                 break;
             case GR:
                 System.out.println("GR:");
-                if(GeneralParameters.NUMERIC_CLEANNER) {
+                if (GeneralParameters.NUMERIC_CLEANNER) {
                     NumericCleaner decimals = new NumericCleaner();                         // new instance of filter
                     decimals.setInputFormat(instances);
                     decimals.setDecimals(5);
                     instances = Filter.useFilter(instances, decimals);   // apply filter
                 }
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
 
                     allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
                     if (CSV) {
@@ -262,11 +266,11 @@ public class FeatureRanking {
                 break;
             case OneR:
                 System.out.println("OneR:");
-                for (int i = 0; i < instances.numAttributes()-1; i++) {
+                for (int i = 0; i < instances.numAttributes() - 1; i++) {
                     try {
                         allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
-                    } catch (Exception e){
-                        System.out.println("Erro ao avaliar Feature "+i+" "+e.getMessage()+", set OneR value to 0.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao avaliar Feature " + i + " " + e.getMessage() + ", set OneR value to 0.");
                         allFeatures[i] = new FeatureAvaliada(0, i + 1);
                     }
                 }

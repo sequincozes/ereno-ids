@@ -12,10 +12,7 @@ import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
 import br.uff.midiacom.ereno.featureSelection.Util;
-import br.uff.midiacom.ereno.featureSelection.subsets.CicidsFeatures;
-import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
-import br.uff.midiacom.ereno.featureSelection.subsets.KddFeatures;
-import br.uff.midiacom.ereno.featureSelection.subsets.WsnFeatures;
+import br.uff.midiacom.ereno.featureSelection.subsets.*;
 import weka.core.Instances;
 
 import java.io.IOException;
@@ -26,16 +23,38 @@ import java.io.IOException;
 public class FeatureSelectionExperiments {
 
     public static void main(String[] args) throws Exception {
-        GeneralParameters.CSV = true;
+//         Manual Run
 
-//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0"+uc+"/uc00_uc0"+uc+"_1s.csv";
-//        args[0] = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc0" + uc + "/uc00_uc0" + uc + ".csv";
-//        args[0] = GeneralParameters.WSN_DATASET;
+        int ucNum = 4;
+//        for (String uc : GeneralParameters.CONSISTENCYV4_DATASET_10percent) {
+        for (String uc : GeneralParameters.CONSISTENCYV4_DATASET) {
+            GeneralParameters.DATASET = uc;
+            System.out.println(GeneralParameters.DATASET);
+//            CrossValidation.printFolds(ConsistencySubsets.exTop3UC0[ucNum++]);
+            CrossValidation.printFolds(ConsistencySubsets.UC0[ucNum++]);
+            break;
+        }
+
+//        int[] fs = new int[]{/*1*/ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, /*14, 15,*/ 16, 17, 18, 19, 20, 21, 22, 23, 24,
+//                25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43};
+//        System.out.println(GeneralParameters.CONSISTENCYV4_DATASET_UC04/*_10percent*/);
+//        CrossValidation.printFolds(fs);
+
+//         FeatureRanking.justRank(GeneralParameters.DATASET, METODO.GR);
+//         Microservice mode
+//         automaticRun(args);
+
+    }
+
+    // For microservice mode
+    private static void automaticRun(String[] args) throws Exception {
+        args = new String[3];
+        GeneralParameters.CSV = true;
 
         METODO method = null;
         System.out.println("Usage: java -jar featureRanking.jar [dataset] [method]");
         System.out.println("Example: java -jar featureRanking.jar uc00_uc01 GR");
-        String uc = args[0];
+        String dataset = args[0];
         if (args[1].equalsIgnoreCase("IG")) {
             method = METODO.IG;
         } else if (args[1].equalsIgnoreCase("GR")) {
@@ -46,23 +65,16 @@ public class FeatureSelectionExperiments {
             System.out.println("Method must be IG, GR, or OneR");
             System.exit(1);
         }
-//        System.out.println("uc00_uc0" + uc + "_"+method.name());
-        System.out.println(uc + "_"+method.name());
-        GeneralParameters.DATASET = uc;
+        System.out.println(dataset + "_" + method.name());
+        GeneralParameters.DATASET = dataset;
         FeatureRanking.justRank(GeneralParameters.DATASET, method);
-    }
-
-
-    private static void fullConsistencyV4CrossValidation() throws Exception {
-        int[] fs = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43};
-        CrossValidation.printFolds(fs);
     }
 
     public static void reduceInstances() throws IOException {
         Instances allInstances = Util.cutFold(10, 1, 7, new String[]{
                 GeneralParameters.DATASET});
         System.out.println("Tamanho: " + allInstances.size());
-        Util.writeInstancesToFile(allInstances, GeneralParameters.CONSISTENCY_DATASET.replace(".csv", "_10percent.csv"));
+        Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_10percent.csv"));
     }
 
     public static void wsnCrossValidation() throws Exception {

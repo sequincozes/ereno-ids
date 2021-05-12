@@ -23,22 +23,28 @@ import java.io.IOException;
 /**
  * @author silvio
  */
-public class ExperimentosVinicius {
+public class Kz {
 
     public static void main(String[] args) throws Exception {
+        // Manual Run
         GeneralParameters.CSV = true;
-        GeneralParameters.DATASET = GeneralParameters.KDD_DATASET;
-        GeneralParameters.FOLDS = 7;
-//12, 26, 4, 25, 39, 30, 38, 6, 29, 5, 3, 37, 33, 34, 35, 31, 28, 27, 8, 41, 32, 23, 10, 36, 13, 2, 15, 11, 19, 40, 16, 21, 1, 17, 7, 24, 14, 22, 9
-        int[] completo = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40};
-        int[] top5 = new int[]{12, 26, 4, 25, 39};
-        int[] top10 = new int[]{12, 26, 4, 25, 39, 30, 38, 6, 29, 5};
 
 
-        // Para aplicar o filtro
-        FeatureRanking.avaliarESelecionarFromGeneralParamter(40, FeatureRanking.METODO.GR, false);
+        GenericClassifiers.allCustom = new ClassifierExtended[]{
+                GenericClassifiers.J48,
+                GenericClassifiers.RANDOM_TREE,
+                GenericClassifiers.REP_TREE
+        };
 
-        // Para classificar
-//        CrossValidation.runAndPrintFoldResults(top5, 2, false);
+
+        GeneralParameters.DATASET = GeneralParameters.WSN_NORMAL_GRAYHOLE;
+        System.out.println(GeneralParameters.DATASET);
+        CrossValidation.printFolds(WsnFeatures.WSN_GR);
+        System.out.println("OneR");
+        CrossValidation.printFolds(WsnFeatures.WSN_OneR);
+        System.out.println("IG");
+        CrossValidation.printFolds(WsnFeatures.WSN_IG);
     }
+
+
 }

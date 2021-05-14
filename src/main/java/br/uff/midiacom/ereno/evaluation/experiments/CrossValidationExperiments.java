@@ -72,7 +72,7 @@ public class CrossValidationExperiments {
 //        wsnCrossValidation();
 
         GeneralParameters.DATASET = GeneralParameters.KDD_DATASET;
-        SWATCrossValidation();
+//        SWATCrossValidation();
 
     }
 

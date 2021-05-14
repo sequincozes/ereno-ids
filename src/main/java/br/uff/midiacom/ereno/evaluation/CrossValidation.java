@@ -248,8 +248,10 @@ public class CrossValidation {
             Instances train = randData.trainCV(totalFolds, fold, rand);
             Instances test = randData.testCV(totalFolds, fold);
             resultsCompilation[fold] = GenericEvaluation.runSingleClassifier(train, test);
-
-            if (GeneralParameters.DEBUG_MODE) {
+            if (GeneralParameters.SINGLE_FOLD_MODE) {
+                return new GenericResultado[]{resultsCompilation[fold]};
+            }
+                if (GeneralParameters.DEBUG_MODE) {
                 System.out.println("runSingleClassifier - F1:" + resultsCompilation[fold].getF1Score());
                 System.out.println("runSingleClassifier - Acc:" + resultsCompilation[fold].getAcuracia());
                 System.out.println("runSingleClassifier - Precision:" + resultsCompilation[fold].getPrecision());
@@ -360,6 +362,7 @@ public class CrossValidation {
 
 
     public static void printFolds(int[] features) throws Exception {
+
         // Compute all folds, for each classifier
         GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.allCustom.length][];
         for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
@@ -369,6 +372,9 @@ public class CrossValidation {
         }
 
         //Just print
+        if(GeneralParameters.SINGLE_FOLD_MODE){
+            return;
+        }
         for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
             System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
             for (int fold = 0; fold < GeneralParameters.FOLDS; fold++) {

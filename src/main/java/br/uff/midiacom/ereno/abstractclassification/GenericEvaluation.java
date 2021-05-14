@@ -207,7 +207,10 @@ public class GenericEvaluation {
 
 
     private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test, boolean timeTest) throws Exception {
+        long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
+        long endTraining = System.nanoTime();
+        System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
         if (timeTest) {
             System.out.println("---------");
             System.out.println(selectedClassifier.getClassifierName());

@@ -39,6 +39,6 @@ public class ExperimentosVinicius {
         FeatureRanking.avaliarESelecionarFromGeneralParamter(40, FeatureRanking.METODO.GR, false);
 
         // Para classificar
-//        CrossValidation.runAndPrintFoldResults(top5, 2, false);
+        CrossValidation.runAndPrintFoldResults(top5, 2, false);
     }
 }

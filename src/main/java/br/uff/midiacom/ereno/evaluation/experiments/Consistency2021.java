@@ -8,6 +8,7 @@ package br.uff.midiacom.ereno.evaluation.experiments;
 import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
+import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
@@ -23,12 +24,31 @@ import java.io.IOException;
 public class Consistency2021 {
 
     public static void main(String[] args) throws Exception {
+//        runWithoutCV();
         //    startRecursivo();
-        if (args.length > 0) {
-            microserviceCrossValidation(args);
-        } else {
-            manual();
-        }
+//        if (args.length > 0) {
+//            microserviceCrossValidation(args);
+//        } else {
+//            manual();
+//        }
+        runWithoutCV();
+//        reduceInstances(10,2);
+//        reduceInstances(10,3);
+
+
+    }
+
+    private static void runWithoutCV() throws Exception {
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v5/uc01/uc00Top10pctTrain_10folds-1.csv";
+
+        Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
+        train.setClassIndex(train.numAttributes()-1);
+
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v5/uc01/uc00Top10pctTrain_10folds-2.csv";
+        Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
+        test.setClassIndex(test.numAttributes()-1);
+
+        GenericEvaluation.runSingleClassifier(train, test);
     }
 
     private static void microserviceValidation(String[] args) throws Exception {
@@ -42,7 +62,6 @@ public class Consistency2021 {
             CrossValidation.printFolds(ConsistencySubsets.UC01RankedIG);
         }
     }
-
 
     private static void microserviceCrossValidation(String[] args) throws Exception {
         GeneralParameters.FEATURE_SELECTION = ConsistencySubsets.UC0[Integer.parseInt(args[1])];
@@ -110,11 +129,9 @@ public class Consistency2021 {
     }
 
 
-    public static void reduceInstances() throws IOException {
-        Instances allInstances = Util.cutFold(10, 1, 7, new String[]{
-                GeneralParameters.DATASET});
-        System.out.println("Tamanho: " + allInstances.size());
-        Util.writeInstancesToFile(allInstances, GeneralParameters.CONSISTENCY_DATASET.replace(".csv", "_10percent.csv"));
+    public static void reduceInstances(int totalFolds, int fold) throws IOException {
+        Instances allInstances = Util.cutFold(totalFolds, fold, 7, new String[]{GeneralParameters.DATASET});
+        Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_"+totalFolds+"folds-"+fold+".csv"));        System.out.println("Tamanho: " + allInstances.size());
     }
 
     public static void SWATCrossValidation() throws Exception {

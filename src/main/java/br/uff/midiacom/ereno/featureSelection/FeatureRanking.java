@@ -117,7 +117,7 @@ public class FeatureRanking {
 
     public static void main(String[] args) throws Exception {
         System.out.println("WSN OneR");
-        justRank(GeneralParameters.WSN_DATASET, METODO.OneR);
+        justRank(GeneralParameters.SWAT30pct, METODO.OneR);
 
     }
 

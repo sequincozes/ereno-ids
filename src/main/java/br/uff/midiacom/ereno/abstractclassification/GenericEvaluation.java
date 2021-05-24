@@ -8,6 +8,8 @@ package br.uff.midiacom.ereno.abstractclassification;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.util.Arrays;
+
 /**
  * @author silvio
  */
@@ -137,7 +139,7 @@ public class GenericEvaluation {
                             + r.getVN() + ";"
                             + r.getFP() + ";"
                             + r.getFN() + ";"
-                            + r.getTime()
+                            + Arrays.toString(r.usedFS)
             );
 
         } else if (SIMPLE) {
@@ -210,7 +212,9 @@ public class GenericEvaluation {
         long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
         long endTraining = System.nanoTime();
-        System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+        if (GeneralParameters.PRINT_TRAINING_TIME) {
+            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+        }
         if (timeTest) {
             System.out.println("---------");
             System.out.println(selectedClassifier.getClassifierName());

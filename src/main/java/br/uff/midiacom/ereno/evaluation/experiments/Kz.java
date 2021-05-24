@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.uff.midiacom.ereno.evaluation.experiments;
 
 import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
@@ -26,25 +21,41 @@ import java.io.IOException;
 public class Kz {
 
     public static void main(String[] args) throws Exception {
+//        GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/clustering2021/normal_grayhole_80percent_train.csv";
+//        reduceInstances();
+//        GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/clustering2021/normal_flooding_80percent_train.csv";
+//        reduceInstances();
+//        GeneralParameters.DATASET = "/home/silvio/datasets/wsn-ds/clustering2021/normal_blackhole_80percent_train.csv";
+//        reduceInstances();
+
+
         // Manual Run
-        GeneralParameters.CSV = true;
-
-
-        GenericClassifiers.allCustom = new ClassifierExtended[]{
-                GenericClassifiers.J48,
-                GenericClassifiers.RANDOM_TREE,
-                GenericClassifiers.REP_TREE
-        };
-
-
-        GeneralParameters.DATASET = GeneralParameters.WSN_NORMAL_GRAYHOLE;
+//        GeneralParameters.CSV = true;
+//        GenericClassifiers.allCustom = new ClassifierExtended[]{
+//                GenericClassifiers.J48,
+//                GenericClassifiers.RANDOM_TREE,
+//                GenericClassifiers.REP_TREE
+//        };
+//
+//
+        GeneralParameters.DATASET = GeneralParameters.WSN_NORMAL_BLACKHOLE;
         System.out.println(GeneralParameters.DATASET);
-        CrossValidation.printFolds(WsnFeatures.WSN_GR);
-        System.out.println("OneR");
-        CrossValidation.printFolds(WsnFeatures.WSN_OneR);
-        System.out.println("IG");
-        CrossValidation.printFolds(WsnFeatures.WSN_IG);
+//        CrossValidation.printFolds(WsnFeatures.WSN_GR);
+     reduceInstances(5,0);
+//        reduceInstances(5,2);
+//        reduceInstances(5,3);
+//        reduceInstances(5,4);
+//
+
+//        System.out.println("OneR");
+//        CrossValidation.printFolds(WsnFeatures.WSN_OneR);
+//        System.out.println("IG");
+//        CrossValidation.printFolds(WsnFeatures.WSN_IG);
     }
 
+    public static void reduceInstances(int totalFolds, int fold) throws IOException {
+        Instances allInstances = Util.cutFold(totalFolds, fold, 7, new String[]{GeneralParameters.DATASET});
+        Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_"+totalFolds+"folds-"+fold+".csv"));        System.out.println("Tamanho: " + allInstances.size());
+    }
 
 }

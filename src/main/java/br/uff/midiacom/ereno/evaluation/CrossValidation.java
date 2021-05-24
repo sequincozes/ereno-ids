@@ -221,6 +221,13 @@ public class CrossValidation {
         return result;
     }
 
+    public static GenericResultado[] setupAndRun(int folds, int seed, ClassifierExtended classifier) throws Exception {
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
+        Instances allInstances = Util.loadAndFilterSingleFile(GeneralParameters.PRINT_SELECTION); // mudar para o grasp
+        GenericResultado[] result = runSingleClassifier(allInstances, folds, seed);
+        return result;
+    }
+
     public static GenericResultado[] setupAndRunFastFirstFold(int folds, int seed, ClassifierExtended classifier, int[] fs) throws Exception {
         GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
         GeneralParameters.FEATURE_SELECTION = fs;
@@ -360,6 +367,34 @@ public class CrossValidation {
 
     }
 
+    public static void printFolds() throws Exception {
+
+        // Compute all folds, for each classifier
+        GenericResultado[][] allClassifiers = new GenericResultado[GenericClassifiers.allCustom.length][];
+        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+//            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+            GenericResultado[] foldResults = setupAndRun(GeneralParameters.FOLDS, 7, GenericClassifiers.allCustom[classifierIndex]);
+            allClassifiers[classifierIndex] = foldResults;
+        }
+
+        //Just print
+        if(GeneralParameters.SINGLE_FOLD_MODE){
+            return;
+        }
+        for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
+            System.out.print(GenericClassifiers.allCustom[classifierIndex].getClassifierName() + ";");
+            for (int fold = 0; fold < GeneralParameters.FOLDS; fold++) {
+                try {
+                    System.out.print(allClassifiers[classifierIndex][fold].getF1Score() + ";");
+                } catch (Exception ex) {
+                    System.out.println("FOLD: " + fold);
+                    ex.printStackTrace();
+                    Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            System.out.println("");
+        }
+    }
 
     public static void printFolds(int[] features) throws Exception {
 

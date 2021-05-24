@@ -10,8 +10,10 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 public class GeneralParameters {
 
     public static final boolean NUMERIC_CLEANNER = true;
-    public static final boolean SINGLE_FOLD_MODE = true;
-    public static boolean PRINT_SELECTION = false;
+    public static final boolean PRINT_TRAINING_TIME = false;
+    public static final String SWAT30pct = "/home/silvio/datasets/SWAT/swat30pct.csv" ;
+    public static boolean SINGLE_FOLD_MODE = true;
+    public static boolean PRINT_SELECTION = true;
     public static boolean DEBUG_MODE = false;
 
     public static boolean CSV = true;
@@ -71,6 +73,12 @@ public class GeneralParameters {
     public static String WSN_NORMAL_GRAYHOLE = "/home/silvio/datasets/wsn-ds/separated/normal_grayhole.csv";
     public static String WSN_NORMAL_BLACKHOLE = "/home/silvio/datasets/wsn-ds/separated/normal_blackhole.csv";
 
+    public static String WSN_CLUSTERING_FLOODING_TEST = "/home/silvio/datasets/wsn-ds/clustering2021/normal_flooding_20percent_test.csv";
+    public static String WSN_CLUSTERING_GRAYHOLE_TEST = "/home/silvio/datasets/wsn-ds/clustering2021/normal_grayhole_20percent_test.csv";
+    public static String WSN_CLUSTERING_BLACKHOLE_TEST = "/home/silvio/datasets/wsn-ds/clustering2021/normal_blackhole_20percent_test.csv";
+    public static String WSN_CLUSTERING_FLOODING_TRAIN = "/home/silvio/datasets/wsn-ds/clustering2021/normal_flooding_80percent_train.csv";
+    public static String WSN_CLUSTERING_GRAYHOLE_TRAIN = "/home/silvio/datasets/wsn-ds/clustering2021/normal_grayhole_80percent_train.csv";
+    public static String WSN_CLUSTERING_BLACKHOLE_TRAIN = "/home/silvio/datasets/wsn-ds/clustering2021/normal_blackhole_80percent_train.csv";
     // GRASP
     public static String OUTPUT = "outputs/";
     public static int FOLDS = 5;
@@ -98,9 +106,9 @@ public class GeneralParameters {
     public static ClassifierExtended[] CLASSIFIERS_FOREACH = {
             GenericClassifiers.RANDOM_TREE,
             GenericClassifiers.J48,
-//            GenericClassifiers.REP_TREE,
-//            GenericClassifiers.NAIVE_BAYES,
-//            GenericClassifiers.RANDOM_FOREST
+            GenericClassifiers.REP_TREE,
+            GenericClassifiers.NAIVE_BAYES,
+            GenericClassifiers.RANDOM_FOREST
     };
 
     public static ClassifierExtended SINGLE_CLASSIFIER_MODE = GenericClassifiers.J48;

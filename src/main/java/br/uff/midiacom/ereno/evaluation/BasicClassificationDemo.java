@@ -18,13 +18,13 @@ public class BasicClassificationDemo {
         int features[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 
         // Read training dataset and train classifier
-        String train = "/home/silvio/datasets/wsn-ds/train.csv";
+        String train = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc01/20p10p/train.csv";
         Instances trainingDataset = setup(train, classifier, features);
         trainingDataset.setClassIndex(trainingDataset.numAttributes() - 1);
         classifier.getClassifier().buildClassifier(trainingDataset); // training the classifier
 
         // Read testing dataset and test classifier
-        String test = "/home/silvio/datasets/wsn-ds/test.csv";
+        String test = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc01/20p10p/test.csv";
         Instances testingDataset = setup(test, classifier, features);
         testingDataset.setClassIndex(testingDataset.numAttributes() - 1);
 
@@ -33,19 +33,7 @@ public class BasicClassificationDemo {
         System.out.println("Classe esperada: " + instancia.classValue());
         System.out.println("Classe resultante: " + classifier.getClassifier().classifyInstance(instancia));
 
-//        if (resultado == esperado) { // verdadeiro
-//            if (resultado == normalClass) {
-//                VN = VN + 1;
-//            } else {
-//                VP = VP + 1;
-//            }
-//        } else {
-//            if (resultado == normalClass) {
-//                FN = FN + 1;
-//            } else {
-//                FP = FP + 1;
-//            }
-//        }
+
     }
 
     public static Instances setup(String dataset, ClassifierExtended classifier, int[] fullFeatures) throws Exception {

@@ -5,11 +5,12 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
+import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
-import br.uff.midiacom.ereno.featureSelection.subsets.ConsistencySubsets;
+import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 
 import java.util.ArrayList;
 
@@ -27,11 +28,14 @@ public class IWSSr implements NeighborhoodStructure {
 
     public static void main(String[] args) throws Exception {
         Grasp graspVnd = new GraspVND();
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[1])];
+        GeneralParameters.DATASET = args[0];
+        //        GeneralParameters.DATASET = GeneralParameters.SWAT30pct;
         graspVnd.allInstances = Util.loadSingleFile(true);
         IWSSr iwssr = new IWSSr(graspVnd);
         iwssr.fullList = new ArrayList<>();
 
-        int[] rcl = {}; //@TODO quando usar isso, atribuir uma RCL
+        int[] rcl = FeatureSubsets.SWAT; //@TODO quando usar isso, atribuir uma RCL
         for (int feature : rcl) {
             iwssr.fullList.add(feature);
         }

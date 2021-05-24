@@ -34,7 +34,7 @@ public abstract class Grasp {
 
     public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
     int maxIterations = 100000; // quantidade total de iteracoes
-    public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)
+    public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)mc
     final int maxNoImprovement = 100000; // iteracoes sem melhorias consecutivas
     static int NUM_FEATURES = 5;
     //String method = "method";

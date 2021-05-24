@@ -6,18 +6,23 @@
 package br.uff.midiacom.ereno.featureSelection;
 
 import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
+
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+
 import static br.uff.midiacom.ereno.sv2020_consistency.Parameters.MULTICLASS_FILES;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Random;
+
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -25,7 +30,6 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
 /**
- *
  * @author silvio
  */
 public class Util {
@@ -309,6 +313,26 @@ public class Util {
         Instances randData = new Instances(allInstances); // create copy of original data
         randData.randomize(rand);
         return randData.testCV(totalFolds, fold);
+    }
+
+    public static Instances[] cutFold(int totalFolds, int seed, String[] allInstancesFiles) throws IOException {
+        Instances allInstances = new Instances(readDataFile(allInstancesFiles[0]));
+        for (int i = 1; i < allInstancesFiles.length; i++) {
+            Instances moreInstances = new Instances(readDataFile(allInstancesFiles[i]));
+            allInstances.addAll(moreInstances);
+//            System.out.println("Size: " + allInstancesFiles[i] + ": " + moreInstances.size());
+        }
+
+        Random rand = new Random(seed); // create seeded number generator
+        Instances randData = new Instances(allInstances); // create copy of original data
+        randData.randomize(rand);
+        Instances oneFold = randData.testCV(totalFolds, 1);
+        Instances otherFolds = randData.trainCV(totalFolds, 1);
+        System.out.println("Total Size: " + allInstances.size());
+        System.out.println("oneFold Size: " + oneFold.size());
+        System.out.println("otherFolds Size: " + otherFolds.size());
+
+        return new Instances[]{oneFold, otherFolds};
     }
 
     public static Instances cutFold(int totalFolds, int fold, int seed, Instances allInstances) {

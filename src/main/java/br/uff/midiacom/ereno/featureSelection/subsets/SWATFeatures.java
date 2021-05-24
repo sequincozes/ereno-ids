@@ -56,11 +56,11 @@ public class SWATFeatures extends FeatureSubsets {
     public static final int[] F_G_RVND_RandomForest = {20, 3, 7, 27, 33, 50, 48, 47, 46, 44, 39, 38, 37, 36, 35, 34, 32, 29, 26, 25, 23, 21, 19, 13, 9, 6, 5, 4};
     public static final int[][] F_G_RVND = {F_G_RVND_RandomTree, F_G_RVND_J48, F_G_RVND_REPTree, F_G_RVND_NaiveBayes, F_G_RVND_RandomForest};
 
-    public static final int[] I_G_VND_RandomTree = {};
-    public static final int[] I_G_VND_J48 = {};
-    public static final int[] I_G_VND_REPTree = {};
-    public static final int[] I_G_VND_NaiveBayes = {};
-    public static final int[] I_G_VND_RandomForest = {};
+    public static final int[] I_G_VND_RandomTree = {36, 35, 3, 15, 8, 6, 5};
+    public static final int[] I_G_VND_J48 = {25, 37, 29, 7, 6, 4, 23, 26, 27, 35, 38};
+    public static final int[] I_G_VND_REPTree = {8, 35, 21, 3, 6, 9, 37};
+    public static final int[] I_G_VND_NaiveBayes = {42, 39, 5};
+    public static final int[] I_G_VND_RandomForest = {37, 38, 5, 3, 6, 7, 8, 15, 25, 27, 35};
     public static final int[][] I_G_VND = {I_G_VND_RandomTree, I_G_VND_J48, I_G_VND_REPTree, I_G_VND_NaiveBayes, I_G_VND_RandomForest};
 
 

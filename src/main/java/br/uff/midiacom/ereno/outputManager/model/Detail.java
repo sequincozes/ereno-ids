@@ -17,13 +17,13 @@ public class Detail {
     public String accuracy;
     public String subset;
     public int evaluation;
-    public long time;
+    public float time;
 
     public Detail() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Detail(String accuracy, String subset, int evaluation, long time) {
+    public Detail(String accuracy, String subset, int evaluation, float time) {
         this.accuracy = accuracy;
         this.subset = subset;
         this.evaluation = evaluation;

@@ -10,7 +10,9 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 public class GeneralParameters {
 
     public static final boolean NUMERIC_CLEANNER = true;
-    public static final boolean PRINT_TRAINING_TIME = false;
+    public static boolean PRINT_TRAINING_TIME = false;
+    public static boolean PRINT_TESTING_TIME = true;
+
     public static final String SWAT30pct = "/home/silvio/datasets/SWAT/swat30pct.csv" ;
     public static boolean SINGLE_FOLD_MODE = true;
     public static boolean PRINT_SELECTION = true;

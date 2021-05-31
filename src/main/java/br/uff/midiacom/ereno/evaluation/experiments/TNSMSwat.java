@@ -26,27 +26,28 @@ public class TNSMSwat {
 
         GeneralParameters.DATASET = GeneralParameters.SWAT30pct;
         GeneralParameters.SINGLE_FOLD_MODE = false;
-
-//        System.out.println(" ----- GR");
-//        runWithSWAT(Setup.GR);
-//        System.out.println(" ----- IG");
-//        runWithSWAT(Setup.IG);
-//        System.out.println(" ----- GR_G_VND");
-//        runWithSWAT(Setup.GR_G_VND);
-//        System.out.println(" ----- GR_G_RVND");
-//        runWithSWAT(Setup.GR_G_RVND);
-//        System.out.println(" ----- F_G_VND");
-//        runWithSWAT(Setup.F_G_VND);
-//        System.out.println(" ----- F_G_RVND");
-//        runWithSWAT(Setup.F_G_RVND);
-//        System.out.println(" ----- FULL");
-//        runWithSWAT(Setup.FULL);
-//        System.out.println(" ----- GR_G_BF");
-//        runWithSWAT(Setup.GR_G_BF);
+        GeneralParameters.PRINT_TESTING_TIME = true;
+        GeneralParameters.CSV = false;
+        System.out.println(" ----- GR");
+        runWithSWAT(Setup.GR);
+        System.out.println(" ----- IG");
+        runWithSWAT(Setup.IG);
+        System.out.println(" ----- GR_G_VND");
+        runWithSWAT(Setup.GR_G_VND);
+        System.out.println(" ----- GR_G_RVND");
+        runWithSWAT(Setup.GR_G_RVND);
+        System.out.println(" ----- F_G_VND");
+        runWithSWAT(Setup.F_G_VND);
+        System.out.println(" ----- F_G_RVND");
+        runWithSWAT(Setup.F_G_RVND);
+        System.out.println(" ----- FULL");
+        runWithSWAT(Setup.FULL);
+        System.out.println(" ----- GR_G_BF");
+        runWithSWAT(Setup.GR_G_BF);
         System.out.println(" ----- I_G_VND");
         runWithSWAT(Setup.I_G_VND);
-//        System.out.println(" ----- OneR");
-//        runWithSWAT(Setup.OneR);
+        System.out.println(" ----- OneR");
+        runWithSWAT(Setup.OneR);
 
     }
 

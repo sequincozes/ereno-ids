@@ -25,7 +25,7 @@ public class GenericEvaluation {
         GenericResultado[] results = new GenericResultado[GeneralParameters.CLASSIFIERS_FOREACH.length];
         int run = 0;
         for (ClassifierExtended classififer : GeneralParameters.CLASSIFIERS_FOREACH) {
-            GenericResultado r = testaEssaGalera(classififer, train, test, false);
+            GenericResultado r = testaEssaGalera(classififer, train, test);
             results[run++] = r;
             if (GeneralParameters.CSV) {
                 System.out.println(
@@ -53,7 +53,7 @@ public class GenericEvaluation {
         GenericResultado[] results = new GenericResultado[GeneralParameters.CLASSIFIERS_FOREACH.length];
         int run = 0;
         for (ClassifierExtended classififer : GeneralParameters.CLASSIFIERS_FOREACH) {
-            GenericResultado r = testaEssaGalera(classififer, train, test, false);
+            GenericResultado r = testaEssaGalera(classififer, train, test);
             results[run++] = r;
             if (GeneralParameters.CSV) {
                 System.out.println(
@@ -126,7 +126,7 @@ public class GenericEvaluation {
 
     public static GenericResultado runSingleClassifier(Instances train, Instances test) throws Exception {
         ClassifierExtended classififer = GeneralParameters.SINGLE_CLASSIFIER_MODE;
-        GenericResultado r = testaEssaGalera(classififer, train, test, false);
+        GenericResultado r = testaEssaGalera(classififer, train, test);
 
         if (GeneralParameters.CSV) {
             System.out.println(
@@ -139,6 +139,7 @@ public class GenericEvaluation {
                             + r.getVN() + ";"
                             + r.getFP() + ";"
                             + r.getFN() + ";"
+                            + r.getNanotime() + ";"
                             + Arrays.toString(r.usedFS)
             );
 
@@ -208,46 +209,36 @@ public class GenericEvaluation {
     }
 
 
-    private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test, boolean timeTest) throws Exception {
+    private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
         long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
         long endTraining = System.nanoTime();
         if (GeneralParameters.PRINT_TRAINING_TIME) {
             System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
         }
-        if (timeTest) {
-            System.out.println("---------");
-            System.out.println(selectedClassifier.getClassifierName());
-        }
+
 
         // Resultados
         int VP = 0;
         int VN = 0;
         int FP = 0;
         int FN = 0;
+        long beginNano = System.nanoTime();
+        long beginMili = System.currentTimeMillis();
 
-        long begin = System.nanoTime();
         int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
 
+        long testSize;
+        if (GeneralParameters.PRINT_TESTING_TIME) {
+            testSize = 10000;
+        } else {
+            testSize = test.size();
+        }
 
-        for (int i = 0; i < test.size(); i++) {
+        for (int i = 0; i < testSize; i++) {
             try {
                 Instance testando = test.instance(i);
                 double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
-//                if (resultado == testando.classValue()) {
-//                    if (resultado == normalClass) {
-//                        VN = VN + 1;
-//                    } else {
-//                        VP = VP + 1;
-//                    }
-//                } else {
-//                    if (resultado == normalClass) {
-//                        FN = FN + 1;
-//                    } else {
-//                        FP = FP + 1;
-//                    }
-//                }
-
                 if (resultado == normalClass) {
                     if (resultado == testando.classValue()) {
                         VN = VN + 1; // resultado normal, resultado verdadeiro
@@ -277,15 +268,19 @@ public class GenericEvaluation {
 
             }
         }
-        long end = System.nanoTime();
+        long endano = System.nanoTime();
+        long endMili = System.currentTimeMillis();
 
         if (ERROR) {
             System.out.println("Results");
         }
-        long time = (end - begin) / test.size(); //nano time
+        float timeNano = (Float.valueOf(endano - beginNano)) / testSize; //nano time
+        float timeMili = (Float.valueOf(endMili - beginMili)) / testSize; //nano time
 
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, time, confusionMatrix);
-        //System.out.println(r.getCx()+" - "+r.getAcuracia()+" (F1: "+r.getF1Score());
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, confusionMatrix);
+        if (GeneralParameters.PRINT_TESTING_TIME) {
+            System.out.println(selectedClassifier.getClassifierName() + ";" + timeNano + ";" + timeMili);
+        }
         return r;
 
     }

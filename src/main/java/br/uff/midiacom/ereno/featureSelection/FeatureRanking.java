@@ -113,11 +113,10 @@ public class FeatureRanking {
         GR, IG, Relief, OneR;
     }
 
-    ;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("WSN OneR");
-        justRank(GeneralParameters.SWAT30pct, METODO.OneR);
+        System.out.println("WSN IG");
+        justRank(GeneralParameters.SWAT30pct, METODO.IG);
 
     }
 

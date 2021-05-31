@@ -25,11 +25,11 @@ public class GenericResultado {
     double cpuLoad, memoryLoad;
     double varianceTime, stdDvTime, loConfIntTime, hiConfIntTime;
     ArrayList<Long> detailedClassificationTime;
-    private long nanotime;
+    private float nanotime;
     private int testDatasetSize;
     double avgTime;
     @Deprecated
-    long Time;
+    float Time;
     public double microtime;
     public int[] usedFS;
 
@@ -79,7 +79,7 @@ public class GenericResultado {
         return testDatasetSize;
     }
 
-    public long getNanotime() {
+    public float getNanotime() {
         return nanotime;
     }
 
@@ -184,7 +184,7 @@ public class GenericResultado {
         recalcular();
     }
 
-    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, long nanotime, int[][] confusionMatrix) {
+    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, float nanotime, int[][] confusionMatrix) {
         this.Cx = descricao;
         this.VP = VP;
         this.FN = FN;
@@ -275,7 +275,7 @@ public class GenericResultado {
         this.FP = FP;
     }
 
-    public long getTime() {
+    public float getTime() {
         return Time;
     }
 

@@ -46,7 +46,7 @@ public class Parameters {
     public static final ClassifierExtended[] CLASSIFIERS_FOREACH = {RANDOM_TREE, J48, RANDOM_FOREST, REP_TREE, NAIVE_BAYES};// KNN está fora
     public static final boolean TEST_NORMALS = false;
     public static final boolean TEST_ATTACKS = true;
-    public static final int TOTAL_FEATURES = 10;
+//    public static final int TOTAL_FEATURES = 10;
     public static final boolean NORMALIZE = false;
 
     //Selected by statoc
@@ -64,6 +64,6 @@ public class Parameters {
     static int[] IG10WSN = new int[]{18, 6, 3, 7, 13, 12, 8, 17, 5, 10};//, 9, 14, 4, 1, 11, 15, 16, 2};
     static int[] GR10WSN = new int[]{3, 6, 10, 9, 13, 18, 7, 12, 8, 17};//, 5, 11, 15, 16, 14, 4, 1, 2};
 
-    static int[] FEATURE_SELECTION = STATIC_FEATURE_SELECTION_2;
+    static int[] FEATURE_SELECTION = {};//STATIC_FEATURE_SELECTION_2;
 
 }

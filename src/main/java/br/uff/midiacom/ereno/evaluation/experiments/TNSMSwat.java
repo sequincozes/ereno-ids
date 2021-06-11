@@ -43,6 +43,7 @@ public class TNSMSwat {
         System.out.println(" ----- FULL");
         runWithSWAT(Setup.FULL);
         System.out.println(" ----- GR_G_BF");
+        System.out.println(" ----- GR_G_BF");
         runWithSWAT(Setup.GR_G_BF);
         System.out.println(" ----- I_G_VND");
         runWithSWAT(Setup.I_G_VND);

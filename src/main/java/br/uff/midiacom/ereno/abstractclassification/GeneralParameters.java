@@ -25,6 +25,7 @@ public class GeneralParameters {
     public static String CICIDS_DATASET = "/home/silvio/datasets/CICIDS2017/all_in_one/cicids.csv";
     //    public static String CICIDS_DATASET = "all_in_one_cicids.csv";
     public static String KDD_DATASET = "all_in_one_kdd.csv";
+    public static String classes1_13 = "/home/silvio/datasets/classes1-13.csv";
     public static String CONSISTENCYV4_DATASET_UC01 = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc01/uc00_uc01.csv";
     public static String CONSISTENCYV4_DATASET_UC02 = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc02/uc00_uc02.csv";
     public static String CONSISTENCYV4_DATASET_UC03 = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc03/uc00_uc03.csv";

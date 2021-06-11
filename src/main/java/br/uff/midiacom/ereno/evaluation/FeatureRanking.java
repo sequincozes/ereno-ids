@@ -8,8 +8,10 @@ package br.uff.midiacom.ereno.evaluation;
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.legacy.substation.FeatureAvaliada;
+
 import static br.uff.midiacom.ereno.legacy.substation.Parameters.NORMALIZE;
 import static br.uff.midiacom.ereno.legacy.substation.Util.readDataFile;
+
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.OneRAttributeEval;
@@ -19,7 +21,6 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
 /**
- *
  * @author sequi
  */
 public class FeatureRanking {
@@ -35,23 +36,28 @@ public class FeatureRanking {
 
     public static enum METODO {
         GR, IG, Relief, OneR;
-    };
+    }
+
+    ;
 
     public static void main(String[] args) throws Exception {
 //        avaliarESelecionar(14, METODO.OneR, false); 
 
-        GeneralParameters.DATASET = GeneralParameters.KDD_DATASET;
+        GeneralParameters.DATASET = GeneralParameters.classes1_13;
 
 //        avaliarESelecionar(42, METODO.IG, false); 
 //        avaliarESelecionar(42, METODO.GR, false); 
-        avaliarESelecionar(40, METODO.GR, false);
+//        avaliarESelecionar(10, METODO.GR, false);
+        for (int i = 0; i < 126; i++) {
+            avaliarESelecionarOtherClassIndex(10, METODO.IG, false, i);
+        }
 
     }
 
     public static FeatureAvaliada[] avaliarESelecionar(int featuresSelecionar, METODO metodo, boolean debug) throws Exception {
-        System.out.println("Método: " + metodo);
         Instances instances = new Instances(readDataFile(GeneralParameters.DATASET));
         instances.setClassIndex(instances.numAttributes() - 1);
+
         if (NORMALIZE) {
             instances = normalizar(instances);
         }
@@ -90,7 +96,7 @@ public class FeatureRanking {
                 System.out.println("OneR:");
                 for (int i = 0; i < instances.numAttributes(); i++) {
                     allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
-                    System.out.println(allFeatures[i].indiceFeature+";"+allFeatures[i].valorFeature);
+                    System.out.println(allFeatures[i].indiceFeature + ";" + allFeatures[i].valorFeature);
 
                 }
                 break;
@@ -124,6 +130,53 @@ public class FeatureRanking {
 
         return filter;
     }
+
+    public static void avaliarESelecionarOtherClassIndex(int featuresSelecionar, METODO metodo, boolean debug, int classIndex) throws Exception {
+        Instances instances = new Instances(readDataFile(GeneralParameters.DATASET));
+        instances.setClassIndex(classIndex);
+        String c = instances.get(0).classAttribute().name();
+        if (NORMALIZE) {
+            instances = normalizar(instances);
+        }
+        FeatureAvaliada[] allFeatures = new FeatureAvaliada[instances.numAttributes()];
+        switch (metodo) {
+            case IG:
+                System.out.println("IG");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularaIG(instances, i), i + 1);
+                    String attr = instances.attribute(i).name();
+                    System.out.println(c + " x " + attr + ";" + allFeatures[i].valorFeature);
+                }
+                break;
+            case Relief:
+                System.out.println("Relief:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularReliefF(instances, i), i + 1);
+                }
+                break;
+            case GR:
+                System.out.println("GR");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularGainRatioAttributeEval(instances, i), i + 1);
+                    String attr = instances.attribute(i).name();
+                    System.out.println(c + " x " + attr + ";" + allFeatures[i].valorFeature);
+                }
+                break;
+            case OneR:
+                System.out.println("OneR:");
+                for (int i = 0; i < instances.numAttributes(); i++) {
+                    allFeatures[i] = new FeatureAvaliada(calcularOneRAttributeEval(instances, i), i + 1);
+                    System.out.println(allFeatures[i].indiceFeature + ";" + allFeatures[i].valorFeature);
+
+                }
+                break;
+            default:
+                System.out.println("Método incorreto.");
+        }
+
+        return;
+    }
+
 
     public static double calcularaIG(Instances instances, int featureIndice) throws Exception {
         InfoGainAttributeEval ase = new InfoGainAttributeEval();

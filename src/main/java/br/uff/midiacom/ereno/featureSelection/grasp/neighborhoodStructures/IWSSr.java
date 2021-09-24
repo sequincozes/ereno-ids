@@ -28,16 +28,18 @@ public class IWSSr implements NeighborhoodStructure {
 
     public static void main(String[] args) throws Exception {
         Grasp graspVnd = new GraspVND();
-        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[1])];
-        GeneralParameters.DATASET = args[0];
-        //        GeneralParameters.DATASET = GeneralParameters.SWAT30pct;
+//        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[1])];
+//        GeneralParameters.DATASET = args[0];
+        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[2];
+        GeneralParameters.DATASET ="C:\\datasets\\uc01\\train.csv";// GeneralParameters.SWAT30pct;
         graspVnd.allInstances = Util.loadSingleFile(true);
         IWSSr iwssr = new IWSSr(graspVnd);
         iwssr.fullList = new ArrayList<>();
 
-        int[] rcl = FeatureSubsets.SWAT; //@TODO quando usar isso, atribuir uma RCL
-        for (int feature : rcl) {
+        int[] rcl = new int[graspVnd.allInstances.get(0).numAttributes()-1]; //@TODO quando usar isso, atribuir uma RCL
+        for (int feature = 0; feature < graspVnd.allInstances.get(0).numAttributes()-1; feature++) {
             iwssr.fullList.add(feature);
+            rcl[feature] = feature;
         }
 
         ArrayList<Integer> seedFS = new ArrayList<>();

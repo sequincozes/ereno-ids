@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStr
+ uctures.IWSSr
+

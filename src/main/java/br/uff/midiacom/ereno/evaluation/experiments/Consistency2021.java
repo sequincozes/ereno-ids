@@ -39,12 +39,12 @@ public class Consistency2021 {
     }
 
     private static void runWithoutCV() throws Exception {
-        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v5/uc01/uc00Top10pctTrain_10folds-1.csv";
+        GeneralParameters.DATASET = "C:\\datasets\\uc01\\train.csv";
 
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
         train.setClassIndex(train.numAttributes()-1);
 
-        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v5/uc01/uc00Top10pctTrain_10folds-2.csv";
+        GeneralParameters.DATASET = "C:\\datasets\\uc01\\test.csv";
         Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
         test.setClassIndex(test.numAttributes()-1);
 

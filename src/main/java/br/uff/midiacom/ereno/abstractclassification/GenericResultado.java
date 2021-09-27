@@ -83,8 +83,9 @@ public class GenericResultado {
         return nanotime;
     }
 
-    public GenericResultado(double acuracia) {
-        this.acuracia = acuracia;
+    public GenericResultado(double evaluation) {
+        this.acuracia = evaluation;
+        this.f1score = evaluation;
         this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
     }
 

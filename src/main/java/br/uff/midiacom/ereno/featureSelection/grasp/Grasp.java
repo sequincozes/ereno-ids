@@ -20,6 +20,7 @@ import br.uff.midiacom.ereno.outputManager.model.Detail;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import weka.core.Instances;
 
@@ -276,36 +277,41 @@ public abstract class Grasp {
     }
 
     public GraspSolution avaliar(GraspSolution solution) throws Exception {
-        solution.setCurrentTimeSeconds((beginTime / 1000) - (System.currentTimeMillis() / 1000));
-        if (GeneralParameters.DEBUG_MODE) {
-            System.out.println("Dataset: " + GeneralParameters.DATASET);
-            System.out.println("Classifier: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
-            System.out.println("Folds: " + GeneralParameters.FOLDS);
-            System.out.println("Seed: " + GeneralParameters.GRASP_SEED);
-        }
-
-        GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
-        GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
-        solution.setEvaluation(Util.getResultAverage(resultado));
-        String avaliacao = "AVALIAÇÃO "
-                + "(" + numberEvaluation++ + ") - Selected: "
-                + Arrays.toString(solution.getArrayFeaturesSelecionadas())
-                + " F1Score > " + solution.getEvaluation().getF1Score()
-                + "(acc: " + solution.getEvaluation().getAcuracia();
-
-        System.out.println(avaliacao);
-        if (GeneralParameters.DEBUG_MODE) {
-
-            if (!(solution.getEvaluation().getF1Score() > 0)) {
-                System.err.print("Problema na F1 Score: " + solution.getEvaluation().getF1Score());
-                System.exit(0);
+        boolean debug = false;
+        if (debug) {
+            solution.setEvaluation(new GenericResultado(ThreadLocalRandom.current().nextInt(10, 100)));
+            return solution;
+        } else {
+            solution.setCurrentTimeSeconds((beginTime / 1000) - (System.currentTimeMillis() / 1000));
+            if (GeneralParameters.DEBUG_MODE) {
+                System.out.println("Dataset: " + GeneralParameters.DATASET);
+                System.out.println("Classifier: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
+                System.out.println("Folds: " + GeneralParameters.FOLDS);
+                System.out.println("Seed: " + GeneralParameters.GRASP_SEED);
             }
-        }
-        if (outputManager != null)
-            outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getCurrentTimeSeconds()));
 
-        //solution.setEvaluation(new GenericResultado(ThreadLocalRandom.current().nextInt(70, 100)));
-        return solution;
+            GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
+            GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
+            solution.setEvaluation(Util.getResultAverage(resultado));
+            String avaliacao = "AVALIAÇÃO "
+                    + "(" + numberEvaluation++ + ") - Selected: "
+                    + Arrays.toString(solution.getArrayFeaturesSelecionadas())
+                    + " F1Score > " + solution.getEvaluation().getF1Score()
+                    + "(acc: " + solution.getEvaluation().getAcuracia();
+
+            System.out.println(avaliacao);
+            if (GeneralParameters.DEBUG_MODE) {
+
+                if (!(solution.getEvaluation().getF1Score() > 0)) {
+                    System.err.print("Problema na F1 Score: " + solution.getEvaluation().getF1Score());
+                    System.exit(0);
+                }
+            }
+            if (outputManager != null)
+                outputManager.writeDetail(new Detail(solution.getF1Score(), solution.getFeatureSet(), numberEvaluation, solution.getCurrentTimeSeconds()));
+
+            return solution;
+        }
     }
 
     public void downloadDatabase() throws InterruptedException, IOException, Exception {

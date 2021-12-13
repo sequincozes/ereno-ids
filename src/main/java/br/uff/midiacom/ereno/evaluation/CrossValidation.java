@@ -191,6 +191,39 @@ public class CrossValidation {
         }
     }
 
+    public static void runAndPrintFoldResults(boolean printConfusionMatrix) throws Exception {
+//        System.out.print(GenericClassifiers.all[classifierIndex].getClassifierName() + ";");
+
+        GeneralParameters.FEATURE_SELECTION = new int[]{}; // garante que não tem nenhum filtro sendo aplicado.
+// Compute for all folds
+        GenericResultado[] results = setupAndRun(GeneralParameters.FOLDS, 7, GeneralParameters.SINGLE_CLASSIFIER_MODE);
+
+        // Just print
+        for (int i = 0; i < GeneralParameters.FOLDS; i++) {
+            try {
+                System.out.print("fold[" + i + "];" + results[i].getF1Score() + ";");
+            } catch (Exception ex) {
+                Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("");
+
+        // Just print matrix
+        if (printConfusionMatrix) {
+            int numFold = 0;
+            for (GenericResultado foldResult : results) {
+                System.out.println("Fold: " + numFold++);
+                //Para cada fold, mostrar matriz
+                for (int classIndex = 0; classIndex < foldResult.getConfusionMatrix().length; classIndex++) {
+                    System.out.print("Esperado: " + classIndex + ";resultados:;");
+                    for (int expectedIndex = 0; expectedIndex < foldResult.getConfusionMatrix().length; expectedIndex++) {
+                        System.out.print(foldResult.getConfusionMatrix()[classIndex][expectedIndex] + ";");
+                    }
+                    System.out.println("");
+                }
+            }
+        }
+    }
 
     public static GenericResultado[] setupAndRunBinaryMatrix(int folds, int seed, ClassifierExtended classifier, int[] fs, Instances datasetBinary, Instances datasetMulticlass) throws Exception {
         GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
@@ -258,7 +291,7 @@ public class CrossValidation {
             if (GeneralParameters.SINGLE_FOLD_MODE) {
                 return new GenericResultado[]{resultsCompilation[fold]};
             }
-                if (GeneralParameters.DEBUG_MODE) {
+            if (GeneralParameters.DEBUG_MODE) {
                 System.out.println("runSingleClassifier - F1:" + resultsCompilation[fold].getF1Score());
                 System.out.println("runSingleClassifier - Acc:" + resultsCompilation[fold].getAcuracia());
                 System.out.println("runSingleClassifier - Precision:" + resultsCompilation[fold].getPrecision());
@@ -281,10 +314,8 @@ public class CrossValidation {
         Instances randBinaryData = new Instances(datasetBinary);   // create copy of original data
         Instances datasetMulticlassData = new Instances(datasetMulticlass);   // create copy of original data
 
-
         randBinaryData.randomize(randBinary);         // randomize data with number generator
         datasetMulticlassData.randomize(randMulticlass);         // randomize data with number generator
-
 
         GenericResultado[] resultsCompilation = new GenericResultado[totalFolds];
         for (int fold = 0; fold < totalFolds; fold++) {
@@ -378,7 +409,7 @@ public class CrossValidation {
         }
 
         //Just print
-        if(GeneralParameters.SINGLE_FOLD_MODE){
+        if (GeneralParameters.SINGLE_FOLD_MODE) {
             return;
         }
         for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {
@@ -407,7 +438,7 @@ public class CrossValidation {
         }
 
         //Just print
-        if(GeneralParameters.SINGLE_FOLD_MODE){
+        if (GeneralParameters.SINGLE_FOLD_MODE) {
             return;
         }
         for (int classifierIndex = 0; classifierIndex < GenericClassifiers.allCustom.length; classifierIndex++) {

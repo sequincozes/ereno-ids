@@ -24,7 +24,7 @@ public class IWSSr implements NeighborhoodStructure {
     Grasp grasp;
     int remIterations = 1000000;
     int remNoImprovements = 1000000;
-    ArrayList<Integer> fullList;
+    public ArrayList<Integer> fullList;
 
     public static void main(String[] args) throws Exception {
         Grasp graspVnd = new GraspVND();

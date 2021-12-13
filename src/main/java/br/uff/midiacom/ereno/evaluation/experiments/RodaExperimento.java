@@ -32,7 +32,7 @@ public class RodaExperimento {
 //        int remNoImprovements = 1000000;
 //        ArrayList<Integer> fullList;
 //        args = new String[]{"-c", "teste.csv", "4", "2"};
-        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
+//        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
         } else if (!(args[0].equals("-h")||args[0].equals("--help")||args[0].equals("-f")||args[0].equals("-c")||args[0].equals("-i"))) { // se não for nenhum desses aqui, chama o método showhelp
@@ -59,13 +59,18 @@ public class RodaExperimento {
                 GeneralParameters.DATASET = args[1];
                 GeneralParameters.FOLDS = Integer.valueOf(args[2]);
                 GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.valueOf(args[3])]; // Passando a posição do classificador.
+                System.out.println("dataset" + GeneralParameters.DATASET);
+                System.out.println("fold" + GeneralParameters.FOLDS);
+                System.out.println("classificador" + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
                 // Para classificar usando um filtro
                 // CrossValidation.runAndPrintFoldResults(top5, 2, false);
                 // Para classificar sem utilizar filtros.
                 CrossValidation.runAndPrintFoldResults(false); // false significa que não vai exibir a matriz confusão.
+
             case "-i":
                 GeneralParameters.DATASET = args[1];
-                runIWSSr(args);
+                GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2])];
+                runIWSSr();
                 break;
             default:
                 showHelp();
@@ -75,7 +80,7 @@ public class RodaExperimento {
     private static void showHelp() {
         System.out.println("-h or --help # Para abrir o menu de opções");
         System.out.println("-f  # Para aplicar o filtro. Uso: java -jar vini.jar -f [DATASET] [FEATURES] [MÉTODO] \n "
-                + "Exemplo de uso:  -f dataset.csv 40 GR\n"
+                + " Exemplo de uso:  -f dataset.csv 40 GR\n"
                 + "                # GR\n"
                 + "                # IG\n"
                 + "                # Relief\n"
@@ -96,9 +101,8 @@ public class RodaExperimento {
                 + "                # - 4 para RANDOM_FOREST");
     }
 
-    public static void runIWSSr(String[] args) throws Exception {
+    public static void runIWSSr() throws Exception {
         Grasp graspVnd = new GraspVND();
-        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2])];
         //        GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[1];
         //        GeneralParameters.DATASET ="C:\\datasets\\uc01\\train.csv";// GeneralParameters.SWAT30pct;
         graspVnd.allInstances = Util.loadSingleFile(true);

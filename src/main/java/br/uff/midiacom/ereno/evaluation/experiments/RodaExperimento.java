@@ -14,47 +14,36 @@ import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- *
  * @author vagne
  */
 public class RodaExperimento {
 
-    // vini.jar -f dataset.csv 40 gr
-    // vini.jar -c 
-    // vini.jar -
+
     public static void main(String[] args) throws Exception {
 
-        GraspSolution bestLocal;
-        Grasp grasp;
-        int remIterations = 1000000;
-        int remNoImprovements = 1000000;
-        ArrayList<Integer> fullList;
-        args = new String[]{"-c", "teste.csv", "4", "2"};
+//        GraspSolution bestLocal;
+//        Grasp grasp;
+//        int remIterations = 1000000;
+//        int remNoImprovements = 1000000;
+//        ArrayList<Integer> fullList;
+//        args = new String[]{"-c", "teste.csv", "4", "2"};
         System.out.println("Tecle -h ou --help para abrir o menu de opções.");
-
+        if (args.length == 0) {
+            showHelp();
+        } else if (!(args[0].equals("-h")||args[0].equals("--help")||args[0].equals("-f")||args[0].equals("-c")||args[0].equals("-i"))) { // se não for nenhum desses aqui, chama o método showhelp
+            showHelp();
+        }
         switch (args[0]) {
             case "-h":
-                System.out.println("-h --help to options menu");
-                System.out.println("-f  [Para aplicar o filtro. Requisitos: Dataset, Features, Método. \n "
-                        + "Exemplo de uso:  -f dataset.csv 40 gr]");
-                System.out.println("-c  [Para classificar. Requisitos: {Dataset, Fold, Classificador}]"
-                        + "                // - Tecle 0 para RANDOM_TREE\n"
-                        + "                // - Tecle 1 para J48\n"
-                        + "                // - Tecle 2 para REP_TREE\n"
-                        + "                // - Tecle 3 para NAIVE_BAYES\n"
-                        + "                // - Tecle 4 para RANDOM_FOREST");
-                System.out.println("-i  [Para rodar IWSSr. Requisitos: {Dataset, Classificador}"
-                        + "Exemplo de uso: -i dataset.csv 1]");
-                System.exit(0);
+                showHelp();
+                break;
             case "--help":
-                System.out.println("-h --help to options menu");
-                System.out.println("-e  [Run ExperimentoVinicius.java class]");
-                System.out.println("-i  [Run IWSSr filter]");
-                System.exit(0);
+                showHelp();
                 break;
             case "-f":
                 GeneralParameters.DATASET = args[1];
@@ -78,7 +67,33 @@ public class RodaExperimento {
                 GeneralParameters.DATASET = args[1];
                 runIWSSr(args);
                 break;
+            default:
+                showHelp();
         }
+    }
+
+    private static void showHelp() {
+        System.out.println("-h or --help # Para abrir o menu de opções");
+        System.out.println("-f  # Para aplicar o filtro. Uso: java -jar vini.jar -f [DATASET] [FEATURES] [MÉTODO] \n "
+                + "Exemplo de uso:  -f dataset.csv 40 GR\n"
+                + "                # GR\n"
+                + "                # IG\n"
+                + "                # Relief\n"
+                + "                # OneR\n");
+        System.out.println("-c  # Para classificar. Uso: java -jar vini.jar -c [DATASET] [FOLD] [CLASSIFICADOR] \n "
+                + "                # Exemplo de uso: java-jar vini.jar -c dataset.csv 7 1\n"
+                + "                # - 0 para RANDOM_TREE\n"
+                + "                # - 1 para J48\n"
+                + "                # - 2 para REP_TREE\n"
+                + "                # - 3 para NAIVE_BAYES\n"
+                + "                # - 4 para RANDOM_FOREST");
+        System.out.println("-i  # Para rodar IWSSr. Uso: java-jar vini.jar -i [DATASET] [CLASSIFICADOR]\n"
+                + "                # Exemplo de uso: -i dataset.csv 1] \n"
+                + "                # - 0 para RANDOM_TREE\n"
+                + "                # - 1 para J48\n"
+                + "                # - 2 para REP_TREE\n"
+                + "                # - 3 para NAIVE_BAYES\n"
+                + "                # - 4 para RANDOM_FOREST");
     }
 
     public static void runIWSSr(String[] args) throws Exception {

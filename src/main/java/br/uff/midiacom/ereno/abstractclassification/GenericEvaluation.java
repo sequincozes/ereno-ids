@@ -5,6 +5,8 @@
  */
 package br.uff.midiacom.ereno.abstractclassification;
 
+import br.uff.midiacom.ereno.evaluation.experiments.Consistency2021;
+import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -124,6 +126,32 @@ public class GenericEvaluation {
         return r;
     }
 
+    public static GenericResultado runSingleClassifierJ48(Instances train, Instances test) throws Exception {
+        ClassifierExtended classififer = GeneralParameters.SINGLE_CLASSIFIER_MODE;
+        GenericResultado r = testaEssaGaleraJ48(classififer, train, test);
+
+        if (GeneralParameters.CSV) {
+            System.out.println(
+                    r.Cx + ";"
+                            + String.valueOf(r.getAcuracia()).replace(",", ".") + ";"
+                            + String.valueOf(r.getPrecision()).replace(",", ".") + ";"
+                            + String.valueOf(r.getRecall()).replace(",", ".") + ";"
+                            + String.valueOf(r.getF1Score()).replace(",", ".") + ";"
+                            + r.getVP() + ";"
+                            + r.getVN() + ";"
+                            + r.getFP() + ";"
+                            + r.getFN() + ";"
+                            + r.getNanotime() + ";"
+                            + Arrays.toString(r.usedFS)
+            );
+
+        } else if (SIMPLE) {
+            System.out.println("Classificador: " + classififer.getClassifierName() + " -> " + String.valueOf(r.getF1Score()).substring(0, 5) + "%");
+        }
+
+        return r;
+    }
+
     public static GenericResultado runSingleClassifier(Instances train, Instances test) throws Exception {
         ClassifierExtended classififer = GeneralParameters.SINGLE_CLASSIFIER_MODE;
         GenericResultado r = testaEssaGalera(classififer, train, test);
@@ -149,6 +177,33 @@ public class GenericEvaluation {
 
         return r;
     }
+
+//    public static GenericResultado runJ48(Instances train, Instances test) throws Exception {
+//        ClassifierExtended classififer = GenericClassifiers.J48;
+//        GenericResultado r = testaEssaGaleraJ48(classififer, train, test);
+//
+//        if (GeneralParameters.CSV) {
+//            System.out.println(
+//                    r.Cx + ";"
+//                            + String.valueOf(r.getAcuracia()).replace(",", ".") + ";"
+//                            + String.valueOf(r.getPrecision()).replace(",", ".") + ";"
+//                            + String.valueOf(r.getRecall()).replace(",", ".") + ";"
+//                            + String.valueOf(r.getF1Score()).replace(",", ".") + ";"
+//                            + r.getVP() + ";"
+//                            + r.getVN() + ";"
+//                            + r.getFP() + ";"
+//                            + r.getFN() + ";"
+//                            + r.getNanotime() + ";"
+//                            + Arrays.toString(r.usedFS)
+//            );
+//
+//        } else if (SIMPLE) {
+//            System.out.println("Classificador: " + classififer.getClassifierName() + " -> " + String.valueOf(r.getF1Score()).substring(0, 5) + "%");
+//        }
+//
+//        return r;
+//    }
+
 
     private static GenericResultado testaEssaGaleraBinaryMatrix(ClassifierExtended selectedClassifier, Instances trainBinary, Instances testBinary, Instances trainMulticlass, Instances testMulticlass, boolean timeTest) throws Exception {
         selectedClassifier.getClassifier().buildClassifier(trainBinary);
@@ -202,16 +257,21 @@ public class GenericEvaluation {
         }
         long time = (end - begin) / testBinary.size(); //nano time
 
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, time, confusionMatrix);
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(),
+                VP, FN, VN, FP, time, confusionMatrix);
         //System.out.println(r.getCx()+" - "+r.getAcuracia()+" (F1: "+r.getF1Score());
         return r;
 
     }
 
 
-    private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
+    private static GenericResultado testaEssaGaleraJ48(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
         long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
+        if (selectedClassifier.getClassifier() instanceof J48) {
+            // Shows the decision trees
+            Consistency2021.showTree((J48) selectedClassifier.getClassifier());
+        }
         long endTraining = System.nanoTime();
         if (GeneralParameters.PRINT_TRAINING_TIME) {
             System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
@@ -248,6 +308,86 @@ public class GenericEvaluation {
                 } else { //Intrusion detected!
                     if (normalClass == testando.classValue()) {
                         FP = FP + 1; // resultado ataque, resultado falso 
+                    } else {
+                        VP = VP + 1; // resultado ataque, resultado verdadeiro
+                    }
+                }
+                ///
+                double esperado = testando.classValue();
+                // Confusion matrix:
+//                System.out.println("Esperado: "+esperado+" / resultado: "+resultado);
+                confusionMatrix[(int) esperado][(int) resultado] = confusionMatrix[(int) esperado][(int) resultado] + 1;
+            } catch (ArrayIndexOutOfBoundsException a) {
+                System.err.println("Erro: " + a.getLocalizedMessage());
+                System.err.println("DICA: " + "Tem certeza que o número de classes está definido corretamente?");
+
+                System.exit(1);
+            } catch (Exception e) {
+                System.err.println("Erro: " + e.getLocalizedMessage());
+                System.exit(1);
+
+            }
+        }
+        long endano = System.nanoTime();
+        long endMili = System.currentTimeMillis();
+
+        if (ERROR) {
+            System.out.println("Results");
+        }
+        float timeNano = (Float.valueOf(endano - beginNano)) / testSize; //nano time
+        float timeMili = (Float.valueOf(endMili - beginMili)) / testSize; //nano time
+
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, confusionMatrix);
+        if (GeneralParameters.PRINT_TESTING_TIME) {
+            System.out.println(selectedClassifier.getClassifierName() + ";" + timeNano + ";" + timeMili);
+        }
+        return r;
+
+    }
+
+    private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
+        long beginTraining = System.nanoTime();
+        selectedClassifier.getClassifier().buildClassifier(train);
+//        if (selectedClassifier.getClassifier() instanceof J48) {
+//            // Shows the decision trees
+//            Consistency2021.showTree((J48) selectedClassifier.getClassifier());
+//        }
+        long endTraining = System.nanoTime();
+        if (GeneralParameters.PRINT_TRAINING_TIME) {
+            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+        }
+
+
+        // Resultados
+        int VP = 0;
+        int VN = 0;
+        int FP = 0;
+        int FN = 0;
+        long beginNano = System.nanoTime();
+        long beginMili = System.currentTimeMillis();
+
+        int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
+
+        long testSize;
+        if (GeneralParameters.PRINT_TESTING_TIME) {
+            testSize = 10000;
+        } else {
+            testSize = test.size();
+        }
+
+        for (int i = 0; i < testSize; i++) {
+            try {
+                Instance testando = test.instance(i);
+                double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
+                if (resultado == normalClass) {
+                    if (resultado == testando.classValue()) {
+                        VN = VN + 1; // resultado normal, resultado verdadeiro
+                    } else {
+                        FN = FN + 1; // resultado normal, resultado falso
+                    }
+                } else { //Intrusion detected!
+                    if (normalClass == testando.classValue()) {
+                        FP = FP + 1; // resultado ataque, resultado falso
                     } else {
                         VP = VP + 1; // resultado ataque, resultado verdadeiro
                     }

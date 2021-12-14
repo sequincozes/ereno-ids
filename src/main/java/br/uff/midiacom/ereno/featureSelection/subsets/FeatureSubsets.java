@@ -175,4 +175,11 @@ public class FeatureSubsets {
     public static int[] Multiclass_REP_Tree = new int[]{4, 7, 2, 6, 15};
     public static int[][] Multiclass = new int[][]{Multiclass_J48, Multiclass_Naive_Bayes, Multiclass_Random_Forest, Multiclass_Random_Tree, Multiclass_REP_Tree};
 
+
+    public static int[] CONSISTENCY_SVFeatures = {1, 2,3,4,5,6,7,8,9,10,11,12,13};
+    public static int[] CONSISTENCY_GOOSEFeatures = {14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+    public static int[] CONSISTENCY_NovelFeatures = {36,37,38,39,40,41,42,43};
+    public static int[] CONSISTENCY_SVAndGooseFeatures = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+    public static int[] CONSISTENCY_FULL = {1, 2,3,4,5,6,7,8,9,10,11,12,1314,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43};
+
 }

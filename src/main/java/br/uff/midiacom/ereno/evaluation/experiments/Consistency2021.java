@@ -14,8 +14,12 @@ import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
 import br.uff.midiacom.ereno.featureSelection.Util;
 import br.uff.midiacom.ereno.featureSelection.subsets.*;
+import weka.classifiers.trees.J48;
 import weka.core.Instances;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -24,6 +28,7 @@ import java.io.IOException;
 public class Consistency2021 {
 
     public static void main(String[] args) throws Exception {
+        System.out.println("Teste");
 //        runWithoutCV();
         //    startRecursivo();
 //        if (args.length > 0) {
@@ -31,24 +36,63 @@ public class Consistency2021 {
 //        } else {
 //            manual();
 //        }
-        runWithoutCV();
+
+//        runWithoutCV(FeatureSubsets.CONSISTENCY_GOOSEFeatures);
+        runWithoutCV(FeatureSubsets.CONSISTENCY_SVAndGooseFeatures);
+
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
 //        reduceInstances(10,2);
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test.csv";
 //        reduceInstances(10,3);
-
-
     }
 
     private static void runWithoutCV() throws Exception {
-        GeneralParameters.DATASET = "C:\\datasets\\uc01\\train.csv";
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train1pct.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
 
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
         train.setClassIndex(train.numAttributes()-1);
 
-        GeneralParameters.DATASET = "C:\\datasets\\uc01\\test.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test.csv";
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test1pct.csv";
         Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
         test.setClassIndex(test.numAttributes()-1);
 
-        GenericEvaluation.runSingleClassifier(train, test);
+        GenericEvaluation.runSingleClassifierJ48(train, test);
+    }
+    private static void runWithoutCV(int[] filter) throws Exception {
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train1pct.csv";
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
+        GeneralParameters.FEATURE_SELECTION = filter;
+        Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
+        train.setClassIndex(train.numAttributes()-1);
+
+        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test.csv";
+//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test1pct.csv";
+        Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
+        test.setClassIndex(test.numAttributes()-1);
+
+        GenericEvaluation.runSingleClassifierJ48(train, test);
+    }
+
+    public static void showTree(J48 j48) throws Exception {
+        // display classifier
+        final javax.swing.JFrame jf =
+                new javax.swing.JFrame("Weka Classifier Tree Visualizer: J48");
+        jf.setSize(500,400);
+        jf.getContentPane().setLayout(new BorderLayout());
+        TreeVisualizer tv = new TreeVisualizer(null,
+                j48.graph(),
+                new PlaceNode2());
+        jf.getContentPane().add(tv, BorderLayout.CENTER);
+        jf.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                jf.dispose();
+            }
+        });
+
+        jf.setVisible(true);
+        tv.fitToScreen();
     }
 
     private static void microserviceValidation(String[] args) throws Exception {

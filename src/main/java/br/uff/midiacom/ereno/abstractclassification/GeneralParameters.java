@@ -14,7 +14,7 @@ public class GeneralParameters {
     public static boolean PRINT_TESTING_TIME = false; // limit the analysis to the first 10k register in dataset
 
     public static final String SWAT30pct = "/home/silvio/datasets/SWAT/swat30pct.csv" ;
-    public static boolean SINGLE_FOLD_MODE = true;
+    public static boolean SINGLE_FOLD_MODE = false;
     public static boolean PRINT_SELECTION = true;
     public static boolean DEBUG_MODE = false;
 

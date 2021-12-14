@@ -203,7 +203,7 @@ public class CrossValidation {
             try {
                 System.out.print("fold[" + i + "];" + results[i].getF1Score() + ";");
             } catch (Exception ex) {
-//                Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrossValidation.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         System.out.println("");

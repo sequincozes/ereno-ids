@@ -31,7 +31,7 @@ public class RodaExperimento {
 //        int remIterations = 1000000;
 //        int remNoImprovements = 1000000;
 //        ArrayList<Integer> fullList;
-//        args = new String[]{"-c", "teste.csv", "4", "2"};
+//        args = new String[]{"-c", "teste.csv", "3", "2"};
 //        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
@@ -46,6 +46,7 @@ public class RodaExperimento {
                 showHelp();
                 break;
             case "-f":
+                System.out.println("Selecionado a opção de seleção de features.");
                 GeneralParameters.DATASET = args[1];
                 if (args[3].toLowerCase().equalsIgnoreCase("GR")) {
                     FeatureRanking.avaliarESelecionarFromGeneralParamter(Integer.parseInt(args[2]), FeatureRanking.METODO.GR, false);
@@ -56,18 +57,20 @@ public class RodaExperimento {
                 }
                 break;
             case "-c":
+                System.out.println("Selecionado a opção de classificação.");
                 GeneralParameters.DATASET = args[1];
                 GeneralParameters.FOLDS = Integer.valueOf(args[2]);
                 GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.valueOf(args[3])]; // Passando a posição do classificador.
-                System.out.println("dataset" + GeneralParameters.DATASET);
-                System.out.println("fold" + GeneralParameters.FOLDS);
-                System.out.println("classificador" + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
+                System.out.println("Selecionado o dataset: " + GeneralParameters.DATASET);
+                System.out.println("Número de folds: " + GeneralParameters.FOLDS);
+                System.out.println("Classificador: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
                 // Para classificar usando um filtro
                 // CrossValidation.runAndPrintFoldResults(top5, 2, false);
                 // Para classificar sem utilizar filtros.
                 CrossValidation.runAndPrintFoldResults(false); // false significa que não vai exibir a matriz confusão.
-
+                break;
             case "-i":
+                System.out.println("Selecionado a opção de filtro com IWSSr.");
                 GeneralParameters.DATASET = args[1];
                 GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2])];
                 runIWSSr();
@@ -80,20 +83,20 @@ public class RodaExperimento {
     private static void showHelp() {
         System.out.println("-h or --help # Para abrir o menu de opções");
         System.out.println("-f  # Para aplicar o filtro. Uso: java -jar vini.jar -f [DATASET] [FEATURES] [MÉTODO] \n "
-                + " Exemplo de uso:  -f dataset.csv 40 GR\n"
+                + "                # Exemplo de uso: java -jar vini.jar -f dataset.csv 40 GR\n"
                 + "                # GR\n"
                 + "                # IG\n"
                 + "                # Relief\n"
                 + "                # OneR\n");
         System.out.println("-c  # Para classificar. Uso: java -jar vini.jar -c [DATASET] [FOLD] [CLASSIFICADOR] \n "
-                + "                # Exemplo de uso: java-jar vini.jar -c dataset.csv 7 1\n"
+                + "                # Exemplo de uso: java -jar vini.jar -c dataset.csv 7 1\n"
                 + "                # - 0 para RANDOM_TREE\n"
                 + "                # - 1 para J48\n"
                 + "                # - 2 para REP_TREE\n"
                 + "                # - 3 para NAIVE_BAYES\n"
                 + "                # - 4 para RANDOM_FOREST");
         System.out.println("-i  # Para rodar IWSSr. Uso: java-jar vini.jar -i [DATASET] [CLASSIFICADOR]\n"
-                + "                # Exemplo de uso: -i dataset.csv 1] \n"
+                + "                # Exemplo de uso: java -jar vini.jar -i dataset.csv 1] \n"
                 + "                # - 0 para RANDOM_TREE\n"
                 + "                # - 1 para J48\n"
                 + "                # - 2 para REP_TREE\n"

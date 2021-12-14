@@ -293,7 +293,7 @@ public abstract class Grasp {
             GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
             GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
             solution.setEvaluation(Util.getResultAverage(resultado));
-            String avaliacao = "AVALIAÇÃO "
+            String avaliacao = "AVALIAÇÃO"
                     + "(" + numberEvaluation++ + ") - Selected: "
                     + Arrays.toString(solution.getArrayFeaturesSelecionadas())
                     + " F1Score > " + solution.getEvaluation().getF1Score()

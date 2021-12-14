@@ -129,6 +129,10 @@ public class GenericEvaluation {
         GenericResultado r = testaEssaGalera(classififer, train, test);
 
         if (GeneralParameters.CSV) {
+            String fs = Arrays.toString(r.usedFS);
+            if (fs.equals("[]")) {
+                fs = "[All features]";
+            }
             System.out.println(
                     r.Cx + ";"
                             + String.valueOf(r.getAcuracia()).replace(",", ".") + ";"
@@ -140,7 +144,7 @@ public class GenericEvaluation {
                             + r.getFP() + ";"
                             + r.getFN() + ";"
                             + r.getNanotime() + ";"
-                            + Arrays.toString(r.usedFS)
+                            + fs
             );
 
         } else if (SIMPLE) {

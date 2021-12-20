@@ -144,6 +144,7 @@ public class GenericEvaluation {
                             + r.getFP() + ";"
                             + r.getFN() + ";"
                             + r.getNanotime() + ";"
+                            + r.getTrainingTime() + ";"
                             + fs
             );
 
@@ -217,8 +218,12 @@ public class GenericEvaluation {
         long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
         long endTraining = System.nanoTime();
-        if (GeneralParameters.PRINT_TRAINING_TIME) {
-            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+        long trainingTime;
+        if (GeneralParameters.PRINT_TRAINING_TIME == true) {
+//            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+            trainingTime = endTraining - beginTraining;
+        } else {
+            trainingTime = 0;
         }
 
 
@@ -281,7 +286,7 @@ public class GenericEvaluation {
         float timeNano = (Float.valueOf(endano - beginNano)) / testSize; //nano time
         float timeMili = (Float.valueOf(endMili - beginMili)) / testSize; //nano time
 
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, confusionMatrix);
+        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, trainingTime, confusionMatrix);
         if (GeneralParameters.PRINT_TESTING_TIME) {
             System.out.println(selectedClassifier.getClassifierName() + ";" + timeNano + ";" + timeMili);
         }

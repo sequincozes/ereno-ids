@@ -26,6 +26,7 @@ public class GenericResultado {
     double varianceTime, stdDvTime, loConfIntTime, hiConfIntTime;
     ArrayList<Long> detailedClassificationTime;
     private float nanotime;
+    private float trainingTime;
     private int testDatasetSize;
     double avgTime;
     @Deprecated
@@ -202,6 +203,25 @@ public class GenericResultado {
         recalcular();
     }
 
+    public GenericResultado(String descricao, float VP, float FN, float VN, float FP, float nanotime,
+                            float trainingTime, int[][] confusionMatrix) {
+        this.Cx = descricao;
+        this.VP = VP;
+        this.FN = FN;
+        this.VN = VN;
+        this.usedFS = GeneralParameters.FEATURE_SELECTION.clone();
+        this.FP = FP;
+        this.trainingTime = trainingTime;
+        this.nanotime = nanotime;
+        this.microtime = nanotime / 1000;
+        this.Time = nanotime / 1000;
+        this.confusionMatrix = confusionMatrix;
+        if (GeneralParameters.DEBUG_MODE) {
+            System.out.println("New result = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + ")");
+        }
+        recalcular();
+    }
+
     public GenericResultado(String descricao, float VP, float FN, float VN, float FP) {
         this.Cx = descricao;
         this.VP = VP;
@@ -274,6 +294,14 @@ public class GenericResultado {
 
     public void setFP(float FP) {
         this.FP = FP;
+    }
+
+    public float getTrainingTime() {
+        return trainingTime;
+    }
+
+    public void setTrainingTime(float trainingTime) {
+        this.trainingTime = trainingTime;
     }
 
     public float getTime() {

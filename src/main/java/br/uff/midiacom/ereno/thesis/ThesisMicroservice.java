@@ -13,17 +13,18 @@ import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ThesisMicroservice {
 
     // java -jar thesis.jar [dataset.csv] [features] [classifier]
     // java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]
     public static void main(String[] args) throws Exception {
+        System.out.println("usage: java -jar thesis.jar [dataset.csv] [features] [classifier] OR \n" +
+                "java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]");
         // Maldormed call
         if (args.length != 4 && args.length != 3) {
-            System.err.println("usage: java -jar thesis.jar [dataset.csv] [features] [classifier] OR \n" +
-                    "java -jar thesis.jar [train.csv] [test.csv] [features] [classifier] OR ");
-            System.out.println("features = {F-GRASP, I-GRASP, IWSSR, GOOSE, SV, GOOSESV++, FULL}");
+            System.out.println("features = {F-GRASP, I-GRASP, IWSSR, GOOSE, GOOSESV, GOOSESV++, FULL}");
             System.out.println("classifiers = {1=RANDOM_TREE, 2=J48, 3=REP_TREE, 4=NAIVE_BAYES, 5=RANDOM_FOREST}");
             System.exit(1);
         } else if (args.length == 3) {
@@ -60,16 +61,16 @@ public class ThesisMicroservice {
             // Seting up the features
             String fs = args[2].toLowerCase();
             switch (fs) {
-                case "GOOSE":
+                case "goose":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.goose;
                     break;
-                case "GOOSESV":
+                case "goosesv":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.gooseAndSv;
                     break;
-                case "GOOSESV++":
+                case "goosesv++":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.gooseAndSvPlusPlus;
                     break;
-                case "FULL":
+                case "full":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.goosePlusPlusAndSvPlusPlus;
                     break;
             }
@@ -80,6 +81,7 @@ public class ThesisMicroservice {
     }
 
     private static void runSingleEvaluation(String trainData, String testData) throws Exception {
+        System.out.println("Classifier: "+GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName()+" - FS: "+Arrays.toString(GeneralParameters.FEATURE_SELECTION));
         GeneralParameters.DATASET = trainData;
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
         train.setClassIndex(train.numAttributes() - 1);

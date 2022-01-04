@@ -5,10 +5,7 @@
  */
 package br.uff.midiacom.ereno.evaluation.experiments;
 
-import br.uff.midiacom.ereno.abstractclassification.ClassifierExtended;
-import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
-import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;
+import br.uff.midiacom.ereno.abstractclassification.*;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking.METODO;
@@ -38,7 +35,11 @@ public class Consistency2021 {
 //        }
 
 //        runWithoutCV(FeatureSubsets.CONSISTENCY_GOOSEFeatures);
-        runWithoutCV(FeatureSubsets.CONSISTENCY_SVAndGooseFeatures);
+        runWithoutCV(new int[]{});
+
+//        long before3 = System.currentTimeMillis();
+//        runWithoutCV(FeatureSubsets.gooseAndSvPlusPlus);
+//        System.out.println("Total Time (seconds):" + ((System.currentTimeMillis()-before3)/1000));
 
 //        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
 //        reduceInstances(10,2);
@@ -51,35 +52,41 @@ public class Consistency2021 {
         GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
 
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
-        train.setClassIndex(train.numAttributes()-1);
+        train.setClassIndex(train.numAttributes() - 1);
 
         GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test.csv";
 //        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test1pct.csv";
         Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
-        test.setClassIndex(test.numAttributes()-1);
+        test.setClassIndex(test.numAttributes() - 1);
 
         GenericEvaluation.runSingleClassifierJ48(train, test);
     }
+
     private static void runWithoutCV(int[] filter) throws Exception {
-//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train1pct.csv";
         GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
         GeneralParameters.FEATURE_SELECTION = filter;
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
-        train.setClassIndex(train.numAttributes()-1);
+        train.setClassIndex(train.numAttributes() - 1);
 
         GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test.csv";
-//        GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/test1pct.csv";
         Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
-        test.setClassIndex(test.numAttributes()-1);
+        test.setClassIndex(test.numAttributes() - 1);
 
-        GenericEvaluation.runSingleClassifierJ48(train, test);
+        GenericResultado result = GenericEvaluation.runSingleClassifierJ48(train, test);
+        for (int classIndex = 0; classIndex < result.getConfusionMatrix().length; classIndex++) {
+            System.out.print("Esperado: " + classIndex + ";resultados:;");
+            for (int expectedIndex = 0; expectedIndex < result.getConfusionMatrix().length; expectedIndex++) {
+                System.out.print(result.getConfusionMatrix()[classIndex][expectedIndex] + ";");
+            }
+            System.out.println("");
+        }
     }
 
     public static void showTree(J48 j48) throws Exception {
         // display classifier
         final javax.swing.JFrame jf =
                 new javax.swing.JFrame("Weka Classifier Tree Visualizer: J48");
-        jf.setSize(500,400);
+        jf.setSize(500, 400);
         jf.getContentPane().setLayout(new BorderLayout());
         TreeVisualizer tv = new TreeVisualizer(null,
                 j48.graph(),
@@ -175,7 +182,8 @@ public class Consistency2021 {
 
     public static void reduceInstances(int totalFolds, int fold) throws IOException {
         Instances allInstances = Util.cutFold(totalFolds, fold, 7, new String[]{GeneralParameters.DATASET});
-        Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_"+totalFolds+"folds-"+fold+".csv"));        System.out.println("Tamanho: " + allInstances.size());
+        Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_" + totalFolds + "folds-" + fold + ".csv"));
+        System.out.println("Tamanho: " + allInstances.size());
     }
 
     public static void SWATCrossValidation() throws Exception {

@@ -270,7 +270,12 @@ public class GenericEvaluation {
         selectedClassifier.getClassifier().buildClassifier(train);
         if (selectedClassifier.getClassifier() instanceof J48) {
             // Shows the decision trees
-            Consistency2021.showTree((J48) selectedClassifier.getClassifier());
+            try {
+                Consistency2021.showTree((J48) selectedClassifier.getClassifier());
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+                e.printStackTrace();
+            }
         }
         long endTraining = System.nanoTime();
         if (GeneralParameters.PRINT_TRAINING_TIME) {
@@ -379,21 +384,21 @@ public class GenericEvaluation {
             try {
                 Instance testando = test.instance(i);
                 double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
-                if (resultado == normalClass) {
-                    if (resultado == testando.classValue()) {
-                        VN = VN + 1; // resultado normal, resultado verdadeiro
+                double esperado = testando.classValue();
+                if (resultado == esperado) {
+                    if (resultado == normalClass) {
+                        VN = VN + 1;
                     } else {
-                        FN = FN + 1; // resultado normal, resultado falso
+                        VP = VP + 1;
                     }
-                } else { //Intrusion detected!
-                    if (normalClass == testando.classValue()) {
-                        FP = FP + 1; // resultado ataque, resultado falso
+                } else { // bad prediction
+                    if (resultado == normalClass) {
+                        FN = FN + 1;
                     } else {
-                        VP = VP + 1; // resultado ataque, resultado verdadeiro
+                        FP = FP + 1;
                     }
                 }
-                ///
-                double esperado = testando.classValue();
+
                 // Confusion matrix:
 //                System.out.println("Esperado: "+esperado+" / resultado: "+resultado);
                 confusionMatrix[(int) esperado][(int) resultado] = confusionMatrix[(int) esperado][(int) resultado] + 1;

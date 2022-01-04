@@ -28,6 +28,7 @@ public class ThesisMicroservice {
             System.out.println("classifiers = {1=RANDOM_TREE, 2=J48, 3=REP_TREE, 4=NAIVE_BAYES, 5=RANDOM_FOREST}");
             System.exit(1);
         } else if (args.length == 3) {
+            System.out.println("Entered filter selection mode.");
             // Seting up the dataset
             GeneralParameters.DATASET = args[0];
 
@@ -38,15 +39,15 @@ public class ThesisMicroservice {
             GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2]) - 1];
 
             switch (fs) {
-                case "I-GRASP":
+                case "i-grasp":
                     System.exit(1);
                     System.err.println("Not implemented yet.");
                     ((GraspRVND) new GraspRVND().setupGraspMicroservice(Integer.parseInt(args[2]) - 1)).run(FeatureSubsets.iwssrGoosePlusPlusAndSvPlusPlus, "grasp_rvnd", GeneralParameters.DATASET);
                     break;
-                case "IWSSR":
+                case "iwssr":
                     runIWSSR();
                     break;
-                case "F-GRASP":
+                case "f-grasp":
                     ((GraspRVND) new GraspRVND().setupGraspMicroservice(Integer.parseInt(args[2]) - 1)).run(FeatureSubsets.goosePlusPlusAndSvPlusPlus, "grasp_rvnd", GeneralParameters.DATASET);
                     break;
             }

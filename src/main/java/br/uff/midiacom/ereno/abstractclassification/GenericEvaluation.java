@@ -350,7 +350,7 @@ public class GenericEvaluation {
 
     }
 
-    private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
+    public static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
         long beginTraining = System.nanoTime();
         selectedClassifier.getClassifier().buildClassifier(train);
 //        if (selectedClassifier.getClassifier() instanceof J48) {

@@ -6,14 +6,22 @@
 package br.uff.midiacom.ereno.abstractclassification;
 
 import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
+import weka.core.Instances;
 
 public class GeneralParameters {
 
     public static final boolean NUMERIC_CLEANNER = true;
+    public static boolean PRINT_CONFUSION_MATRIX = true;
+
+    /* Modifications for GRASP-FS without crossvalidation*/
+    public static Instances TRAIN;
+    public static Instances TEST;
+    public static boolean CROSS_VALIDATION = true;
+
     public static boolean PRINT_TRAINING_TIME = false;
     public static boolean PRINT_TESTING_TIME = false; // limit the analysis to the first 10k register in dataset
 
-    public static final String SWAT30pct = "/home/silvio/datasets/SWAT/swat30pct.csv" ;
+    public static final String SWAT30pct = "/home/silvio/datasets/SWAT/swat30pct.csv";
     public static boolean SINGLE_FOLD_MODE = true;
     public static boolean PRINT_SELECTION = true;
     public static boolean DEBUG_MODE = false;

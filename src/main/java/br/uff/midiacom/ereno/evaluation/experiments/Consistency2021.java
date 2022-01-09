@@ -35,8 +35,8 @@ public class Consistency2021 {
 //        }
 
 //        runWithoutCV(FeatureSubsets.CONSISTENCY_GOOSEFeatures);
-        runWithoutCV(new int[]{});
-
+        runWithoutCV(new int[]{42, 51, 40, 58, 55, 53, 47, 41, 39, 38});
+        runWithoutCV(FeatureSubsets.goose);
 //        long before3 = System.currentTimeMillis();
 //        runWithoutCV(FeatureSubsets.gooseAndSvPlusPlus);
 //        System.out.println("Total Time (seconds):" + ((System.currentTimeMillis()-before3)/1000));
@@ -62,7 +62,7 @@ public class Consistency2021 {
         GenericEvaluation.runSingleClassifierJ48(train, test);
     }
 
-    private static void runWithoutCV(int[] filter) throws Exception {
+    private static void  runWithoutCV(int[] filter) throws Exception {
         GeneralParameters.DATASET = "/home/silvio/datasets/Full_SV_2021/consistency_v7/10pct/all_ucs/train.csv";
         GeneralParameters.FEATURE_SELECTION = filter;
         Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);

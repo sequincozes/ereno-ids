@@ -5,13 +5,10 @@
  */
 package br.uff.midiacom.ereno.featureSelection.grasp;
 
+import br.uff.midiacom.ereno.abstractclassification.*;
 import br.uff.midiacom.ereno.evaluation.experiments.FeatureSelectionExperiments;
 import br.uff.midiacom.ereno.featureSelection.subsets.*;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
-import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
-import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
-import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.evaluation.GraspMetrics;
 import br.uff.midiacom.ereno.evaluation.TimeAnalysis;
@@ -291,14 +288,20 @@ public abstract class Grasp {
             }
 
             GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
-            GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
-            solution.setEvaluation(Util.getResultAverage(resultado));
-            String avaliacao = "AVALIAÇÃO "
-                    + "(" + numberEvaluation++ + ") - Selected: "
-                    + Arrays.toString(solution.getArrayFeaturesSelecionadas())
-                    + " F1Score > " + solution.getEvaluation().getF1Score()
-                    + "(acc: " + solution.getEvaluation().getAcuracia();
 
+            if (GeneralParameters.CROSS_VALIDATION) {
+                GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
+                solution.setEvaluation(Util.getResultAverage(resultado));
+            } else {
+                try {
+                    solution.setEvaluation(GenericEvaluation.testaEssaGalera(GeneralParameters.SINGLE_CLASSIFIER_MODE, Util.copyAndFilter(GeneralParameters.TRAIN, printSelection), Util.copyAndFilter(GeneralParameters.TEST, printSelection)));
+                } catch (NullPointerException e) {
+                    System.err.println("It is necessary to set TRAIN and TEST datasets when cross-validation is off.");
+                }
+            }
+
+            String avaliacao = "EV;"+ numberEvaluation++ + ";"+solution.getEvaluation().getF1Score()+";"
+                    + Arrays.toString(solution.getArrayFeaturesSelecionadas());
             System.out.println(avaliacao);
             if (GeneralParameters.DEBUG_MODE) {
 

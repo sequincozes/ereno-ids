@@ -11,11 +11,11 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.BitFl
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
+
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- *
  * @author silvio
  */
 public class LocalSearches {
@@ -37,10 +37,11 @@ public class LocalSearches {
             GraspSolution nova = buscaLocal(semente, neighborhoodStructures.get(i), grasp);
             System.out.println("**** Selected bestLocal: " + bestLocal.getFeatureSet() + "(" + bestLocal.getF1Score() + "), RCL:" + bestLocal.getRCLfeatures());
             System.out.println("Running structure: " + i);
-            System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getF1Score()+ "), RCL:" + nova.getRCLfeatures());
+            System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getF1Score() + "), RCL:" + nova.getRCLfeatures());
 
             if (nova.isBetterThan(bestLocal, grasp.criteriaMetric)) {
                 bestLocal = nova.newClone(false);
+                grasp.setBestGlobalSolution(nova.newClone(false));
             }
             grasp.numBitFLipFeatures = bestLocal.getNumSelectedFeatures();
             if (grasp.numBitFLipFeatures > 0 && !includedBF) {
@@ -75,8 +76,8 @@ public class LocalSearches {
                 randomNum = ThreadLocalRandom.current().nextInt(min, max);
                 System.out.println("Running structure: " + randomNum);
                 GraspSolution nova = buscaLocal(semente.newClone(false), neighborhoodStructures.get(randomNum), grasp);
-                System.out.println("**** Selected melhor: " + melhor.getFeatureSet() + "(" + melhor.getF1Score()+ "), RCL:" + melhor.getRCLfeatures());
-                System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getF1Score()+ "), RCL:" + nova.getRCLfeatures());
+                System.out.println("**** Selected melhor: " + melhor.getFeatureSet() + "(" + melhor.getF1Score() + "), RCL:" + melhor.getRCLfeatures());
+                System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getF1Score() + "), RCL:" + nova.getRCLfeatures());
                 if (nova.isBetterThan(melhor, grasp.criteriaMetric)) {
                     if (firstIteration) {
                         firstIteration = false;
@@ -88,6 +89,7 @@ public class LocalSearches {
                     } else {
                         System.out.println("RESET");
                         melhor = nova.newClone(false);
+                        grasp.setBestGlobalSolution(melhor.newClone(false));
                         neighborhoodStructures = new ArrayList<>();
                         neighborhoodStructures.add(new IWSSr(grasp));
                         System.out.println("Adding IWWSr...");
@@ -114,8 +116,8 @@ public class LocalSearches {
         return melhor;
     }
 
-    public static GraspSolution buscaLocal(GraspSolution solution, NeighborhoodStructure neigborhood,Grasp grasp) throws Exception {
-        GraspSolution bestLocal = neigborhood.run(solution);
+    public static GraspSolution buscaLocal(GraspSolution solution, NeighborhoodStructure neighborhood, Grasp grasp) throws Exception {
+        GraspSolution bestLocal = neighborhood.run(solution);
         if (bestLocal.isBetterThan(solution, grasp.criteriaMetric)) {
             return bestLocal;
         } else {

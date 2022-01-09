@@ -52,8 +52,7 @@ public class FirebaseOutput implements OutputManager {
                         .setDatabaseUrl("https://ereno-9326b.firebaseio.com")
                         .build();
                 FirebaseApp.initializeApp(options);
-                System.out.println("dataset");
-                mDatabase = FirebaseDatabase.getInstance().getReference().child(dataset);
+                mDatabase = FirebaseDatabase.getInstance().getReference().child(dataset.replace(".csv", ""));
                 System.out.println("mDatabase:" + mDatabase);
                 serviceAccount.close();
             } catch (FileNotFoundException ex) {
@@ -71,10 +70,7 @@ public class FirebaseOutput implements OutputManager {
     public void writeDetail(Detail detail) {
         if (!offlinemode) {
             final DatabaseReference pathReference = (getPath(experimentName));
-
-            final DatabaseReference iterationReference = pathReference
-                    .child("iterations")
-                    .child(String.valueOf(currentIterationNumber));
+            final DatabaseReference iterationReference = pathReference.child("iterations").child(String.valueOf(currentIterationNumber));
             final DatabaseReference detailsReference = iterationReference.child("details").child(String.valueOf(detail.evaluation));
 
             System.out.println("detailsReference: " + detailsReference);
@@ -89,6 +85,7 @@ public class FirebaseOutput implements OutputManager {
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
+
             pathReference.child("last_evaluation").setValue(dtf.format(now), new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError de, DatabaseReference dr) {
@@ -96,6 +93,38 @@ public class FirebaseOutput implements OutputManager {
                     System.out.println("DatabaseReference: " + dr.toString());
                 }
             });
+
+            if (detail.evaluation == 1) {
+                pathReference.child("preliminar_best_detail").setValue(detail, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError de, DatabaseReference dr) {
+                        System.out.println("DatabaseError: " + de.getMessage());
+                        System.out.println("DatabaseReference: " + dr.toString());
+                    }
+                });
+
+            } else {
+                pathReference.child("preliminar_best_detail").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Detail bestDetail = dataSnapshot.getValue(Detail.class);
+                        if (Float.valueOf(detail.accuracy) > Float.valueOf(bestDetail.accuracy)) {
+                            dataSnapshot.getRef().setValue(detail, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError de, DatabaseReference dr) {
+                                    System.out.println("DatabaseError: " + de.getMessage());
+                                    System.out.println("DatabaseReference: " + dr.toString());
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
         } else {
             detail.print();
         }

@@ -88,7 +88,7 @@ public class Util {
                 instances.deleteAttributeAt(i - 1);
             }
         }
-
+        instances.setClassIndex(instances.numAttributes()- 1);
         return instances;
     }
 
@@ -161,7 +161,6 @@ public class Util {
     }
 
     public static Instances loadAndFilterSingleFile(boolean printSelection) throws Exception {
-
         Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
         if (printSelection) {
             System.out.println("All instances: " + allInstances.size());
@@ -180,7 +179,6 @@ public class Util {
         allInstances.setClassIndex(allInstances.numAttributes() - 1);
         normalClass = allInstances.get(0).classValue();
         return allInstances;
-
     }
 
     public static Instances loadAndFilter(String[] files, boolean printSelection) throws Exception {
@@ -207,6 +205,16 @@ public class Util {
         normalClass = allInstances.get(0).classValue();
         return allInstances;
 
+    }
+
+    public static void loadTrainFile(String train) throws Exception {
+        GeneralParameters.TRAIN = new Instances(Util.readDataFile(train));
+        System.out.println("All instances: " + GeneralParameters.TRAIN.size());
+    }
+
+    public static void loadTestFile(String test) throws Exception {
+        GeneralParameters.TEST = new Instances(Util.readDataFile(test));
+        System.out.println("All instances: " + GeneralParameters.TEST.size());
     }
 
     public static Instances loadSingleFile(boolean printSelection) throws Exception {

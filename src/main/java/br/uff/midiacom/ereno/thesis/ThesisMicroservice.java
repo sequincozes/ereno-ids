@@ -15,93 +15,92 @@ import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.PRINT_CONFUSION_MATRIX;
+
 public class ThesisMicroservice {
 
-    // java -jar thesis.jar [dataset.csv] [features] [classifier]
     // java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]
     public static void main(String[] args) throws Exception {
-        System.out.println("usage: java -jar thesis.jar [dataset.csv] [features] [classifier] OR \n" +
-                "java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]");
+
+        System.out.println("usage: java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]");
+        GeneralParameters.CROSS_VALIDATION = false;
+
         // Maldormed call
-        if (args.length != 4 && args.length != 3) {
-            System.out.println("features = {F-GRASP, I-GRASP, IWSSR, GOOSE, GOOSESV, GOOSESV++, FULL}");
+        if (args.length != 4) {
+            // java -Xmx20g -jar thesis.jar all.csv goose-grasp 2 >> grasp-goose_08-janeir_cluster04.txt&
+            System.err.println("usage: java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]");
+            System.out.println("features = {GOOSE-GRASP, GSV-GRASP, F-GRASP, I-GRASP, IWSSR, GOOSE, GOOSESV, GOOSESV++, FULL}");
             System.out.println("classifiers = {1=RANDOM_TREE, 2=J48, 3=REP_TREE, 4=NAIVE_BAYES, 5=RANDOM_FOREST}");
             System.exit(1);
-        } else if (args.length == 3) {
-            System.out.println("Entered filter selection mode.");
+        } else {
             // Seting up the dataset
-            GeneralParameters.DATASET = args[0];
+            GeneralParameters.DATASET = null; // We do not use this parameter because the cross-validation is off.
+            Util.loadTrainFile(args[0]);
+            Util.loadTestFile(args[1]);
 
             // Seting up the features
-            String fs = args[1].toLowerCase();
+            String fs = args[3].toLowerCase();
 
             // Seting up the classifier
             GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2]) - 1];
 
             switch (fs) {
+                case "goose-grasp":
+                    new GraspRVND().run(FeatureSubsets.goose, "grasp_rvnd");
+                    break;
+                case "gsv-grasp":
+                    new GraspRVND().run(FeatureSubsets.gooseAndSv, "grasp_rvnd");
+                    break;
                 case "i-grasp":
                     System.exit(1);
                     System.err.println("Not implemented yet.");
-                    ((GraspRVND) new GraspRVND().setupGraspMicroservice(Integer.parseInt(args[2]) - 1)).run(FeatureSubsets.iwssrGoosePlusPlusAndSvPlusPlus, "grasp_rvnd", GeneralParameters.DATASET);
+                    new GraspRVND().run(FeatureSubsets.iwssrGoosePlusPlusAndSvPlusPlus, "grasp_rvnd");
                     break;
                 case "iwssr":
                     runIWSSR();
                     break;
                 case "f-grasp":
-                    ((GraspRVND) new GraspRVND().setupGraspMicroservice(Integer.parseInt(args[2]) - 1)).run(FeatureSubsets.goosePlusPlusAndSvPlusPlus, "grasp_rvnd", GeneralParameters.DATASET);
+                    new GraspRVND().run(FeatureSubsets.goosePlusPlusAndSvPlusPlus, "grasp_rvnd");
                     break;
-            }
-        } else if (args.length == 4) {
-            // Seting up the dataset
-            String train = args[0];
-            String test = args[1];
-
-            // Seting up the classifier
-            GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[3]) - 1];
-
-            // Seting up the features
-            String fs = args[2].toLowerCase();
-            switch (fs) {
                 case "goose":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.goose;
+                    runSingleEvaluation();
                     break;
                 case "goosesv":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.gooseAndSv;
+                    runSingleEvaluation();
                     break;
                 case "goosesv++":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.gooseAndSvPlusPlus;
+                    runSingleEvaluation();
                     break;
                 case "full":
                     GeneralParameters.FEATURE_SELECTION = FeatureSubsets.goosePlusPlusAndSvPlusPlus;
+                    runSingleEvaluation();
+                    break;
+                case "custom":
+                    runSingleEvaluation();
                     break;
             }
-
-            runSingleEvaluation(train, test);
         }
-
     }
 
-    private static void runSingleEvaluation(String trainData, String testData) throws Exception {
-        System.out.println("Classifier: "+GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName()+" - FS: "+Arrays.toString(GeneralParameters.FEATURE_SELECTION));
-        GeneralParameters.DATASET = trainData;
-        Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
-        train.setClassIndex(train.numAttributes() - 1);
+    private static void runSingleEvaluation() throws Exception {
+        GeneralParameters.TRAIN = Util.applyFilterKeep(GeneralParameters.TRAIN);
+        GeneralParameters.TEST = Util.applyFilterKeep(GeneralParameters.TEST);
+        GenericResultado result = GenericEvaluation.runSingleClassifier(GeneralParameters.TRAIN, GeneralParameters.TEST);
 
-        GeneralParameters.DATASET = testData;
-        Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadAndFilterSingleFile(false);
-        test.setClassIndex(test.numAttributes() - 1);
-
-        System.out.println("CONFUSION MATRIX");
-        GenericResultado result = GenericEvaluation.runSingleClassifier(train, test);
-        for (int classIndex = 0; classIndex < result.getConfusionMatrix().length; classIndex++) {
-            System.out.print("EXPECTED: " + classIndex + ";RESULT:;");
-            for (int expectedIndex = 0; expectedIndex < result.getConfusionMatrix().length; expectedIndex++) {
-                System.out.print(result.getConfusionMatrix()[classIndex][expectedIndex] + ";");
+        if (PRINT_CONFUSION_MATRIX) {
+            System.out.println("CONFUSION MATRIX");
+            for (int classIndex = 0; classIndex < result.getConfusionMatrix().length; classIndex++) {
+                System.out.print("EXPECTED: " + classIndex + ";RESULT:;");
+                for (int expectedIndex = 0; expectedIndex < result.getConfusionMatrix().length; expectedIndex++) {
+                    System.out.print(result.getConfusionMatrix()[classIndex][expectedIndex] + ";");
+                }
+                System.out.println("");
             }
-            System.out.println("");
         }
     }
-
 
     private static void runIWSSR() throws Exception {
         Grasp graspVnd = new GraspVND();

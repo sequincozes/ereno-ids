@@ -14,7 +14,9 @@ import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
+import weka.core.Instances;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -83,6 +85,14 @@ public class RodaExperimento {
                 GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.parseInt(args[2])];
                 runIWSSr();
                 break;
+            case "-r":
+                System.out.println("Selecionado a opção de reduzir o dataset");
+                GeneralParameters.DATASET = args[1];
+                GeneralParameters.TOTALFOLDS = Integer.valueOf(args[2]);
+                GeneralParameters.FOLDS = Integer.valueOf(args[3]);
+                GeneralParameters.SEED = Integer.valueOf(args[4]);
+                reduceInstances();
+                break;
             default:
                 showHelp();
         }
@@ -110,7 +120,17 @@ public class RodaExperimento {
                 + "                # - 2 para REP_TREE\n"
                 + "                # - 3 para NAIVE_BAYES\n"
                 + "                # - 4 para RANDOM_FOREST");
+        System.out.println("-r  # Para reduzir o dataset. Uso: java-jar vini.jar -r [DATASET] [TOTALFOLDS] [FOLDS] [SEED]\n"
+                + "                # Exemplo de uso: java -jar vini.jar -r dataset.csv 10 1 7]");
     }
+
+    public static void reduceInstances() throws IOException {
+        Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(10, 1, 7, new String[]{
+                GeneralParameters.DATASET});
+        System.out.println("Tamanho: " + allInstances.size());
+        br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_10percent.csv"));
+    }
+
 
     public static void runIWSSr() throws Exception {
         Grasp graspVnd = new GraspVND();

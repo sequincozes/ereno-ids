@@ -33,11 +33,11 @@ public class RodaExperimento {
 //        int remIterations = 1000000;
 //        int remNoImprovements = 1000000;
 //        ArrayList<Integer> fullList;
-//        args = new String[]{"-c", "wsnteste.csv", "6", "2"};
+//        args = new String[]{"-r", "wsnteste.csv", "5", "1", "7"};
 //        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
-        } else if (!(args[0].equals("-h")||args[0].equals("--help")||args[0].equals("-f")||args[0].equals("-c")||args[0].equals("-i"))) { // se não for nenhum desses aqui, chama o método showhelp
+        } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") || args[0].equals("-i"))) { // se não for nenhum desses aqui, chama o método showhelp
             showHelp();
         }
         switch (args[0]) {
@@ -125,10 +125,15 @@ public class RodaExperimento {
     }
 
     public static void reduceInstances() throws IOException {
-        Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(10, 1, 7, new String[]{
-                GeneralParameters.DATASET});
-        System.out.println("Tamanho: " + allInstances.size());
-        br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv", "_10percent.csv"));
+        Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(GeneralParameters.TOTALFOLDS,
+                GeneralParameters.FOLDS, GeneralParameters.SEED, new String[]{
+                        GeneralParameters.DATASET});
+        System.out.println("Total folds: " + GeneralParameters.TOTALFOLDS);
+        System.out.println("Folds: " + GeneralParameters.FOLDS);
+        System.out.println("Seed: " + GeneralParameters.SEED);
+        System.out.println("Tamanho reduzido: " + allInstances.size());
+        br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv",
+                "_" + "totalfolds=" + GeneralParameters.TOTALFOLDS + "_folds=" + GeneralParameters.FOLDS + "_seed=" + GeneralParameters.SEED + ".csv"));
     }
 
 

@@ -37,7 +37,7 @@ public class RodaExperimento {
 //        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
-        } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") || args[0].equals("-i"))) { // se não for nenhum desses aqui, chama o método showhelp
+        } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") || args[0].equals("-i") || args[0].equals("-r"))) { // se não for nenhum desses aqui, chama o método showhelp
             showHelp();
         }
         switch (args[0]) {

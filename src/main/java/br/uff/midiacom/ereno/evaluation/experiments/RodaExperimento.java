@@ -6,7 +6,7 @@
 package br.uff.midiacom.ereno.evaluation.experiments;
 
 import br.uff.midiacom.ereno.abstractclassification.GeneralParameters;
-import br.uff.midiacom.ereno.abstractclassification.GenericClassifiers;
+import br.uff.midiacom.ereno.abstractclassification.GenericEvaluation;
 import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
 import br.uff.midiacom.ereno.featureSelection.FeatureRanking;
@@ -16,9 +16,10 @@ import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import weka.core.Instances;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
+
+import static br.uff.midiacom.ereno.featureSelection.Util.putHeaders;
 
 /**
  * @author vagne
@@ -34,10 +35,12 @@ public class RodaExperimento {
 //        int remNoImprovements = 1000000;
 //        ArrayList<Integer> fullList;
 //        args = new String[]{"-r", "wsnteste.csv", "5", "1", "7"};
+//        args = new String[]{"-d", "wsnteste.csv", "5"};
 //        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
-        } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") || args[0].equals("-i") || args[0].equals("-r"))) { // se não for nenhum desses aqui, chama o método showhelp
+        } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") ||
+                args[0].equals("-i") || args[0].equals("-r") || args[0].equals("-d") || args[0].equals("-s"))) { // se não for nenhum desses aqui, chama o método showhelp
             showHelp();
         }
         switch (args[0]) {
@@ -93,19 +96,33 @@ public class RodaExperimento {
                 GeneralParameters.SEED = Integer.valueOf(args[4]);
                 reduceInstances();
                 break;
+            case "-d": //divide dataset
+                System.out.println("Selecionado a opção de dividir dataset em proporção de treino (o restante será utilizado para teste).");
+                GeneralParameters.DATASET = args[1];
+                reduceInstances(Integer.valueOf(args[2]));
+                break;
+            case "-s": // single fold
+                System.out.printf("Selecionado a opção de teste sem validação cruzada.");
+                GeneralParameters.TRAINING_DATASET = args[1];
+                GeneralParameters.TESTING_DATASET = args[2];
+                runWithoutCV();
+                break;
             default:
                 showHelp();
         }
     }
 
     private static void showHelp() {
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
         System.out.println("-h or --help # Para abrir o menu de opções");
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
         System.out.println("-f  # Para aplicar o filtro. Uso: java -jar vini.jar -f [DATASET] [FEATURES] [MÉTODO] \n "
                 + "                # Exemplo de uso: java -jar vini.jar -f dataset.csv 40 GR\n"
                 + "                # GR\n"
                 + "                # IG\n"
                 + "                # Relief\n"
-                + "                # OneR\n");
+                + "                # OneR");
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
         System.out.println("-c  # Para classificar. Uso: java -jar vini.jar -c [DATASET] [FOLD] [CLASSIFICADOR] \n "
                 + "                # Exemplo de uso: java -jar vini.jar -c dataset.csv 7 1\n"
                 + "                # - 0 para RANDOM_TREE\n"
@@ -113,6 +130,7 @@ public class RodaExperimento {
                 + "                # - 2 para REP_TREE\n"
                 + "                # - 3 para NAIVE_BAYES\n"
                 + "                # - 4 para RANDOM_FOREST");
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
         System.out.println("-i  # Para rodar IWSSr. Uso: java-jar vini.jar -i [DATASET] [CLASSIFICADOR]\n"
                 + "                # Exemplo de uso: java -jar vini.jar -i dataset.csv 1] \n"
                 + "                # - 0 para RANDOM_TREE\n"
@@ -120,20 +138,60 @@ public class RodaExperimento {
                 + "                # - 2 para REP_TREE\n"
                 + "                # - 3 para NAIVE_BAYES\n"
                 + "                # - 4 para RANDOM_FOREST");
-        System.out.println("-r  # Para reduzir o dataset. Uso: java-jar vini.jar -r [DATASET] [TOTALFOLDS] [FOLDS] [SEED]\n"
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
+        System.out.println("-r  # Para reduzir o dataset. Uso: java-jar vini.jar -r [DATASET] [TOTALFOLDS] [FOLD] [SEED]\n"
                 + "                # Exemplo de uso: java -jar vini.jar -r dataset.csv 10 1 7]");
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
+        System.out.println("-d  # Para dividir um dataset em dois pedaços. Uso: java-jar vini.jar -r [DATASET] [PORÇÃO]\n"
+                + "                # Exemplo de uso: java -jar vini.jar -d dataset.csv 2] \n "
+                + "                # OBS:. O parâmetro PORÇÃO representa a proporção de treinamento. Exemplos: \n "
+                + "                # Porção 2: representa 20% de treino e 80% de teste \n "
+                + "                # Porção 3: representa 30% de treino e 70% de teste \n "
+                + "                # Porção 5: representa 50% de treino e 60% de teste \n "
+                + "                # Porção 10: representa 100% de treino.");
+        System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
+        System.out.println("-s  # Para testar um dataset sem validaçao cruzada. Uso: java-jar vini.jar -s [TRAINING_DATASET] [TESTING_DATASET]\n"
+                + "                 # Exemplo de uso: java -jar vini.jar -r dataset_training.csv dataset_testing.csv");
+        System.exit(0);
     }
 
     public static void reduceInstances() throws IOException {
         Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(GeneralParameters.TOTALFOLDS,
-                GeneralParameters.FOLDS, GeneralParameters.SEED, new String[]{
+                GeneralParameters.FOLD, GeneralParameters.SEED, new String[]{
                         GeneralParameters.DATASET});
         System.out.println("Total folds: " + GeneralParameters.TOTALFOLDS);
-        System.out.println("Folds: " + GeneralParameters.FOLDS);
+        System.out.println("Fold: " + GeneralParameters.FOLD);
         System.out.println("Seed: " + GeneralParameters.SEED);
         System.out.println("Tamanho reduzido: " + allInstances.size());
         br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFile(allInstances, GeneralParameters.DATASET.replace(".csv",
-                "_" + "totalfolds=" + GeneralParameters.TOTALFOLDS + "_folds=" + GeneralParameters.FOLDS + "_seed=" + GeneralParameters.SEED + ".csv"));
+                "_" + "totalfolds=" + GeneralParameters.TOTALFOLDS + "_fold=" + GeneralParameters.FOLD + "_seed=" + GeneralParameters.SEED + ".csv"));
+    }
+
+    public static void reduceInstances(int trainingPortion) throws IOException {
+        putHeaders(GeneralParameters.DATASET, GeneralParameters.DATASET.replace(".csv",
+                "_training.csv"));
+        int i = 0;
+        for (i = 0; i < trainingPortion; i++) {
+            Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(10,
+                    i, GeneralParameters.SEED, new String[]{
+                            GeneralParameters.DATASET});
+
+            br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFileT(allInstances,
+                    GeneralParameters.DATASET.replace(".csv",
+                    "_training.csv"));
+        }
+
+        putHeaders(GeneralParameters.DATASET, GeneralParameters.DATASET.replace(".csv",
+                "_testing.csv"));
+        for (i = trainingPortion; i < 10; i++) { // sempre de 1 a 10.
+            Instances allInstances = br.uff.midiacom.ereno.featureSelection.Util.cutFold(10,
+                    i, GeneralParameters.SEED, new String[]{
+                            GeneralParameters.DATASET});
+
+            br.uff.midiacom.ereno.featureSelection.Util.writeInstancesToFileT(allInstances,
+                    GeneralParameters.DATASET.replace(".csv",
+                            "_testing.csv"));
+        }
     }
 
 
@@ -175,6 +233,19 @@ public class RodaExperimento {
         // CrossValidation.runAndPrintFoldResults(top5, 2, false);
         // Para classificar sem utilizar filtros.
         CrossValidation.runAndPrintFoldResults(top5, 2, false);
+    }
+
+    private static void runWithoutCV() throws Exception {
+        GeneralParameters.DATASET = GeneralParameters.TRAINING_DATASET;
+
+        Instances train = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
+        train.setClassIndex(train.numAttributes() - 1);
+
+        GeneralParameters.DATASET = GeneralParameters.TESTING_DATASET;
+        Instances test = br.uff.midiacom.ereno.abstractclassification.Util.loadSingleFile(false);
+        test.setClassIndex(test.numAttributes() - 1);
+
+        GenericEvaluation.runSingleClassifier(train, test);
     }
 
 }

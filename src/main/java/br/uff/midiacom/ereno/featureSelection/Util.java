@@ -5,8 +5,6 @@
  */
 package br.uff.midiacom.ereno.featureSelection;
 
-import br.uff.midiacom.ereno.abstractclassification.GenericResultado;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -352,5 +350,38 @@ public class Util {
         }
         bw.close();
     }
+
+    public static void putHeaders(String inputFile, String outputFile) throws IOException {
+        // Deleting file content
+        File fout = new File(outputFile);
+        FileOutputStream fos1 = new FileOutputStream(fout);
+        BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(fos1));
+
+        // Add headers
+        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            if (linha.contains("@")) {
+                bw1.write(linha);
+                bw1.newLine();
+            } else {
+                break;
+            }
+        }
+        br.close();
+        bw1.close();
+    }
+
+    public static void writeInstancesToFileT(Instances instances, String outputFile) throws IOException {
+        File fout = new File(outputFile);
+        FileOutputStream fos = new FileOutputStream(fout, true);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        for (Instance i : instances) {
+            bw.write(i.toString());
+            bw.newLine();
+        }
+        bw.close();
+    }
+
 
 }

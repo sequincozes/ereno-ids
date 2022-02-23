@@ -87,8 +87,12 @@ public class GeneralParameters {
     // GRASP
     public static String OUTPUT = "outputs/";
     public static int FOLDS = 5;
+    public static int FOLD = 5;
     public static int GRASP_SEED = 5;
     public static int EVALUATION_SEED = 7;
+
+    public static String TRAINING_DATASET = "";
+    public static String TESTING_DATASET = "";
 
     // Run Settings java 
 //  java -jar preGrasp.jar all_in_one_WSN.csv 4 >> pregrasp_WSN_RANDOM_FOREST.txt

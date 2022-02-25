@@ -105,6 +105,10 @@ public class RodaExperimento {
                 System.out.printf("Selecionado a opção de teste sem validação cruzada.");
                 GeneralParameters.TRAINING_DATASET = args[1];
                 GeneralParameters.TESTING_DATASET = args[2];
+                GeneralParameters.SINGLE_CLASSIFIER_MODE = GeneralParameters.CLASSIFIERS_FOREACH[Integer.valueOf(args[3])]; // Passando a posição do classificador.
+                System.out.println("Selecionado o dataset de treino: " + GeneralParameters.TRAINING_DATASET);
+                System.out.println("Selecionado o dataset de teste: " + GeneralParameters.TESTING_DATASET);
+                System.out.println("Classificador: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
                 runWithoutCV();
                 break;
             default:
@@ -150,8 +154,13 @@ public class RodaExperimento {
                 + "                # Porção 5: representa 50% de treino e 60% de teste \n "
                 + "                # Porção 10: representa 100% de treino.");
         System.out.println(" ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----");
-        System.out.println("-s  # Para testar um dataset sem validaçao cruzada. Uso: java-jar vini.jar -s [TRAINING_DATASET] [TESTING_DATASET]\n"
-                + "                 # Exemplo de uso: java -jar vini.jar -r dataset_training.csv dataset_testing.csv");
+        System.out.println("-s  # Para testar um dataset sem validaçao cruzada. Uso: java-jar vini.jar -s [TRAINING_DATASET] [TESTING_DATASET] [CLASSIFICADOR] \n"
+                + "                # Exemplo de uso: java -jar vini.jar -s dataset_training.csv dataset_testing.csv 2\n"
+                + "                # - 0 para RANDOM_TREE\n"
+                + "                # - 1 para J48\n"
+                + "                # - 2 para REP_TREE\n"
+                + "                # - 3 para NAIVE_BAYES\n"
+                + "                # - 4 para RANDOM_FOREST");
         System.exit(0);
     }
 

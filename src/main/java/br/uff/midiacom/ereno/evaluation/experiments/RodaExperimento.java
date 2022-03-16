@@ -110,6 +110,12 @@ public class RodaExperimento {
                 System.out.println("Selecionado o dataset de teste: " + GeneralParameters.TESTING_DATASET);
                 System.out.println("Classificador: " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName());
                 runWithoutCV();
+                Runtime rtSingleFold = Runtime.getRuntime();
+                // freeMemory = memória livre alocada atual, totalMemory = memória total alocada
+
+                long usedMemorySingleFold = (rtSingleFold.totalMemory() - rtSingleFold.freeMemory());
+                System.out.println("O classificador " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName() +
+                        " utilizou " + usedMemorySingleFold + " bytes de memória.");
                 break;
             default:
                 showHelp();

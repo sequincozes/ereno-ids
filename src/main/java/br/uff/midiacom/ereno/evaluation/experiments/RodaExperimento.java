@@ -19,6 +19,7 @@ import weka.core.Instances;
 import java.io.*;
 import java.util.ArrayList;
 
+import static br.uff.midiacom.ereno.evaluation.experiments.UtilVinicius.showMemory;
 import static br.uff.midiacom.ereno.featureSelection.Util.putHeaders;
 
 /**
@@ -35,8 +36,8 @@ public class RodaExperimento {
 //        int remNoImprovements = 1000000;
 //        ArrayList<Integer> fullList;
 //        args = new String[]{"-r", "wsnteste.csv", "5", "1", "7"};
-//        args = new String[]{"-d", "wsnteste.csv", "5"};
-//        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
+        args = new String[]{"-c", "wsnteste_training.csv", "7", "1"};
+        System.out.println("Tecle -h ou --help para abrir o menu de opções.");
         if (args.length == 0) {
             showHelp();
         } else if (!(args[0].equals("-h") || args[0].equals("--help") || args[0].equals("-f") || args[0].equals("-c") ||
@@ -75,12 +76,7 @@ public class RodaExperimento {
                 CrossValidation.runAndPrintFoldResults(false); // false significa que não vai exibir a matriz confusão.
 //                System.gc();
                 System.out.println("Resultados: [Classifier, Acuracia, Precision, Recall, F1Score, VP, VN, FP, FN, Test Time, Training Time, Features]");
-                Runtime rt = Runtime.getRuntime();
-                // freeMemory = memória livre alocada atual, totalMemory = memória total alocada
-//                long usedMemory = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024; // converte em MB
-                long usedMemory = (rt.totalMemory() - rt.freeMemory());
-                System.out.println("O classificador " + GeneralParameters.SINGLE_CLASSIFIER_MODE.getClassifierName() +
-                        " utilizou " + usedMemory + " bytes de memória.");
+                showMemory("ao término da classificação.");
                 break;
             case "-i":
                 System.out.println("Selecionado a opção de filtro com IWSSr.");

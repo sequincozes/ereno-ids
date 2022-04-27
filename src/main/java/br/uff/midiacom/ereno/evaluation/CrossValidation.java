@@ -23,6 +23,8 @@ import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NumericCleaner;
 
+import static br.uff.midiacom.ereno.evaluation.experiments.UtilVinicius.showMemory;
+
 /**
  * @author silvio
  */
@@ -256,7 +258,9 @@ public class CrossValidation {
 
     public static GenericResultado[] setupAndRun(int folds, int seed, ClassifierExtended classifier) throws Exception {
         GeneralParameters.SINGLE_CLASSIFIER_MODE = classifier;
+        showMemory("antes de carregar o dataset.");
         Instances allInstances = Util.loadAndFilterSingleFile(GeneralParameters.PRINT_SELECTION); // mudar para o grasp
+        showMemory("após carregar o dataset.");
         GenericResultado[] result = runSingleClassifier(allInstances, folds, seed);
         return result;
     }

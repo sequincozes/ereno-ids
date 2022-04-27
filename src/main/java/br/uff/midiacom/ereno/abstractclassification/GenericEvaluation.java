@@ -9,6 +9,9 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.Arrays;
+import java.util.Scanner;
+
+import static br.uff.midiacom.ereno.evaluation.experiments.UtilVinicius.showMemory;
 
 /**
  * @author silvio
@@ -215,83 +218,97 @@ public class GenericEvaluation {
 
 
     private static GenericResultado testaEssaGalera(ClassifierExtended selectedClassifier, Instances train, Instances test) throws Exception {
+        int valorSelecionado;
+        System.out.println("Para prosseguir com o treino, tecle 1.");
+        Scanner entrada = new Scanner(System.in);
+        valorSelecionado = entrada.nextInt();
         long beginTraining = System.nanoTime();
-        selectedClassifier.getClassifier().buildClassifier(train);
-        long endTraining = System.nanoTime();
-        long trainingTime;
-        if (GeneralParameters.PRINT_TRAINING_TIME == true) {
-//            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
-            trainingTime = endTraining - beginTraining;
-        } else {
-            trainingTime = 0;
+
+        if (valorSelecionado == 1) {
+            selectedClassifier.getClassifier().buildClassifier(train);
+            showMemory("após treinar.");
         }
 
+        System.out.println("Para prosseguir com o teste, tecle 2.");
+        Scanner entrada2 = new Scanner(System.in);
+        valorSelecionado = entrada2.nextInt();
 
-        // Resultados
-        int VP = 0;
-        int VN = 0;
-        int FP = 0;
-        int FN = 0;
-        long beginNano = System.nanoTime();
-        long beginMili = System.currentTimeMillis();
-
-        int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
-
-        long testSize;
-        if (GeneralParameters.PRINT_TESTING_TIME) {
-            testSize = 10000;
-        } else {
-            testSize = test.size();
-        }
-
-        for (int i = 0; i < testSize; i++) {
-            try {
-                Instance testando = test.instance(i);
-                double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
-                if (resultado == normalClass) {
-                    if (resultado == testando.classValue()) {
-                        VN = VN + 1; // resultado normal, resultado verdadeiro
-                    } else {
-                        FN = FN + 1; // resultado normal, resultado falso
-                    }
-                } else { //Intrusion detected!
-                    if (normalClass == testando.classValue()) {
-                        FP = FP + 1; // resultado ataque, resultado falso 
-                    } else {
-                        VP = VP + 1; // resultado ataque, resultado verdadeiro
-                    }
-                }
-                ///
-                double esperado = testando.classValue();
-                // Confusion matrix:
-//                System.out.println("Esperado: "+esperado+" / resultado: "+resultado);
-                confusionMatrix[(int) esperado][(int) resultado] = confusionMatrix[(int) esperado][(int) resultado] + 1;
-            } catch (ArrayIndexOutOfBoundsException a) {
-                System.err.println("Erro: " + a.getLocalizedMessage());
-                System.err.println("DICA: " + "Tem certeza que o número de classes está definido corretamente?");
-
-                System.exit(1);
-            } catch (Exception e) {
-                System.err.println("Erro: " + e.getLocalizedMessage());
-                System.exit(1);
-
+        if (valorSelecionado == 2) {
+            long endTraining = System.nanoTime();
+            long trainingTime;
+            if (GeneralParameters.PRINT_TRAINING_TIME == true) {
+                //            System.out.println("Tempo de treinamento = " + (endTraining - beginTraining));
+                trainingTime = endTraining - beginTraining;
+            } else {
+                trainingTime = 0;
             }
-        }
-        long endano = System.nanoTime();
-        long endMili = System.currentTimeMillis();
+            // Resultados
+            int VP = 0;
+            int VN = 0;
+            int FP = 0;
+            int FN = 0;
+            long beginNano = System.nanoTime();
+            long beginMili = System.currentTimeMillis();
 
-        if (ERROR) {
-            System.out.println("Results");
-        }
-        float timeNano = (Float.valueOf(endano - beginNano)) / testSize; //nano time
-        float timeMili = (Float.valueOf(endMili - beginMili)) / testSize; //nano time
+            int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
 
-        GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, trainingTime, confusionMatrix);
-        if (GeneralParameters.PRINT_TESTING_TIME) {
-            System.out.println(selectedClassifier.getClassifierName() + ";" + timeNano + ";" + timeMili);
-        }
-        return r;
+            long testSize;
+            if (GeneralParameters.PRINT_TESTING_TIME) {
+                testSize = 10000;
+            } else {
+                testSize = test.size();
+            }
 
+            for (int i = 0; i < testSize; i++) {
+                try {
+                    Instance testando = test.instance(i);
+                    double resultado = selectedClassifier.getClassifier().classifyInstance(testando);
+                    if (resultado == normalClass) {
+                        if (resultado == testando.classValue()) {
+                            VN = VN + 1; // resultado normal, resultado verdadeiro
+                        } else {
+                            FN = FN + 1; // resultado normal, resultado falso
+                        }
+                    } else { //Intrusion detected!
+                        if (normalClass == testando.classValue()) {
+                            FP = FP + 1; // resultado ataque, resultado falso
+                        } else {
+                            VP = VP + 1; // resultado ataque, resultado verdadeiro
+                        }
+                    }
+                    ///
+                    double esperado = testando.classValue();
+                    // Confusion matrix:
+//                System.out.println("Esperado: "+esperado+" / resultado: "+resultado);
+                    confusionMatrix[(int) esperado][(int) resultado] = confusionMatrix[(int) esperado][(int) resultado] + 1;
+                } catch (ArrayIndexOutOfBoundsException a) {
+                    System.err.println("Erro: " + a.getLocalizedMessage());
+                    System.err.println("DICA: " + "Tem certeza que o número de classes está definido corretamente?");
+
+                    System.exit(1);
+                } catch (Exception e) {
+                    System.err.println("Erro: " + e.getLocalizedMessage());
+                    System.exit(1);
+
+                }
+            }
+            long endano = System.nanoTime();
+            long endMili = System.currentTimeMillis();
+
+            if (ERROR) {
+                System.out.println("Results");
+            }
+            float timeNano = (Float.valueOf(endano - beginNano)) / testSize; //nano time
+            float timeMili = (Float.valueOf(endMili - beginMili)) / testSize; //nano time
+
+            GenericResultado r = new GenericResultado(selectedClassifier.getClassifierName(), VP, FN, VN, FP, timeNano, trainingTime, confusionMatrix);
+            if (GeneralParameters.PRINT_TESTING_TIME) {
+                System.out.println(selectedClassifier.getClassifierName() + ";" + timeNano + ";" + timeMili);
+            }
+            showMemory("após testar.");
+            return r;
+        }
+        return null;
     }
 
     private static GenericResultado testaEssaGaleraWithDeadline(ClassifierExtended selectedClassifier, Instances train, Instances test, boolean timeTest, long deadline) throws Exception {
@@ -369,5 +386,4 @@ public class GenericEvaluation {
         return r;
 
     }
-
 }

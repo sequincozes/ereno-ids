@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
  * @author sequi
  */
 public class GenericResultado {
@@ -108,7 +107,7 @@ public class GenericResultado {
         }
     }
 
-    GenericResultado() {
+    public GenericResultado() {
 
     }
 
@@ -135,6 +134,7 @@ public class GenericResultado {
     public int[][] getConfusionMatrix() {
         return confusionMatrix;
     }
+
     public int[][] confusionMatrix = new int[GeneralParameters.NUM_CLASSES][GeneralParameters.NUM_CLASSES];
 
     public GenericResultado(String Cx, float VP, float FN, float VN, float FP, long Time, double acuracia, double txDet, double txAFal, double cpuLoad, double memoryLoad) {
@@ -219,10 +219,7 @@ public class GenericResultado {
         this.acuracia = Float.valueOf(((getVP() + getVN()) * 100) / (getVP() + getVN() + getFP() + getFN())) / 100;
         this.recall = Float.valueOf((getVP() * 100) / (getVP() + getFN())) / 100;
         this.precision = Float.valueOf((getVP() * 100) / (getVP() + getFP())) / 100;
-
-        this.f1score = Float.valueOf(
-                (float) (2 * ((recall * precision) / (recall + precision)))
-        );
+        this.f1score = Float.valueOf((float) (2 * ((recall * precision) / (recall + precision))));
         if (GeneralParameters.DEBUG_MODE) {
             System.out.println("Recalcular = VP (" + VP + "), VN (" + VN + "), FP (" + FP + "), FN (" + FN + "), "
                     + "Acc (" + getAcuracia() + "), F1 (" + getF1Score() + ")"
@@ -353,16 +350,16 @@ public class GenericResultado {
         recalcular();
         System.out.println(
                 getCx() + ";"
-                + getAcuracia() + ";"
-                + getPrecision() + ";"
-                + getRecall() + ";"
-                + getF1Score() + ";"
-                + getVP() + ";"
-                + getVN() + ";"
-                + getFP() + ";"
-                + getFN() + ";"
-                + getAvgTime() + ";"
-                + Arrays.toString(usedFS)
+                        + getAcuracia() + ";"
+                        + getPrecision() + ";"
+                        + getRecall() + ";"
+                        + getF1Score() + ";"
+                        + getVP() + ";"
+                        + getVN() + ";"
+                        + getFP() + ";"
+                        + getFN() + ";"
+                        + getAvgTime() + ";"
+                        + Arrays.toString(usedFS)
         );
     }
 
@@ -386,18 +383,18 @@ public class GenericResultado {
         recalcular();
         System.out.println(
                 getCx() + ";"
-                + getAcuracia() + ";"
-                + getPrecision() + ";"
-                + getRecall() + ";"
-                + getF1Score() + ";"
-                + getVP() + ";"
-                + getVN() + ";"
-                + getFP() + ";"
-                + getFN() + ";"
-                + getTime() + ";"
-                + stdDvTime + ";"
-                + hiConfIntTime + ";"
-                + loConfIntTime + ";"
+                        + getAcuracia() + ";"
+                        + getPrecision() + ";"
+                        + getRecall() + ";"
+                        + getF1Score() + ";"
+                        + getVP() + ";"
+                        + getVN() + ";"
+                        + getFP() + ";"
+                        + getFN() + ";"
+                        + getTime() + ";"
+                        + stdDvTime + ";"
+                        + hiConfIntTime + ";"
+                        + loConfIntTime + ";"
         );
     }
 
@@ -465,22 +462,26 @@ public class GenericResultado {
     public void printDetailedTime() {
         System.out.println(
                 getCx() + ";"
-                + getAvgTime() + ";"
-                + hiConfIntTime + ";"
-                + loConfIntTime + ";"
+                        + getAvgTime() + ";"
+                        + hiConfIntTime + ";"
+                        + loConfIntTime + ";"
         );
     }
 
     public void printDetailedTime(String details) {
         System.out.println(
                 details + ";"
-                + getAvgTime() + ";"
-                + hiConfIntTime + ";"
-                + loConfIntTime + ";"
+                        + getAvgTime() + ";"
+                        + hiConfIntTime + ";"
+                        + loConfIntTime + ";"
         );
     }
 
     public void setTestSize(int size) {
         this.testDatasetSize = size;
+    }
+
+    public void setF1Score(float f1score) {
+        this.f1score = f1score;
     }
 }

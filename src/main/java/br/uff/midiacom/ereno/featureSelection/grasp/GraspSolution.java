@@ -263,6 +263,11 @@ public class GraspSolution {
     public void setEvaluation(GenericResultado evaluation) {
         this.evaluation = evaluation;
     }
+    public void setEvaluation(float evaluation) {
+        GenericResultado genericResultado = new GenericResultado();
+        genericResultado.setF1Score(evaluation);
+        this.evaluation = genericResultado;
+    }
 
     public boolean isVERBOSE() {
         return VERBOSE;

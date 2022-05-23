@@ -299,10 +299,14 @@ public abstract class Grasp {
                     System.err.println("It is necessary to set TRAIN and TEST datasets when cross-validation is off.");
                 }
             }
+            if (getBestGlobalSolution() == null || getBestGlobalSolution().equals(null)) {
+                String avaliacao = "EV;" + numberEvaluation++ + ";" + solution.getEvaluation().getF1Score() + ";" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + ";(max: not yet)";
+                System.out.println(avaliacao);
+            } else {
+                String avaliacao = "EV;" + numberEvaluation++ + ";" + solution.getEvaluation().getF1Score() + ";" + Arrays.toString(solution.getArrayFeaturesSelecionadas()) + ";(max: " + getBestGlobalSolution().getF1Score() + " -> " + getBestGlobalSolution().getFeatureSet() + ")";
+                System.out.println(avaliacao);
+            }
 
-            String avaliacao = "EV;"+ numberEvaluation++ + ";"+solution.getEvaluation().getF1Score()+";"
-                    + Arrays.toString(solution.getArrayFeaturesSelecionadas());
-            System.out.println(avaliacao);
             if (GeneralParameters.DEBUG_MODE) {
 
                 if (!(solution.getEvaluation().getF1Score() > 0)) {

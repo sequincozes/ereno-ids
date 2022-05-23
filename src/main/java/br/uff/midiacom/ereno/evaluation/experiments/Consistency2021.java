@@ -83,6 +83,7 @@ public class Consistency2021 {
     }
 
     public static void showTree(J48 j48) throws Exception {
+        System.out.println(j48.graph());
         // display classifier
         final javax.swing.JFrame jf =
                 new javax.swing.JFrame("Weka Classifier Tree Visualizer: J48");

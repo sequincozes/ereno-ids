@@ -9,6 +9,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.GraspRVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
+import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
 import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
 import weka.core.Instances;
 
@@ -21,6 +22,8 @@ public class ThesisMicroservice {
 
     // java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]
     public static void main(String[] args) throws Exception {
+        System.out.println("Configurado para o SBSeg na classe THesisMicroservice.java");
+        SBSeGrasp.main(args);
 
         System.out.println("usage: java -jar thesis.jar [train.csv] [test.csv] [features] [classifier]");
         GeneralParameters.CROSS_VALIDATION = false;

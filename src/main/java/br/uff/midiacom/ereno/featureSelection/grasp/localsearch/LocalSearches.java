@@ -11,6 +11,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.BitFl
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
+import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -47,6 +48,39 @@ public class LocalSearches {
             if (grasp.numBitFLipFeatures > 0 && !includedBF) {
                 includedBF = true;
                 neighborhoodStructures.add(new BitFlip(grasp));
+                System.out.println("Adding BitFlip...");
+            }
+        }
+        return bestLocal;
+    }
+
+    public static GraspSolution doVNDSBSeGrasp(GraspSolution semente, SBSeGrasp sbSeGrasp) throws Exception {
+
+        ArrayList<NeighborhoodStructure> neighborhoodStructures = new ArrayList<>();
+        neighborhoodStructures.add(new IWSSr(sbSeGrasp));
+        System.out.println("Adding IWWSr...");
+        neighborhoodStructures.add(new IWSS(sbSeGrasp));
+        System.out.println("Adding IWWS...");
+        boolean includedBF = false;
+        if (sbSeGrasp.numBitFLipFeatures > 0 && !includedBF) {
+            neighborhoodStructures.add(new BitFlip(sbSeGrasp));
+            System.out.println("Adding BitFlip...");
+        }
+        GraspSolution bestLocal = semente.newClone(false);
+        for (int i = 0; i < neighborhoodStructures.size(); i++) {
+            GraspSolution nova = buscaLocalSbSeGrasp(semente, neighborhoodStructures.get(i), sbSeGrasp);
+            System.out.println("**** Selected bestLocal: " + bestLocal.getFeatureSet() + "(" + bestLocal.getF1Score() + "), RCL:" + bestLocal.getRCLfeatures());
+            System.out.println("Running structure: " + i);
+            System.out.println("**** Selected nova: " + nova.getFeatureSet() + "(" + nova.getF1Score() + "), RCL:" + nova.getRCLfeatures());
+
+            if (nova.isBetterThan(bestLocal, sbSeGrasp.criteriaMetric)) {
+                bestLocal = nova.newClone(false);
+                sbSeGrasp.setBestGlobalSolution(nova.newClone(false));
+            }
+            sbSeGrasp.numBitFLipFeatures = bestLocal.getNumSelectedFeatures();
+            if (sbSeGrasp.numBitFLipFeatures > 0 && !includedBF) {
+                includedBF = true;
+                neighborhoodStructures.add(new BitFlip(sbSeGrasp));
                 System.out.println("Adding BitFlip...");
             }
         }
@@ -119,6 +153,16 @@ public class LocalSearches {
     public static GraspSolution buscaLocal(GraspSolution solution, NeighborhoodStructure neighborhood, Grasp grasp) throws Exception {
         GraspSolution bestLocal = neighborhood.run(solution);
         if (bestLocal.isBetterThan(solution, grasp.criteriaMetric)) {
+            return bestLocal;
+        } else {
+            return solution;
+        }
+
+    }
+
+    public static GraspSolution buscaLocalSbSeGrasp(GraspSolution solution, NeighborhoodStructure neighborhood, SBSeGrasp sbSeGrasp) throws Exception {
+        GraspSolution bestLocal = neighborhood.runSBSeGrasp(solution);
+        if (bestLocal.isBetterThan(solution, sbSeGrasp.criteriaMetric)) {
             return bestLocal;
         } else {
             return solution;

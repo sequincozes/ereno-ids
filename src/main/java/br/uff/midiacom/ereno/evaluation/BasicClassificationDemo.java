@@ -18,18 +18,18 @@ public class BasicClassificationDemo {
         int features[] = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
 
         // Read training dataset and train classifier
-        String train = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc01/20p10p/train.csv";
+        String train = "train.arff";
         Instances trainingDataset = setup(train, classifier, features);
         trainingDataset.setClassIndex(trainingDataset.numAttributes() - 1);
         classifier.getClassifier().buildClassifier(trainingDataset); // training the classifier
 
         // Read testing dataset and test classifier
-        String test = "/home/silvio/datasets/Full_SV_2021/consistency_v4/uc01/20p10p/test.csv";
+        String test = "test.arff";
         Instances testingDataset = setup(test, classifier, features);
         testingDataset.setClassIndex(testingDataset.numAttributes() - 1);
 
         // Exemplo
-        Instance instancia = testingDataset.get(399);
+        Instance instancia = testingDataset.get(0);
         System.out.println("Classe esperada: " + instancia.classValue());
         System.out.println("Classe resultante: " + classifier.getClassifier().classifyInstance(instancia));
 

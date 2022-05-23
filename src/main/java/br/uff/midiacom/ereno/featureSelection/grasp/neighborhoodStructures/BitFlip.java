@@ -8,6 +8,8 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 import br.uff.midiacom.ereno.exceptions.IncompleteFeatureSelection;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
+import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -18,13 +20,16 @@ public class BitFlip implements NeighborhoodStructure {
 
     GraspSolution bestLocal;
     Grasp grasp;
+    SBSeGrasp sbSeGrasp;
     int remLSIterations = 50;
     int remLSNoImprovements = 20;
 
     public BitFlip(Grasp grasp) {
         this.grasp = grasp;
     }
-
+    public BitFlip(SBSeGrasp sbSeGrasp) {
+        this.sbSeGrasp = sbSeGrasp;
+    }
     private GraspSolution performSingleMoviment(GraspSolution reference) throws IncompleteFeatureSelection, Exception {
         GraspSolution neighborSolution = reference.newClone(true);
         int rem = 0;
@@ -51,6 +56,32 @@ public class BitFlip implements NeighborhoodStructure {
 
     @Override
     public GraspSolution run(GraspSolution reference) throws Exception {
+        System.out.println("Running BitFlip:");
+        bestLocal = reference.newClone(false); // initialization
+
+        while (--remLSIterations > 0 && --remLSNoImprovements > 0) {
+            GraspSolution neighborSolution;
+            try {
+                neighborSolution = performSingleMoviment(reference);
+                if (neighborSolution.isBetterThan(bestLocal,  grasp.criteriaMetric)) {
+                    bestLocal = neighborSolution.newClone(false);
+                    remLSNoImprovements = 10;
+                }
+            } catch (IncompleteFeatureSelection ex) {
+                System.out.println("Cancelando run: " + ex);
+                remLSIterations = 20;
+                remLSNoImprovements = 10;
+                return bestLocal;
+            }
+
+        }
+        remLSIterations = 20;
+        remLSNoImprovements = 10;
+        return bestLocal;
+    }
+
+    @Override
+    public GraspSolution runSBSeGrasp(GraspSolution reference) throws Exception {
         System.out.println("Running BitFlip:");
         bestLocal = reference.newClone(false); // initialization
 

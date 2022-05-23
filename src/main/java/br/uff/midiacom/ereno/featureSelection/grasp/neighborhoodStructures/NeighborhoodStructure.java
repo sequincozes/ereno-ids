@@ -13,4 +13,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
  */
 public interface NeighborhoodStructure {
     GraspSolution run(GraspSolution reference) throws Exception;
+
+
+    GraspSolution runSBSeGrasp(GraspSolution reference) throws Exception;
 }

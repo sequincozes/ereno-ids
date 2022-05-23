@@ -73,4 +73,12 @@ public class PreGraspIWSSr implements NeighborhoodStructure {
         return bestLocal;
     }
 
+    @Override
+    public GraspSolution runSBSeGrasp(GraspSolution seed) throws Exception {
+       System.err.println("PreGraspIWSSr não é esperado com SBSeg2022.");
+        System.exit(0);
+        return null;
+    }
+
+
 }

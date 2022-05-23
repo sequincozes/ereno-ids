@@ -7,6 +7,8 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
+import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+
 import java.util.ArrayList;
 
 /**
@@ -16,11 +18,15 @@ import java.util.ArrayList;
 public class IWSS implements NeighborhoodStructure {
 
     Grasp grasp;
+    SBSeGrasp sbSeGrasp;
     GraspSolution bestLocal;
     ArrayList<Integer> fullList;
 
     public IWSS(Grasp grasp) {
         this.grasp = grasp;
+    }
+    public IWSS(SBSeGrasp sbSeGrasp) {
+        this.sbSeGrasp = sbSeGrasp;
     }
 
     /* Build solution sequentially 
@@ -56,7 +62,40 @@ public class IWSS implements NeighborhoodStructure {
         return bestLocal;
     }
 
+    @Override
+    public GraspSolution runSBSeGrasp(GraspSolution seed) throws Exception {
+        System.out.println("Running IWSS:");
+        bestLocal = seed.newClone(false); // initialization
+
+        // Starts with a empty set
+        while (bestLocal.getNumSelectedFeatures() > 0) {
+            bestLocal.deselectFeature(0); //remove first, send to end of RCL
+        }
+
+        fullList = bestLocal.copyRCLFeatures();
+
+        for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
+            System.out.println("IWSS >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(Acc: " + bestLocal.getAccuracy()+ "), (F1: " + bestLocal.getF1Score() + ")");
+
+            if (grasp.currentTime >= grasp.maxTime) {
+                return bestLocal;
+            }
+            GraspSolution beforeIncrement = bestLocal.newClone(false);
+            GraspSolution add = performAddMovimentSBSeGrasp(beforeIncrement.newClone(true), rclIndex);
+            if (add.isBetterThan(bestLocal,  grasp.criteriaMetric)) {
+                bestLocal = add.newClone(false);
+            }
+        }
+
+        restoreRCL(bestLocal);
+        return bestLocal;
+    }
     public GraspSolution performAddMoviment(GraspSolution reference, int rclFeatureIndex) throws Exception {
+        reference.selectFeature(rclFeatureIndex);
+        reference = grasp.avaliar(reference);
+        return reference;
+    }
+    public GraspSolution performAddMovimentSBSeGrasp(GraspSolution reference, int rclFeatureIndex) throws Exception {
         reference.selectFeature(rclFeatureIndex);
         reference = grasp.avaliar(reference);
         return reference;

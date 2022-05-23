@@ -10,12 +10,14 @@ import weka.core.Instances;
 
 public class GeneralParameters {
 
+    public static String UNIFIED_DATASET;
     public static final boolean NUMERIC_CLEANNER = true;
     public static boolean PRINT_CONFUSION_MATRIX = true;
 
     /* Modifications for GRASP-FS without crossvalidation*/
     public static Instances TRAIN;
     public static Instances TEST;
+
     public static boolean CROSS_VALIDATION = true;
 
     public static boolean PRINT_TRAINING_TIME = false;
@@ -129,7 +131,7 @@ public class GeneralParameters {
     public static boolean NORMALIZE = false;
 
     public static int[] FEATURE_SELECTION = {};// FeatureSubsets.RCL_CICIDS_IG;
-    static int NUM_CLASSES = 11;
+    public static int NUM_CLASSES = 11;
 
     public static int getTotalFeatures() {
         return FEATURE_SELECTION.length;

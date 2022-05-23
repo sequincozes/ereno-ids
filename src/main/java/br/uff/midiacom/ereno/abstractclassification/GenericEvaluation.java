@@ -272,6 +272,7 @@ public class GenericEvaluation {
             // Shows the decision trees
             try {
                 Consistency2021.showTree((J48) selectedClassifier.getClassifier());
+//                System.out.println(((J48) selectedClassifier.getClassifier()).graph());
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
                 e.printStackTrace();

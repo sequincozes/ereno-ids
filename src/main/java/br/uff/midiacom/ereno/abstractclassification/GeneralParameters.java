@@ -19,6 +19,7 @@ public class GeneralParameters {
     public static Instances TEST;
 
     public static boolean CROSS_VALIDATION = true;
+    public static boolean LOCAL_VALIDATION = false;
 
     public static boolean PRINT_TRAINING_TIME = false;
     public static boolean PRINT_TESTING_TIME = false; // limit the analysis to the first 10k register in dataset
@@ -132,6 +133,7 @@ public class GeneralParameters {
 
     public static int[] FEATURE_SELECTION = {};// FeatureSubsets.RCL_CICIDS_IG;
     public static int NUM_CLASSES = 11;
+    public static double normalClass = 1;
 
     public static int getTotalFeatures() {
         return FEATURE_SELECTION.length;

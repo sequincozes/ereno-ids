@@ -215,7 +215,7 @@ public class GenericResultado {
     }
 
     public GenericResultado recalcular() {
-
+//        System.out.println(getVP()+","+getVN()+","+getFP()+","+getFN());
         this.acuracia = Float.valueOf(((getVP() + getVN()) * 100) / (getVP() + getVN() + getFP() + getFN())) / 100;
         this.recall = Float.valueOf((getVP() * 100) / (getVP() + getFN())) / 100;
         this.precision = Float.valueOf((getVP() * 100) / (getVP() + getFP())) / 100;

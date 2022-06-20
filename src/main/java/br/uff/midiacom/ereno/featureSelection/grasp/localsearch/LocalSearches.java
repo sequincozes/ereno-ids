@@ -11,7 +11,7 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.BitFl
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSS;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.NeighborhoodStructure;
-import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+import br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;

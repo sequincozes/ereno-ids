@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022;
+package br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier;
 
 import br.uff.midiacom.ereno.abstractclassification.*;
 import br.uff.midiacom.ereno.evaluation.GraspMetrics;
@@ -35,9 +35,9 @@ public class SBSeGrasp {
     public static GraspMetrics criteriaMetric = GraspMetrics.F1SCORE;// GraspMetrics.F1SCORE;
 
     public int maxTime = 24 * 60 * 60 * 1000; // quantidade total de iteracoes
-    int maxIterations = 100000; // quantidade total de iteracoes
-    public int maxNumberEvaluation = 100000; // quantidade total de avaliações (50*20)mc
-    final int maxNoImprovement = 100000; // iteracoes sem melhorias consecutivas
+    int maxIterations = 100; // quantidade total de iteracoes
+    public int maxNumberEvaluation = 1000; // quantidade total de avaliações (50*20)mc
+    final int maxNoImprovement = 100; // iteracoes sem melhorias consecutivas
     static int NUM_FEATURES = 1;
     //String method = "method";
     //String experimentIdentifier = "0000000";
@@ -148,19 +148,15 @@ public class SBSeGrasp {
         GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
 
         try {
-            System.err.println("Solution: " + solution);
-            System.err.println("Evaluation: " + solution.getEvaluation());
-            solution.setEvaluation(0);
-            System.err.println("Evaluation: " + solution.getEvaluation());
             float f1Score = ExternalClassifier.externalEvaluation(Arrays.toString(GeneralParameters.FEATURE_SELECTION));
-            System.err.println("F1Score: " + f1Score);
             solution.setEvaluation(f1Score);
+            System.err.println("F1Score: " + f1Score);
         } catch (NullPointerException e) {
             e.printStackTrace();
             System.err.println("It is necessary to set TRAIN and TEST datasets when cross-validation is off.");
             System.err.println("Solution: " + solution);
             System.err.println("Evaluation: " + solution.getEvaluation());
-            System.exit(0);
+            System.exit(1);
         }
 
         if (getBestGlobalSolution() == null || getBestGlobalSolution().equals(null)) {
@@ -191,7 +187,6 @@ public class SBSeGrasp {
         outputManager.writeBeginTime();
 
         System.out.println("######### ITERATION (" + iterationNumber + ") #############");
-
         ArrayList<Integer> RCL = buildCustomRCL(rcl);
 
         // Solução Inicial Factível

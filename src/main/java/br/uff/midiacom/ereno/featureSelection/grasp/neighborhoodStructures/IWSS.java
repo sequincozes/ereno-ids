@@ -7,7 +7,7 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
-import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+import br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp;
 
 import java.util.ArrayList;
 
@@ -77,12 +77,12 @@ public class IWSS implements NeighborhoodStructure {
         for (int rclIndex = bestLocal.getNumRCLFeatures() - 1; rclIndex >= 0; --rclIndex) {
             System.out.println("IWSS >>> adding " + bestLocal.getRCLfeatures().get(rclIndex) + " > to set " + bestLocal.getFeatureSet() + "(Acc: " + bestLocal.getAccuracy()+ "), (F1: " + bestLocal.getF1Score() + ")");
 
-            if (grasp.currentTime >= grasp.maxTime) {
+            if (sbSeGrasp.currentTime >= sbSeGrasp.maxTime) {
                 return bestLocal;
             }
             GraspSolution beforeIncrement = bestLocal.newClone(false);
             GraspSolution add = performAddMovimentSBSeGrasp(beforeIncrement.newClone(true), rclIndex);
-            if (add.isBetterThan(bestLocal,  grasp.criteriaMetric)) {
+            if (add.isBetterThan(bestLocal,  sbSeGrasp.criteriaMetric)) {
                 bestLocal = add.newClone(false);
             }
         }
@@ -97,7 +97,7 @@ public class IWSS implements NeighborhoodStructure {
     }
     public GraspSolution performAddMovimentSBSeGrasp(GraspSolution reference, int rclFeatureIndex) throws Exception {
         reference.selectFeature(rclFeatureIndex);
-        reference = grasp.avaliar(reference);
+        reference = sbSeGrasp.externalEvaluation(reference);
         return reference;
     }
 

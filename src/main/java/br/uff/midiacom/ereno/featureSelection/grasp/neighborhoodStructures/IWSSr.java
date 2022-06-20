@@ -10,8 +10,7 @@ import br.uff.midiacom.ereno.abstractclassification.Util;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
-import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
-import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
+import br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp;
 
 import java.util.ArrayList;
 
@@ -143,12 +142,12 @@ public class IWSSr implements NeighborhoodStructure {
                 if (swap.isBetterThan(bestLocal, grasp.criteriaMetric)) {
                     System.out.println("!# Novel Best Local: " + swap.getFeatureSet() + " reached " + swap.getF1Score() + " and passed " + bestLocal.getFeatureSet() + " with " + bestLocal.getF1Score());
                     bestLocal = swap.newClone(false);
-                    grasp.setBestGlobalSolution(bestLocal.newClone(false));
+                    sbSeGrasp.setBestGlobalSolution(bestLocal.newClone(false));
                 }
             }
 
             GraspSolution add = performAddMovimentSBSeg(beforeIncrement.newClone(true), rclIndex, true);
-            if (add.isBetterThan(bestLocal, grasp.criteriaMetric)) {
+            if (add.isBetterThan(bestLocal, sbSeGrasp.criteriaMetric)) {
                 System.out.println("!# Novel Best Local: " + add.getFeatureSet() + " reached " + add.getF1Score() + " and passed " + bestLocal.getFeatureSet() + " with " + bestLocal.getF1Score());
                 bestLocal = add.newClone(false);
                 sbSeGrasp.setBestGlobalSolution(bestLocal.newClone(false));

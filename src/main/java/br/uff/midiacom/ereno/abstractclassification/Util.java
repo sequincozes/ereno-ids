@@ -25,7 +25,6 @@ import weka.filters.unsupervised.attribute.Normalize;
  */
 public class Util {
 
-    public static double normalClass;
 
     public static void quickSort(FeatureAvaliada[] vetor, int inicio, int fim) {
         if (inicio < fim) {
@@ -88,7 +87,7 @@ public class Util {
                 instances.deleteAttributeAt(i - 1);
             }
         }
-        instances.setClassIndex(instances.numAttributes()- 1);
+        instances.setClassIndex(instances.numAttributes() - 1);
         return instances;
     }
 
@@ -101,7 +100,7 @@ public class Util {
             }
         }
         allInstances.setClassIndex(allInstances.numAttributes() - 1);
-        normalClass = allInstances.get(0).classValue();
+        GeneralParameters.normalClass = allInstances.get(0).classValue();
         return allInstances;
     }
 
@@ -116,7 +115,7 @@ public class Util {
 
         Instances allInstances = new Instances(Util.readDataFile(GeneralParameters.DATASET));
         System.out.println("All instances: " + allInstances.size());
-        normalClass = allInstances.get(0).classValue();
+        GeneralParameters.normalClass = allInstances.get(0).classValue();
 
         Instances train = new Instances(allInstances, 0, 1);
         Instances test = new Instances(allInstances, 1, 2);
@@ -177,7 +176,7 @@ public class Util {
             }
         }
         allInstances.setClassIndex(allInstances.numAttributes() - 1);
-        normalClass = allInstances.get(0).classValue();
+        GeneralParameters.normalClass = allInstances.get(0).classValue();
         return allInstances;
     }
 
@@ -202,7 +201,7 @@ public class Util {
             }
         }
         allInstances.setClassIndex(allInstances.numAttributes() - 1);
-        normalClass = allInstances.get(0).classValue();
+        GeneralParameters.normalClass = allInstances.get(0).classValue();
         return allInstances;
 
     }
@@ -227,6 +226,12 @@ public class Util {
 
         return allInstances;
 
+    }
+
+    public static Instances loadFile(String file) throws Exception {
+        Instances allInstances = new    Instances(Util.readDataFile(file));
+        System.out.println("All instances: " + allInstances.size());
+        return allInstances;
     }
 
     public static SimpleKMeans clusterData(Instances evaluation, int k) throws Exception {

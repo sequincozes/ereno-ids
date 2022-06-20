@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeG
+Main-Class: br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeG
  rasp
 

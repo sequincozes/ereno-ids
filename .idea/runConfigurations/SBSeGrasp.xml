@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="SBSeGrasp" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp" />
+    <option name="MAIN_CLASS_NAME" value="br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp" />
     <module name="ereno" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.*" />
+        <option name="PATTERN" value="br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

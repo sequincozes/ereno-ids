@@ -8,7 +8,7 @@ package br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures;
 import br.uff.midiacom.ereno.exceptions.IncompleteFeatureSelection;
 import br.uff.midiacom.ereno.featureSelection.grasp.Grasp;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
-import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+import br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -50,7 +50,7 @@ public class BitFlip implements NeighborhoodStructure {
         }
 
         neighborSolution.replaceFeature(rem, add);
-        neighborSolution = grasp.avaliar(neighborSolution);
+        neighborSolution = sbSeGrasp.externalEvaluation(neighborSolution);
         return neighborSolution;
     }
 

@@ -14,21 +14,22 @@ import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.Neigh
 import br.uff.midiacom.ereno.outputManager.FirebaseOutput;
 import br.uff.midiacom.ereno.outputManager.LocalOutput;
 import br.uff.midiacom.ereno.outputManager.model.Iteration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
  * @author sequi
  */
 public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
     public GraspSolution run(int[] rcl, String methodChoosen, NeighborhoodStructures selectedNeighborhood, String dataset) throws Exception {
         System.out.println("Wellcome to GRASP!");
+        System.out.println("dataset: " + dataset);
         outputManager = new FirebaseOutput().initialize(methodChoosen, dataset);
         this.beginTime = System.currentTimeMillis();
         outputManager.writeBeginTime();
-        
+
         NeighborhoodStructure neighborhood = null;
         if (null != selectedNeighborhood) {
             switch (selectedNeighborhood) {
@@ -56,7 +57,7 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
         /* Gera uma solução vizinha igual ou melhor */
         initialSolution = LocalSearches.buscaLocal(initialSolution, neighborhood, this);
-        if (initialSolution.isBetterThan(getBestGlobalSolution(),criteriaMetric)) {
+        if (initialSolution.isBetterThan(getBestGlobalSolution(), criteriaMetric)) {
             setBestGlobalSolution(initialSolution.newClone(false));
         }
 
@@ -78,14 +79,14 @@ public class GraspSimple extends Grasp { //@TODO: Create abstract GRASP
 
             // Avalia Solução
             avaliar(reconstructedSoluction);
-            if (initialSolution.isBetterThan(getBestGlobalSolution(),criteriaMetric)) {
+            if (initialSolution.isBetterThan(getBestGlobalSolution(), criteriaMetric)) {
                 setBestGlobalSolution(initialSolution.newClone(false));
                 noImprovements = 0;
             }
             // Busca por Ótimo Local
             reconstructedSoluction = LocalSearches.buscaLocal(reconstructedSoluction, neighborhood, this);
 
-            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution(),criteriaMetric)) {
+            if (reconstructedSoluction.isBetterThan(getBestGlobalSolution(), criteriaMetric)) {
                 setBestGlobalSolution(reconstructedSoluction.newClone(false));
                 noImprovements = 0;
             } else {

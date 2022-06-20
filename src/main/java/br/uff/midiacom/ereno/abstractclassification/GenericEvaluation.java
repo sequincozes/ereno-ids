@@ -12,6 +12,8 @@ import weka.core.Instances;
 
 import java.util.Arrays;
 
+import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.normalClass;
+
 /**
  * @author silvio
  */
@@ -21,7 +23,6 @@ public class GenericEvaluation {
     static boolean debug = false;
     static boolean SIMPLE = false;
     static boolean ERROR = false;
-    static double normalClass;
 
     public static GenericResultado[] runMultipleClassifier(Instances train, Instances test) throws Exception {
         GenericResultado[] results = new GenericResultado[GeneralParameters.CLASSIFIERS_FOREACH.length];

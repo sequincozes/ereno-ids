@@ -7,6 +7,7 @@ package br.uff.midiacom.ereno.featureSelection.grasp;
 
 import br.uff.midiacom.ereno.abstractclassification.*;
 import br.uff.midiacom.ereno.evaluation.experiments.FeatureSelectionExperiments;
+import br.uff.midiacom.ereno.evaluation.experiments.LKNN;
 import br.uff.midiacom.ereno.featureSelection.subsets.*;
 import br.uff.midiacom.ereno.outputManager.OutputManager;
 import br.uff.midiacom.ereno.evaluation.CrossValidation;
@@ -289,14 +290,18 @@ public abstract class Grasp {
 
             GeneralParameters.FEATURE_SELECTION = solution.getArrayFeaturesSelecionadas();
 
-            if (GeneralParameters.CROSS_VALIDATION) {
-                GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
-                solution.setEvaluation(Util.getResultAverage(resultado));
+            if (GeneralParameters.LOCAL_VALIDATION) {
+                solution.setEvaluation(new LKNN().run(Util.copyAndFilter(GeneralParameters.TRAIN, printSelection), Util.copyAndFilter(GeneralParameters.TEST, printSelection)));
             } else {
-                try {
-                    solution.setEvaluation(GenericEvaluation.testaEssaGalera(GeneralParameters.SINGLE_CLASSIFIER_MODE, Util.copyAndFilter(GeneralParameters.TRAIN, printSelection), Util.copyAndFilter(GeneralParameters.TEST, printSelection)));
-                } catch (NullPointerException e) {
-                    System.err.println("It is necessary to set TRAIN and TEST datasets when cross-validation is off.");
+                if (GeneralParameters.CROSS_VALIDATION) {
+                    GenericResultado[] resultado = CrossValidation.runSingleClassifier(Util.copyAndFilter(allInstances, printSelection), GeneralParameters.FOLDS, GeneralParameters.GRASP_SEED);
+                    solution.setEvaluation(Util.getResultAverage(resultado));
+                } else {
+                    try {
+                        solution.setEvaluation(GenericEvaluation.testaEssaGalera(GeneralParameters.SINGLE_CLASSIFIER_MODE, Util.copyAndFilter(GeneralParameters.TRAIN, printSelection), Util.copyAndFilter(GeneralParameters.TEST, printSelection)));
+                    } catch (NullPointerException e) {
+                        System.err.println("It is necessary to set TRAIN and TEST datasets when cross-validation is off.");
+                    }
                 }
             }
             if (getBestGlobalSolution() == null || getBestGlobalSolution().equals(null)) {

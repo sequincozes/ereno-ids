@@ -9,12 +9,10 @@ import br.uff.midiacom.ereno.featureSelection.grasp.GraspRVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspSolution;
 import br.uff.midiacom.ereno.featureSelection.grasp.GraspVND;
 import br.uff.midiacom.ereno.featureSelection.grasp.neighborhoodStructures.IWSSr;
-import br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp;
+import br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp;
 import br.uff.midiacom.ereno.featureSelection.subsets.FeatureSubsets;
-import weka.core.Instances;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static br.uff.midiacom.ereno.abstractclassification.GeneralParameters.PRINT_CONFUSION_MATRIX;
 

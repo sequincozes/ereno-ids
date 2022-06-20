@@ -11,7 +11,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath br.uff.midiacom.ereno.featureSelection.grasp.sbseg2022.SBSeGrasp</exec.args>
+                <exec.args>-classpath %classpath
+                    br.uff.midiacom.ereno.featureSelection.grasp.externalClassifier.SBSeGrasp</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
